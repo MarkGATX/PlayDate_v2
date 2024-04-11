@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --backgroundColor: oklch(99.23% 0.006 325.627);
+  --textColor:oklch(32.39% 0.177 266.91);
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --backgroundColor: oklch(99.23% 0.006 325.627);
+    --textColor:oklch(32.39% 0.177 266.91);
+  }
+}
+
+body {
+  color: var(--textColor);
+  /* background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb)); */
+  background: var(--backgroundColor)
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
