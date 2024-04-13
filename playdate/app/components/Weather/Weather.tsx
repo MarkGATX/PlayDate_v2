@@ -1,3 +1,4 @@
+'use client'
 import { useLocationContext } from "@/utils/location/LocationContext"
 
 export default function Weather() {
