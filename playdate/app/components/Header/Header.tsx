@@ -4,35 +4,35 @@ import Image from "next/image";
 import Weather from "../Weather/Weather";
 import { useState } from "react";
 
-export interface WeatherProps {
-    lat: number;
-    long: number;
-    error?: string;
-}
+// export interface WeatherProps {
+//     lat: number;
+//     long: number;
+//     error?: string;
+// }
 
 export default function Header() {
-    const [lat, setLat] = useState<number>(0)
-    const [long, setLong] = useState<number>(0)
-    const [error, setError] = useState<string | undefined>();
-    const locationSuccess = async (position: GeolocationPosition) => {
-        setLat(position.coords.latitude)
-        setLong(position.coords.longitude)
-    }
+    // const [lat, setLat] = useState<number>(0)
+    // const [long, setLong] = useState<number>(0)
+    // const [error, setError] = useState<string | undefined>();
+    // const locationSuccess = async (position: GeolocationPosition) => {
+    //     setLat(position.coords.latitude)
+    //     setLong(position.coords.longitude)
+    // }
 
-    const locationError = async () => {
-        console.error('error in getting location')
-        setError("Error in getting location")
-    }
+    // const locationError = async () => {
+    //     console.error('error in getting location')
+    //     setError("Error in getting location")
+    // }
 
-    //Check for geolocation in browser
-    if ('geolocation' in navigator) {
-        console.log('geolocation is available');
-        // continue with using geolocation 
-        navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
-    } else {
-        console.log(' geolocation IS NOT available ');
-        setError("Geolocation is not available")
-    };
+    // //Check for geolocation in browser
+    // if ('geolocation' in navigator) {
+    //     console.log('geolocation is available');
+    //     // continue with using geolocation 
+    //     navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+    // } else {
+    //     console.log(' geolocation IS NOT available ');
+    //     setError("Geolocation is not available")
+    // };
 
     return (
         <>
@@ -45,7 +45,7 @@ export default function Header() {
                     className=''>
                 </Image>
             </header>
-            <Weather lat={lat} long={long} error={error} />
+            <Weather />
         </>
     )
 }
