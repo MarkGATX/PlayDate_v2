@@ -1,11 +1,12 @@
 // 'use client'
 
 // import { useEffect, useState } from "react";
-// import { LocationContext, LocationData } from "./LocationContext";
+// import { WeatherData } from "./WeatherContext";
+
 
 // //LocationProvider component that holds initial state, returns provider component
-// export const LocationProvider = ({ children }: { children: React.ReactNode }) => {
-//     const [locationData, setLocationData] = useState<LocationData>({
+// export const WeatherProvider = ({ children }: { children: React.ReactNode }) => {
+//     const [weatherData, setWeatherData] = useState<WeatherData>({
 //         latitude: 0,
 //         longitude: 0,
 //     });
@@ -13,7 +14,7 @@
 
 //     useEffect(() => {
 //         const locationSuccess = (position: GeolocationPosition) => {
-//             setLocationData({ 
+//             setWeatherData({ 
 //                 latitude: position.coords.latitude, 
 //                 longitude: position.coords.longitude 
 //             });
@@ -21,7 +22,7 @@
 
 //         const locationError = () => {
 //             console.error('Error in getting location');
-//             setLocationData({ 
+//             setWeatherData({ 
 //                 latitude: 0, 
 //                 longitude: 0, 
 //                 error: "Error in getting location" 
