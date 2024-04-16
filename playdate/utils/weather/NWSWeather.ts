@@ -48,7 +48,7 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         console.log(currentOpenWeatherData)
         forecastData.current_icon = currentOpenWeatherData.weather[0].id
         forecastData.current_id = currentOpenWeatherData.weather[0].icon
-        forecastData.current_temp = currentOpenWeatherData.main.temp
+        forecastData.current_temp = currentOpenWeatherData.main.temp.toFixed(0)
         return forecastData
     } catch (error) {
         console.log(error)

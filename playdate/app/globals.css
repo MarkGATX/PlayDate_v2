@@ -4,14 +4,14 @@
 
 :root {
   --backgroundColor: oklch(99.23% 0.006 325.627);
-  --textColor:oklch(32.39% 0.177 266.91);
+  --textColor: oklch(32.39% 0.177 266.91);
 
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --backgroundColor: oklch(99.23% 0.006 325.627);
-    --textColor:oklch(32.39% 0.177 266.91);
+    --textColor: oklch(32.39% 0.177 266.91);
   }
 }
 
@@ -29,5 +29,36 @@ body {
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .tempBackground {
+    background-image: linear-gradient(90deg, oklch(70.44% 0.1536 237.18) 0%, oklch(65.61% 0.1887 143.75) 45%, oklch(65.61% 0.1887 143.75) 55%, oklch(46.24% 0.1884 27.53) 100%);
+    z-index: 1;
+
+    & div {
+      font-weight: bold;
+      text-shadow: -1px 1px 0px var(--backgroundColor), 
+        /* Left outline */
+        1px 1px 0px var(--backgroundColor),
+        /* Right outline */
+        1px -1px 0px var(--backgroundColor),
+        /* Top outline */
+        1px 1px 0px var(--backgroundColor);
+    }
+    /* &::after {
+      content: 'temp';
+      position: relative;
+      left: 0;
+      top: -.75rem;
+      font-weight: bold;
+      text-shadow: -1px 1px 0px var(--backgroundColor), */
+        /* Left outline */
+        /* 1px 1px 0px var(--backgroundColor), */
+        /* Right outline */
+        /* 1px -1px 0px var(--backgroundColor), */
+        /* Top outline */
+        /* 1px 1px 0px var(--backgroundColor); */
+      /* z-index: 2; */
+    /* } */
   }
 }
