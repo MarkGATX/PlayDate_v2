@@ -5,6 +5,7 @@ export interface CombinedForecastData {
     current_icon: string
     current_id: number
     rain_chance: number | null
+    error?: string | null
 }
 
 export async function getCurrentNWSWeather(lat: number, long: number) {
@@ -14,7 +15,8 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         high_temp: 0,
         current_icon: "",
         current_id: 0,
-        rain_chance: 0
+        rain_chance: 0,
+
     }
     try {
         //get forecasted conditions from NWS
@@ -26,7 +28,7 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         let forecastEndpoint: string = forecastOfficeData.properties.forecast
         const NWSForecast = await fetch(`${forecastEndpoint}`)
         if (!NWSForecast.ok) {
-            throw new Error('Error fetching office grid ID');
+            throw new Error('Error fetching office grid forecast');
         }
         const NWSforecastData = await NWSForecast.json();
         //set rain chance based on current period and high and low forecast temp based on the first two periods returned. Might be a better way but this is quick

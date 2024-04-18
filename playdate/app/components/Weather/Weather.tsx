@@ -9,18 +9,27 @@ interface WeatherProps {
 export default function Weather({ locationData }: WeatherProps) {
     const [currentTempLeftPosition, setCurrentTempLeftPosition] = useState<number>(0)
     const [currentWeather, setCurrentWeather] = useState<CombinedForecastData | undefined>(); // State to store weather data
+    const [weatherError, setWeatherError] = useState<string | null>()
 
     useEffect(() => {
         const fetchWeatherData = async () => {
             if (locationData.latitude && locationData.longitude) { // Check for valid location data
                 try {
                     const weatherResponse = await getCurrentNWSWeather(locationData.latitude, locationData.longitude);
+                    if (weatherResponse?.error) {
+                        setWeatherError(weatherResponse.error)
+                    }
                     setCurrentWeather(weatherResponse);
                 } catch (error) {
-                    console.error('Error fetching weather data:', error);
+                    if (error instanceof Error) {
+                        setWeatherError(error.message)
+                    } else {
+                        console.error('Error fetching weather data:', error);
+                    }
                 }
             } else {
                 console.warn('Missing location data in props');
+                setWeatherError('No location data')
             }
         };
         fetchWeatherData();
@@ -42,33 +51,39 @@ export default function Weather({ locationData }: WeatherProps) {
             {locationData.error ?
                 <div>Weather info not available</div>
                 :
-                <>
-                    {!currentWeather ?
-                        <section id='weatherConditions' className="w-3/4 pl-1 pr-1 flex items-center justify-between">
-                            Getting current weather
-                        </section>
-                        :
-                        <>
-                            <section id='tempRange' className="w-2/3 max-w-2/3 pl-1 pr-1 flex items-center justify-between">
-                                <img src={`https://openweathermap.org/img/wn/${currentWeather.current_id}@2x.png`} width='32' height='32' alt="current weather icon" className='mr-1'></img>
-                                <div className='w-4 mr-1 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
-                                <span className='relative w-3/4 h-0.5 tempBackground'>
-                                    <div className={`absolute -top-3`} style={{ left: `${(currentTempLeftPosition).toFixed(0)}%` }}>
-                                        {currentWeather.current_temp}
-                                    </div>
-                                </span>
-                                <div className='w-4 ml-1 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
+                currentWeather?.error ?
+                    <section id='weatherConditions' className="w-3/4 pl-1 pr-1 flex items-center justify-between">
+                        Weather not available: {currentWeather?.error}
+                    </section>
+                    :
+                    <>
+                        {!currentWeather ?
+                            <section id='weatherConditions' className="w-3/4 pl-1 pr-1 flex items-center justify-between">
+                                Getting current weather
                             </section>
-                            <section id='rainChance' className='w-1/4 ml-1 text-sm text-right'>
-                                {currentWeather.rain_chance === null || currentWeather.rain_chance === 0 ?
-                                    null
-                                    :
-                                    <div>{currentWeather.rain_chance}% rain</div>
-                                }
-                            </section>
-                        </>
-                    }
-                </>
+                            :
+                            <>
+                                <section id='tempRange' className="w-2/3 max-w-2/3 pl-1 pr-1 flex items-center justify-between">
+                                    {/* <img src={`https://openweathermap.org/img/wn/${currentWeather.current_id}@2x.png`} width='32' height='32' alt="current weather icon" className='mr-1'></img> */}
+                                    <Image src={`/weather_icons/${currentWeather.current_id}.webp`} width='32' height='32' alt="current weather icon" className='mr-1.5'></Image>
+                                    <div className='w-4 mr-1 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
+                                    <span className='relative w-3/4 h-0.5 tempBackground'>
+                                        <div className={`absolute -top-3`} style={{ left: `${(currentTempLeftPosition).toFixed(0)}%` }}>
+                                            {currentWeather.current_temp}
+                                        </div>
+                                    </span>
+                                    <div className='w-4 ml-1 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
+                                </section>
+                                <section id='rainChance' className='w-1/4 ml-1 text-sm text-right'>
+                                    {currentWeather.rain_chance === null || currentWeather.rain_chance === 0 ?
+                                        null
+                                        :
+                                        <div>{currentWeather.rain_chance}% rain</div>
+                                    }
+                                </section>
+                            </>
+                        }
+                    </>
             }
         </section>
     )
