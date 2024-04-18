@@ -16,22 +16,26 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         current_icon: "",
         current_id: 0,
         rain_chance: 0,
-
     }
 
     //frequent 500 errors on the return that clear up with a retry shortly after. Setting a while loop to retry a few times automatically
     let retries = 3;
     while (retries > 0) {
+        if (lat === 0 && long === 0) {
+            throw new Error('Geolocation error. Latitude and Longitude not defined')
+        }
         try {
             //get forecasted conditions from NWS
             const forecastOffice = await fetch(`https://api.weather.gov/points/${lat},${long}`)
             if (!forecastOffice.ok) {
+                forecastData.error = `Error fetching NWS office grid ID`;
                 throw new Error('Error fetching office grid ID');
             }
             const forecastOfficeData = await forecastOffice.json();
             let forecastEndpoint: string = forecastOfficeData.properties.forecast
             const NWSForecast = await fetch(`${forecastEndpoint}`)
             if (!NWSForecast.ok) {
+                forecastData.error = `Error fetching NWS grid forecast.`;
                 throw new Error('Error fetching office grid forecast');
             }
             if (NWSForecast.status === 500) {

@@ -1,46 +1,20 @@
-import { useEffect, useState } from "react";
-import { LocationData } from "../Header/Header";
-import { CombinedForecastData, getCurrentNWSWeather } from "@/utils/weather/NWSWeather";
+'use client'
+import { useContext, useEffect, useState } from "react";
 import Image from "next/image";
+import { LocationContext } from "@/utils/location/LocationContext";
+import { WeatherContext } from "@/utils/weather/WeatherContext";
 
-interface WeatherProps {
-    locationData: LocationData;
-}
-export default function Weather({ locationData }: WeatherProps) {
+// export default function Weather({ locationData }: WeatherProps) {
+export default function Weather() {
     const [currentTempLeftPosition, setCurrentTempLeftPosition] = useState<number>(0)
-    const [currentWeather, setCurrentWeather] = useState<CombinedForecastData | undefined>(); // State to store weather data
-    const [weatherError, setWeatherError] = useState<string | null>()
-
-    useEffect(() => {
-        const fetchWeatherData = async () => {
-            if (locationData.latitude && locationData.longitude) { // Check for valid location data
-                try {
-                    const weatherResponse = await getCurrentNWSWeather(locationData.latitude, locationData.longitude);
-                    
-                   
-                    if (weatherResponse?.error) {
-                        setWeatherError(weatherResponse.error)
-                    }
-                    setCurrentWeather(weatherResponse);
-                } catch (error) {
-                    if (error instanceof Error) {
-                        setWeatherError(error.message)
-                    } else {
-                        console.error('Error fetching weather data:', error);
-                    }
-                }
-            } else {
-                console.warn('Missing location data in props');
-                setWeatherError('No location data')
-            }
-        };
-        fetchWeatherData();
-
-    }, [locationData]);
+    const locationData = useContext(LocationContext);
+    const currentWeather = useContext(WeatherContext).weatherData
+    const weatherError = useContext(WeatherContext).error
+    console.log('weather context: ', currentWeather)
 
     useEffect(() => {
         if (currentWeather) {
-            const temperatureRange = currentWeather.high_temp - currentWeather.low_temp;
+            const temperatureRange = currentWeather.high_temp- currentWeather.low_temp;
             console.log(temperatureRange);
             const currentTempOffset = currentWeather.current_temp - currentWeather.low_temp;
             setCurrentTempLeftPosition((currentTempOffset / temperatureRange) * 100); // Percentage
@@ -54,19 +28,18 @@ export default function Weather({ locationData }: WeatherProps) {
                 <div>Weather info not available</div>
                 :
                 currentWeather?.error ?
-                    <section id='weatherConditions' className="w-3/4 pl-1 pr-1 flex items-center justify-between">
-                        Weather not available: {currentWeather?.error}
-                    </section>
+                    <div className="w-3/4 pl-1 pr-1 flex items-center justify-between">
+                        Weather not available: {weatherError}
+                    </div>
                     :
                     <>
                         {!currentWeather ?
-                            <section id='weatherConditions' className="w-3/4 pl-1 pr-1 flex items-center justify-between">
+                            <div className="w-3/4 pl-1 pr-1 flex items-center justify-between">
                                 Getting current weather
-                            </section>
+                            </div>
                             :
                             <>
-                                <section id='tempRange' className="w-2/3 max-w-2/3 pl-1 pr-1 flex items-center justify-between">
-                                    {/* <img src={`https://openweathermap.org/img/wn/${currentWeather.current_id}@2x.png`} width='32' height='32' alt="current weather icon" className='mr-1'></img> */}
+                                <section id='tempRange' className="w-2/3 max-w-2/3 pr-1 flex items-center justify-between">
                                     <Image src={`/weather_icons/${currentWeather.current_id}.webp`} width='32' height='32' alt="current weather icon" className='mr-1.5'></Image>
                                     <div className='w-4 mr-1 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
                                     <span className='relative w-3/4 h-0.5 tempBackground'>
