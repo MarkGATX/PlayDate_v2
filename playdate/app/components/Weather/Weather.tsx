@@ -14,7 +14,7 @@ export default function Weather() {
 
     useEffect(() => {
         if (currentWeather) {
-            const temperatureRange = currentWeather.high_temp- currentWeather.low_temp;
+            const temperatureRange = currentWeather.high_temp - currentWeather.low_temp;
             console.log(temperatureRange);
             const currentTempOffset = currentWeather.current_temp - currentWeather.low_temp;
             setCurrentTempLeftPosition((currentTempOffset / temperatureRange) * 100); // Percentage
@@ -41,13 +41,14 @@ export default function Weather() {
                             <>
                                 <section id='tempRange' className="w-2/3 max-w-2/3 pr-1 flex items-center justify-between">
                                     <Image src={`/weather_icons/${currentWeather.current_id}.webp`} width='32' height='32' alt="current weather icon" className='mr-1.5'></Image>
-                                    <div className='w-4 mr-1 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
+                                    <div className='w-4 mr-3 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
                                     <span className='relative w-3/4 h-0.5 tempBackground'>
-                                        <div className={`absolute -top-3`} style={{ left: `${(currentTempLeftPosition).toFixed(0)}%` }}>
+                                        {/* toFixed returns a string so convert back to number for ternary */}
+                                        <div className={`absolute -top-3`} style={{ left: Number((currentTempLeftPosition).toFixed(0)) > 90 ? `90%` :`${(currentTempLeftPosition).toFixed(0) }%` }}>
                                             {currentWeather.current_temp}
                                         </div>
                                     </span>
-                                    <div className='w-4 ml-1 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
+                                    <div className='w-4 ml-3 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
                                 </section>
                                 <section id='rainChance' className='w-1/4 ml-1 text-sm text-right'>
                                     {currentWeather.rain_chance === null || currentWeather.rain_chance === 0 ?
