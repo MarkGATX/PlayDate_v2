@@ -16,6 +16,8 @@ export default function Weather({ locationData }: WeatherProps) {
             if (locationData.latitude && locationData.longitude) { // Check for valid location data
                 try {
                     const weatherResponse = await getCurrentNWSWeather(locationData.latitude, locationData.longitude);
+                    
+                   
                     if (weatherResponse?.error) {
                         setWeatherError(weatherResponse.error)
                     }
