@@ -5,16 +5,17 @@ export default function Header() {
 
     return (
         <>
-            <header className="w-full h-8 pt-2 pr-2 pl-2">
+            <header className="w-full pt-2 pr-2 pl-2 flex flex-wrap justify-between gap-3">
                 <Image
                     src="/logos/playdate_logo.webp"
                     alt='Playdate logo'
-                    width='100'
-                    height='20'
+                    width={150}
+                    height={32}
                     className=''>
                 </Image>
-            </header>
+                <Image src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon'></Image>
                 <Weather />
+            </header>
         </>
     )
 }

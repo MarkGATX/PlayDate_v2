@@ -1,12 +1,4 @@
-export interface CombinedForecastData {
-    current_temp: number
-    low_temp: number
-    high_temp: number
-    current_icon: string
-    current_id: number
-    rain_chance: number | null
-    error?: string | null
-}
+import { CombinedForecastData } from "./WeatherContext";
 
 export async function getCurrentNWSWeather(lat: number, long: number) {
     let forecastData: CombinedForecastData = {
@@ -16,6 +8,7 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         current_icon: "",
         current_id: 0,
         rain_chance: 0,
+        forecast: ''
     }
 
     //frequent 500 errors on the return that clear up with a retry shortly after. Setting a while loop to retry a few times automatically
@@ -43,15 +36,18 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
                 throw new Error('NWS Server error');
             }
             const NWSforecastData = await NWSForecast.json();
+            console.log(NWSforecastData)
             //set rain chance based on current period and high and low forecast temp based on the first two periods returned. Might be a better way but this is quick
             if (NWSforecastData.properties.periods[0].temperature > NWSforecastData.properties.periods[1].temperature) {
                 forecastData.low_temp = NWSforecastData.properties.periods[1].temperature
                 forecastData.high_temp = NWSforecastData.properties.periods[0].temperature
                 forecastData.rain_chance = NWSforecastData.properties.periods[0].probabilityOfPrecipitation.value
+                forecastData.forecast = NWSforecastData.properties.periods[0].detailedForecast
             } else {
                 forecastData.low_temp = NWSforecastData.properties.periods[0].temperature
                 forecastData.high_temp = NWSforecastData.properties.periods[1].temperature
                 forecastData.rain_chance = NWSforecastData.properties.periods[0].probabilityOfPrecipitation.value
+                forecastData.forecast = NWSforecastData.properties.periods[0].detailedForecast
             }
             //get current conditions from WeatherBit
             const currentOpenWeatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${long}&units=imperial&appid=${process.env.NEXT_PUBLIC_OPEN_WEATHER_API}`)
