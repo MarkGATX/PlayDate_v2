@@ -25,7 +25,7 @@ export default function Weather() {
     console.log(currentWeather)
     return (
         <>
-            <section id='weatherConditions' className='relative w-full pl-2 pr-2 flex flex-wrap justify-between items-center'>
+            <section id='weatherConditions' className='relative w-full flex flex-wrap justify-between items-center'>
                 {locationData.error ?
                     <div>Weather info not available</div>
                     :
@@ -51,7 +51,9 @@ export default function Weather() {
                                             </div>
                                         </span>
                                         <div className='w-4 ml-3 mr-3 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
-                                        <Image src={`/icons/down_arrow.webp`} width={16} height={16} alt='down icon to show more details' title='more details' onClick={(() => setShowDetails(!showDetails))} className={`cursor-pointer transform ease-in-out duration-700 ${showDetails ? '-rotate-180' : 'rotate-0'} `}></Image>
+                                        <div className='weatherToggle p-2 rounded-md cursor-pointer ' onClick={(() => setShowDetails(!showDetails))}>
+                                            <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700 ${showDetails ? '-rotate-180' : 'rotate-0'} `}></Image>
+                                        </div>
                                     </section>
                                     <section id='rainChance' className='w-1/4 ml-1 text-sm text-right z-1'>
                                         {currentWeather.rain_chance === null || currentWeather.rain_chance === 0 ?

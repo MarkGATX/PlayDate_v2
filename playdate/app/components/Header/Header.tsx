@@ -5,7 +5,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="w-full pt-2 pr-2 pl-2 flex flex-wrap justify-between gap-3">
+            <header className="w-full pt-4 pr-4 pl-4 flex flex-wrap justify-between gap-3">
                 <Image
                     src="/logos/playdate_logo.webp"
                     alt='Playdate logo'

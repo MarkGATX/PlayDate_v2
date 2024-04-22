@@ -5,6 +5,7 @@
 :root {
   --backgroundColor: oklch(99.23% 0.006 325.627);
   --textColor: oklch(32.39% 0.177 266.91);
+  --buttonBackgroundColor: oklch(91.52% 0.079 80.18);
 
 }
 
@@ -31,6 +32,16 @@ header {
 }
 
 @layer utilities {
+
+  .map-container {
+    height: 45dvh;
+    width: 100dvw;
+  }
+
+  .mapboxgl-popup-content {
+    padding: 0 !important;
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -50,6 +61,10 @@ header {
         1px 1px 0px var(--backgroundColor);
     }
 
+  }
+
+  .weatherToggle {
+    background-color: var(--buttonBackgroundColor);
   }
 
   #weatherConditions {
