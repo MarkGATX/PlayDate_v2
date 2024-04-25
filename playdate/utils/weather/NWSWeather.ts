@@ -5,7 +5,7 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
         current_temp: 0,
         low_temp: 0,
         high_temp: 0,
-        current_icon: "",
+        current_icon:0,
         current_id: 0,
         rain_chance: 0,
         forecast: ''

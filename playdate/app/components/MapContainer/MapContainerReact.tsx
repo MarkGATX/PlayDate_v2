@@ -41,6 +41,7 @@ export default function MapContainerReact() {
     return (
         (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API && currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}>
+                <div>{currentLocation.latitude} {currentLocation.longitude}</div>
                 <Map
                     style={{ width: '100dvw', height: '40dvh', marginBottom: '2rem' }}
                     defaultCenter={{ lat: currentLocation.latitude, lng: currentLocation.longitude }}

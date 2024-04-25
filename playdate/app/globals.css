@@ -67,6 +67,11 @@ header {
     background-color: var(--buttonBackgroundColor);
   }
 
+  #placeCardMoreInfo {
+    /* background-color:var(--buttonBackgroundColor); */
+    /* border-color:var(--textColor); */
+  }
+
   #weatherConditions {
     background-color: var(--backgroundColor);
   }

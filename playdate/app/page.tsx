@@ -1,3 +1,4 @@
+import MapContainer from "./components/MapContainer/MapContainer";
 import Map from "./components/MapContainer/MapContainer";
 import MapContainerReact from "./components/MapContainer/MapContainerReact";
 
