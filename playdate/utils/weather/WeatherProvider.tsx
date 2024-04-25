@@ -13,7 +13,7 @@ export const WeatherProvider = ({ children }: { children: React.ReactNode }) => 
     const currentLocation = useContext(LocationContext)
 
     useEffect(() => {
-        if (currentLocation.latitude && currentLocation.longitude) {
+        if (currentLocation.latitude != 0 && currentLocation.longitude !=0) {
             const fetchWeatherData = async () => {
                 try {
                     const currentWeather = await getCurrentNWSWeather(currentLocation.latitude, currentLocation.longitude);

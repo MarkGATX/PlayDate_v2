@@ -1,13 +1,13 @@
 export async function getActivitiesFromWeather(latitude: number, longitude: number, weatherCode: number | undefined) {
 
     const goodWeatherCodes: number[] = [800, 801, 802, 803, 804, 741];
-    const goodWeatherSearches: string[] = ['playground%20', 'hike%20', 'lake%20', 'zoo%20', 'ice%20cream%20', 'state%20park%20', 'play']
+    const goodWeatherSearches: string[] = ['playground%20', 'hike%20', 'lake%20', 'zoo%20', 'ice%20cream%20', 'ice%20cream%20parlor%20', 'state%20park%20', 'play']
     const badWeatherSearches: string[] = ['museum%20', 'movie%20', 'library%20', 'craft%20', 'theater%20', 'aquarium']
-    let activityFetchUrls = []
-    const minLatitude = latitude - .5;
-    const maxLatitude = latitude + .5;
-    const minLongitude = longitude - .5;
-    const maxLongitude = longitude + .5;
+    let activityFetchUrls: string[] = []
+    const minLatitude: number = latitude - .5;
+    const maxLatitude: number = latitude + .5;
+    const minLongitude: number = longitude - .5;
+    const maxLongitude: number = longitude + .5;
     console.log(weatherCode)
     if (weatherCode) {
         console.log(goodWeatherCodes.includes(weatherCode))
@@ -30,8 +30,8 @@ export async function getActivitiesFromWeather(latitude: number, longitude: numb
             for (let i = 0; i < 5; i++) {
                 let activityIndex: number = goodWeatherIndexArray[i];
                 //endpoint for geocoding places with mapbox. trying out searchbox
-                // let fetchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${goodWeatherSearches[activityIndex]}.json?bbox=${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}&type=poi&limit=5&proximity=${longitude},${latitude}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`;
-                let fetchUrl = `https://api.mapbox.com/search/searchbox/v1/category/${goodWeatherSearches[activityIndex]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}&proximity=${longitude},${latitude}`;
+                let fetchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${goodWeatherSearches[activityIndex]}.json?bbox=${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}&type=poi&proximity=${longitude},${latitude}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`;
+                // let fetchUrl = `https://api.mapbox.com/search/searchbox/v1/category/${goodWeatherSearches[activityIndex]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}&proximity=${longitude},${latitude}`;
                 activityFetchUrls.push(fetchUrl);
                 console.log(fetchUrl)
             }
@@ -51,8 +51,8 @@ export async function getActivitiesFromWeather(latitude: number, longitude: numb
             for (let i = 0; i < 5; i++) {
                 let activityIndex = badWeatherIndexArray[i];
                 //endpoint for geocoding places with mapbox. trying out searchbox
-                // let fetchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${badWeatherSearches[activityIndex]}.json?bbox=${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}&type=poi&limit=5&proximity=${longitude},${latitude}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`;
-                let fetchUrl = `https://api.mapbox.com/search/searchbox/v1/category/${badWeatherSearches[activityIndex]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}&proximity=${longitude},${latitude}`;
+                let fetchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${badWeatherSearches[activityIndex]}.json?bbox=${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}&type=poi&proximity=${longitude},${latitude}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`;
+                // let fetchUrl = `https://api.mapbox.com/search/searchbox/v1/category/${badWeatherSearches[activityIndex]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}&proximity=${longitude},${latitude}`;
                 activityFetchUrls.push(fetchUrl);
                 return activityFetchUrls
             }
@@ -62,3 +62,7 @@ export async function getActivitiesFromWeather(latitude: number, longitude: numb
     }
 
 }
+/*
+[art_gallery, museum, performing_arts_theater, library,amusement_center, aquarium, community_center, cultural_center,  movie_theater, ice_cream_shop, bakery, pet_store, book_store, gym ]
+[hiking_area, historical_landmark,national_park, park, zoo,ice_cream_shop, bakery, athletic_field, playground, swimming_pool, community_center  ]
+*/

@@ -30,7 +30,7 @@ export const LocationProvider = ({ children }: { children: React.ReactNode }) =>
 
         if ('geolocation' in navigator) {
             console.log('Geolocation is available');
-            navigator.geolocation.getCurrentPosition(locationSuccess, locationError);
+            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, {enableHighAccuracy:true});
         } else {
             console.log('Geolocation is not available');
             setLocationData({ latitude: 0, longitude: 0, error: "Geolocation is not available" });

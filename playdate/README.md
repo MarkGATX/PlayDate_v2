@@ -1,36 +1,38 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Playdate - version 2
 
-## Getting Started
+## An app designed for busy parents to help them plan activities with their kids and friends. 
 
-First, run the development server:
+___
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+As a busy parent, sometimes finding things to do for your kids is a full-time job. This application uses a combination of a user's current location as well as the weather at that location to provide quick and easy recommendations for kid-friendly activities. Users can also invite their friends to meetup for playdates now or in the future.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+___
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Table of Contents
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [How to use](#How-to-use)
+- [Technology used](#Technology-used)
+- [Future Development](#Future-Development)
 
-## Learn More
+___
 
-To learn more about Next.js, take a look at the following resources:
+## How to use
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+When first coming to the site, users will immediately be given a map with nearby activities that are appropriate for the current weather conditions. Users can then click on a location and invite other friends to meet them at that location for a playdate.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+___
 
-## Deploy on Vercel
+## Technology used
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- React.js
+- Next.js 14 using the 'app' router
+- Typescript
+- Tailwind
+- Sass
+- Google Maps API
+- Google Places API
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+___
+
+## Future Development
+

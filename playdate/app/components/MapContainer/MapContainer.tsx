@@ -16,30 +16,34 @@ export default function MapContainer() {
     useEffect(() => {
 
         const fetchMapData = async () => {
-            if (currentLocation && currentWeather && currentWeather.weatherData) {
+            if (currentLocation.latitude != 0 && currentWeather && currentWeather.weatherData) {
                 const mapUrls = await getActivitiesFromWeather(currentLocation.latitude, currentLocation.longitude, currentWeatherCode);
                 console.log(mapUrls)
             }
         };
         fetchMapData();
 
-    }, [currentLocation, currentWeather]);
+    }, [currentLocation, currentWeather, currentWeatherCode]);
 
     return (
         <>
-            <div >
+            {/* <div >
                 Longitude: {currentLocation.longitude} | Latitude: {currentLocation.latitude}
-            </div>
-            <Map
-                mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API}
-                initialViewState={{
-                    longitude: currentLocation.longitude,
-                    latitude: currentLocation.latitude,
-                    zoom: 14
-                }}
-                style={{ width: '100dvw', height: '40dvh' }}
-                mapStyle="mapbox://styles/mapbox/streets-v12"
-            />
+            </div> */}
+            {(currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
+                <Map
+                    mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API}
+                    initialViewState={{
+                        longitude: currentLocation.longitude,
+                        latitude: currentLocation.latitude,
+                        zoom: 11
+                    }}
+                    style={{ width: '100dvw', height: '40dvh' }}
+                    mapStyle="mapbox://styles/mapbox/streets-v12"
+                />
+                :
+                <div>Loading Map data...</div>
+            }
         </>
     )
 }
