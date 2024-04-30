@@ -27,7 +27,7 @@ export default function MapContainerReact() {
                     ? goodWeatherActivity
                     : badWeatherActivity;
 
-                let placesData: placesDataType[];
+                let placesData: placesDataType[] | undefined;
                 const storedPlacesData = localStorage.getItem('placesData')
                 if (storedPlacesData) {
                     // Get the data from local storage
@@ -80,27 +80,27 @@ export default function MapContainerReact() {
                     mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}
                 >
                     {places ?
-                   
-                        places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => {
-                         
-                    return (
-                    <AdvancedMarker key={place.id}
-                        position={{ lat: place.location.latitude, lng: place.location.longitude }}
-                        title={place.displayName.text}                       
-                        onClick={toggleInfoWindow}
 
-                    >
-                        <Pin background={'oklch(91.52% 0.079 80.18)'} glyphColor={'oklch(32.39% 0.177 266.91)'} borderColor={'oklch(32.39% 0.177 266.91)'} />
-                        {infowindowShown && (
-                            <InfoWindow   onCloseClick={closeInfoWindow}>
-                                <h3>{place.displayName.text}</h3>
-                            </InfoWindow>
-                        )}
-                    </AdvancedMarker>
-                    )
+                        places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => {
+
+                            return (
+                                <AdvancedMarker key={place.id}
+                                    position={{ lat: place.location.latitude, lng: place.location.longitude }}
+                                    title={place.displayName.text}
+                                    onClick={toggleInfoWindow}
+
+                                >
+                                    <Pin background={'oklch(91.52% 0.079 80.18)'} glyphColor={'oklch(32.39% 0.177 266.91)'} borderColor={'oklch(32.39% 0.177 266.91)'} />
+                                    {infowindowShown && (
+                                        <InfoWindow onCloseClick={closeInfoWindow}>
+                                            <h3>{place.displayName.text}</h3>
+                                        </InfoWindow>
+                                    )}
+                                </AdvancedMarker>
+                            )
                         })
-                    :
-                    null
+                        :
+                        null
                     }
                 </Map>
 
@@ -108,10 +108,10 @@ export default function MapContainerReact() {
                     <>
                         <div id='paginationButtons' className='flex justify-around w-full mb-12'>
                             <button className='px-4 w-[130px] text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
-                                Previous 5
+                                {currentPage === 1 ? 'Start' : 'Previous 5'}
                             </button>
                             <button className='px-4 w-[130px] text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage * 5 >= places.length}>
-                                Next 5
+                                {currentPage * 5 >= places.length ? 'End of list' : 'Next 5'}
                             </button>
                         </div>
                         {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => (

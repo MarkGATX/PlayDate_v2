@@ -5,6 +5,8 @@ import { WeatherContext } from "@/utils/weather/WeatherContext";
 import { useContext, useEffect, useRef } from "react";
 import Map from 'react-map-gl';
 import "mapbox-gl/dist/mapbox-gl.css";
+import styles from './MapContainer.module.scss'
+
 
 export default function MapContainer() {
     const currentLocation = useContext(LocationContext)
@@ -44,4 +46,4 @@ export default function MapContainer() {
             }
         </>
     )
-}   
+}

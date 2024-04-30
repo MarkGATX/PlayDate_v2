@@ -12,8 +12,7 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
     const [showMore, setShowMore] = useState<boolean>(false)
     const addressElement = document.getElementById(`${place.id}Address`);
     const summaryElement = document.getElementById(`${place.id}Summary`);
-    //set height of details section
-    let detailsHeight: number = 0
+
     //set number of stars for ratings
     let halfStars: number = 0;
     let fullStars: number = Math.floor(place.rating)
@@ -31,9 +30,7 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
     useEffect(() => {
         const placeCardDetails = document.getElementById(`${place.id}Details`) as HTMLDivElement;
         const summaryHeight = summaryElement?.offsetHeight || 0;
-        console.log(summaryHeight)
         const addressHeight = addressElement?.offsetHeight || 0;
-        console.log(addressHeight)
         if (showMore) {
             placeCardDetails.style.height = `${summaryHeight + addressHeight +50}px`;
         } else {
@@ -47,10 +44,10 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
             <section id='placeCardDetails' className='w-full p-2 min-h-14 '>
 
                 <h2 className='text-left w-full'>{place.displayName.text}</h2>
-                {!place.currentOpeningHours.openNow ?
-                    <div className='text-red-500 text-xs mb-1'>Currently closed</div>
-                    :
+                {place.currentOpeningHours?.openNow || place.currentOpeningHours === undefined ?
                     null
+                    :
+                    <div className='text-red-500 text-xs mb-1'>Currently closed</div>
                 }
                 <div id='starRatings' className='text-xs flex '>
                     {Array.from({ length: fullStars }).map((_, index) => (
@@ -83,8 +80,6 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
                         :
                         null
                     }
-
-
                 </section>
             </section>
         </div>

@@ -4,13 +4,12 @@ export const goodWeatherActivity: string[] = [
     'national_park',
     'park',
     'zoo',
-    'ice_cream_shop',
-    'bakery',
     'athletic_field',
     'playground',
     'swimming_pool',
     'community_center',
-    'amusement_park'
+    'amusement_park',
+
 ]
 
 export const badWeatherActivity: string[] = [
@@ -21,10 +20,8 @@ export const badWeatherActivity: string[] = [
     'community_center',
     'cultural_center',
     'movie_theater',
-    'ice_cream_shop',
-    'bakery',
-    'pet_store',
     'book_store',
+    'leisure_center'
 ]
 
 export const goodWeatherCodes: number[] = [

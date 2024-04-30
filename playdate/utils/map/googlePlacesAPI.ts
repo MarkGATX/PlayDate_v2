@@ -1,7 +1,5 @@
-const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API; // Replace with your actual API key
-// const latitude = 30.22848;
-// const longitude = -97.746944;
-const radius = 4000; // Radius in meters
+const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+const radius = 3000; // Radius in meters
 
 export type locationType = {
     latitude: number
@@ -38,6 +36,11 @@ export type placesDataType = {
     iconBackgroundColor: string;
 }
 
+export type DataType = {
+    places: placesDataType[]
+    // pageToken:string
+}
+
 export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
     const baseUrl = 'https://places.googleapis.com/v1/places:searchNearby';
 
@@ -57,7 +60,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
         pageToken: pageToken
     };
 
-    if (!apiKey) {
+    if (!mapsApiKey) {
         throw new Error('Google Places API key is not set');
     }
 
@@ -65,7 +68,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Goog-Api-Key': apiKey,
+            'X-Goog-Api-Key': mapsApiKey,
             // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
             'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType'
         },
@@ -77,14 +80,17 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
         if (!response.ok) {
             throw new Error(`Error fetching nearby locations: ${response.status}`);
         }
-        const data = await response.json();
-        //shuffle results for random display
+        const data: DataType = await response.json();
+
+        data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
+        // shuffle results for random display
+
         for (let i = data.places.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
         }
         //handle page token for pagination
-        const mapPageToken = data.pageToken;
+        // const mapPageToken = data.pageToken;
         localStorage.setItem('placesData', JSON.stringify(data.places))
         return data.places
 
