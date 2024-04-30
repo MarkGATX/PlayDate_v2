@@ -21,12 +21,19 @@ export type editorialSummaryType = {
     languageCode: string
 }
 
+export type PhotosArrayType = {
+    heightPx:number
+    name:string
+    widthPx:number
+}
+
 export type placesDataType = {
     id: string;
     displayName: displayNameType;
     internationalPhoneNumber: string;
     formattedAddress: string;
     location: locationType;
+    photos: PhotosArrayType[];
     businessStatus: string;
     currentOpeningHours: currentOpeningHoursType;
     goodForChildren: boolean;
@@ -70,7 +77,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             'Content-Type': 'application/json',
             'X-Goog-Api-Key': mapsApiKey,
             // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
-            'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType'
+            'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType,places.photos'
         },
         body: JSON.stringify(data),
     };
@@ -81,7 +88,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             throw new Error(`Error fetching nearby locations: ${response.status}`);
         }
         const data: DataType = await response.json();
-
+        console.log(data)
         data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
         // shuffle results for random display
 

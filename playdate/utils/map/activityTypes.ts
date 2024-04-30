@@ -21,7 +21,6 @@ export const badWeatherActivity: string[] = [
     'cultural_center',
     'movie_theater',
     'book_store',
-    'leisure_center'
 ]
 
 export const goodWeatherCodes: number[] = [

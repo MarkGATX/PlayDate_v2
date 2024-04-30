@@ -4,20 +4,23 @@
 
 :root {
   --backgroundColor: oklch(99.23% 0.006 325.627);
-  --textColor: oklch(32.39% 0.177 266.91);
-  --buttonBackgroundColor: oklch(91.52% 0.079 80.18);
+  --appBlue: oklch(32.39% 0.177 266.91);
+  --appGold: oklch(91.52% 0.079 80.18);
 
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  /* :root {
     --backgroundColor: oklch(99.23% 0.006 325.627);
-    --textColor: oklch(32.39% 0.177 266.91);
+    --appBlue: oklch(32.39% 0.177 266.91);
+  } */
+  body {
+    color: var(--appBlue);
   }
 }
 
 body {
-  color: var(--textColor);
+  color: var(--appBlue);
   /* background: linear-gradient(
       to bottom,
       transparent,
@@ -42,6 +45,20 @@ header {
     padding: 0 !important;
   }
 
+  /* styling custom map markers to point to location */
+  .markerPin::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, 0);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid var(--appBlue);
+  }
+
   .text-balance {
     text-wrap: balance;
   }
@@ -63,14 +80,14 @@ header {
 
   }
 
-  .weatherToggle {
-    background-color: var(--buttonBackgroundColor);
-  }
+  /* .weatherToggle {
+    background-color: var(--appGold);
+  } */
 
-  #placeCardMoreInfo {
-    /* background-color:var(--buttonBackgroundColor); */
-    /* border-color:var(--textColor); */
-  }
+  /* #placeCardMoreInfo {
+    background-color:var(--buttonBackgroundColor); 
+     border-color:var(--textColor);
+  } */
 
   #weatherConditions {
     background-color: var(--backgroundColor);

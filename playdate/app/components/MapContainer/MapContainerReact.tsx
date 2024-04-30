@@ -15,7 +15,6 @@ export default function MapContainerReact() {
     // const [mapMarkers, setMapMarkers] = useState(null)
     const [places, setPlaces] = useState<placesDataType[] | undefined>()
     const [currentPage, setCurrentPage] = useState<number>(1)
-    const [infowindowShown, setInfowindowShown] = useState<boolean>(false);
     const currentLocation = useContext(LocationContext)
     const currentWeather = useContext(WeatherContext)
 
@@ -60,19 +59,12 @@ export default function MapContainerReact() {
         )
     }
 
-
-
-    const toggleInfoWindow = () =>
-        setInfowindowShown(previousState => !previousState);
-
-    const closeInfoWindow = () => setInfowindowShown(false);
-
     return (
         (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API && currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}>
                 {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
                 <Map
-                    style={{ width: '100dvw', height: '40dvh', marginBottom: '2rem' }}
+                    style={{ width: '100vw', height: '40dvh', marginBottom: '2rem' }}
                     defaultCenter={{ lat: currentLocation.latitude, lng: currentLocation.longitude }}
                     defaultZoom={13}
                     gestureHandling={'greedy'}
@@ -87,15 +79,10 @@ export default function MapContainerReact() {
                                 <AdvancedMarker key={place.id}
                                     position={{ lat: place.location.latitude, lng: place.location.longitude }}
                                     title={place.displayName.text}
-                                    onClick={toggleInfoWindow}
-
                                 >
-                                    <Pin background={'oklch(91.52% 0.079 80.18)'} glyphColor={'oklch(32.39% 0.177 266.91)'} borderColor={'oklch(32.39% 0.177 266.91)'} />
-                                    {infowindowShown && (
-                                        <InfoWindow onCloseClick={closeInfoWindow}>
-                                            <h3>{place.displayName.text}</h3>
-                                        </InfoWindow>
-                                    )}
+                                    <div className={`p-1 bg-appBlue text-appGold rounded max-w-32 markerPin z-10 cursor-pointer`} onClick={() => document.getElementById(place.id)?.scrollIntoView({ behavior: 'smooth' })} >
+                                        <h3>{place.displayName.text.length >= 30 ? `${place.displayName.text.slice(0, 30)}...` : place.displayName.text}</h3>
+                                    </div>
                                 </AdvancedMarker>
                             )
                         })

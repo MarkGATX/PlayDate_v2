@@ -51,7 +51,7 @@ export default function Weather() {
                                             </div>
                                         </span>
                                         <div className='w-4 ml-3 mr-3 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
-                                        <div className='weatherToggle p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={(() => setShowDetails(previousState => !previousState))}>
+                                        <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={(() => setShowDetails(previousState => !previousState))}>
                                             <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700 ${showDetails ? '-rotate-180' : 'rotate-0'} `}></Image>
                                         </div>
                                     </section>

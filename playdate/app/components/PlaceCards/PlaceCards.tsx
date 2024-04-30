@@ -1,7 +1,8 @@
 'use client'
 import { placesDataType } from "@/utils/map/googlePlacesAPI";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type PlaceCardsProps = {
     place: placesDataType;
@@ -12,6 +13,8 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
     const [showMore, setShowMore] = useState<boolean>(false)
     const addressElement = document.getElementById(`${place.id}Address`);
     const summaryElement = document.getElementById(`${place.id}Summary`);
+    const linkElement = document.getElementById(`${place.id}Link`);
+
 
     //set number of stars for ratings
     let halfStars: number = 0;
@@ -31,12 +34,13 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
         const placeCardDetails = document.getElementById(`${place.id}Details`) as HTMLDivElement;
         const summaryHeight = summaryElement?.offsetHeight || 0;
         const addressHeight = addressElement?.offsetHeight || 0;
+        const linkHeight = linkElement?.offsetHeight || 0;
         if (showMore) {
-            placeCardDetails.style.height = `${summaryHeight + addressHeight +50}px`;
+            placeCardDetails.style.height = `${summaryHeight + addressHeight + linkHeight + 100}px`;
         } else {
             placeCardDetails.style.height = '0px';
         }
-    }, [showMore]);
+    }, [showMore, addressElement?.offsetHeight, place.id, summaryElement?.offsetHeight, linkElement?.offsetHeight]);
 
 
     return (
@@ -76,12 +80,23 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
                         null
                     }
                     {place.editorialSummary ?
-                        <p id={`${place.id}Summary`} className='text-sm px-2 pb-4 mb-4'>{place.editorialSummary.text}</p>
+                        <>
+                            <p id={`${place.id}Summary`} className='text-sm px-2 pb-4 mb-4'>{place.editorialSummary.text}</p>
+
+                        </>
                         :
                         null
                     }
+                    <Link href={`/place/${place.id}`} id={`${place.id}Link`} className='flex justify-center'>
+
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More information...</button>
+
+                    </Link>
+
                 </section>
+
             </section>
+
         </div>
     )
 }
