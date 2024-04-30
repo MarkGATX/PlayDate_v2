@@ -8,17 +8,25 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      colors: {
+        'appGold': 'oklch(91.52% 0.079 80.18)',
+        'appBlue': 'oklch(32.39% 0.177 266.91)'
+      },
+      boxShadow: {
+        'activeButton': 'inset 3px 3px 5px oklch(0% 0 296.91 / .3)'
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
-      borderColor: {
-        'darkBlue':  'oklch(32.39% 0.177 266.91)'
-      },
-      backgroundColor: {
-        'gold': 'oklch(91.52% 0.079 80.18)'
-      }
+      // borderColor: {
+      //   'appBlue':  'oklch(32.39% 0.177 266.91)'
+      // },
+      // backgroundColor: {
+      //   'appGold': 'oklch(91.52% 0.079 80.18)',
+      //   'appBlue':'oklch(32.39% 0.177 266.91)'
+      // }
     },
   },
   plugins: [],
