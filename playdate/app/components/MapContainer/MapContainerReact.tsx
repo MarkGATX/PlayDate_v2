@@ -79,8 +79,9 @@ export default function MapContainerReact() {
                                 <AdvancedMarker key={place.id}
                                     position={{ lat: place.location.latitude, lng: place.location.longitude }}
                                     title={place.displayName.text}
+                                    onClick= {() => document.getElementById(place.id)?.scrollIntoView({ behavior: 'smooth' })}
                                 >
-                                    <div className={`p-1 bg-appBlue text-appGold rounded max-w-32 markerPin z-10 cursor-pointer`} onClick={() => document.getElementById(place.id)?.scrollIntoView({ behavior: 'smooth' })} >
+                                    <div className={`p-1 bg-appBlue text-appGold rounded max-w-32 markerPin z-10 cursor-pointer`}  >
                                         <h3>{place.displayName.text.length >= 30 ? `${place.displayName.text.slice(0, 30)}...` : place.displayName.text}</h3>
                                     </div>
                                 </AdvancedMarker>
