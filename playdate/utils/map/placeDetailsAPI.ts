@@ -1,105 +1,37 @@
+import { placesDataType } from "./nearbyPlacesAPI";
+
+import { DataType } from "./nearbyPlacesAPI";
+
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
-const radius = 3000; // Radius in meters
-
-export type locationType = {
-    latitude: number
-    longitude: number
-}
-
-export type displayNameType = {
-    text: string
-}
-
-export type currentOpeningHoursType = {
-    openNow: boolean
-    weekdayDescriptions: string[]
-}
 
 
-export type editorialSummaryType = {
-    text: string
-    languageCode: string
-}
-
-export type PhotosArrayType = {
-    heightPx:number
-    name:string
-    widthPx:number
-}
-
-export type placesDataType = {
-    id: string;
-    displayName: displayNameType;
-    internationalPhoneNumber: string;
-    formattedAddress: string;
-    location: locationType;
-    photos: PhotosArrayType[];
-    businessStatus: string;
-    currentOpeningHours: currentOpeningHoursType;
-    goodForChildren: boolean;
-    editorialSummary: editorialSummaryType;
-    rating: number;
-    iconMaskBaseUri: string;
-    iconBackgroundColor: string;
-}
-
-export type DataType = {
-    places: placesDataType[]
-    // pageToken:string
-}
-
-export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
-    const baseUrl = 'https://places.googleapis.com/v1/places:searchNearby';
-
-    const data = {
-        includedPrimaryTypes: types,
-        maxResultCount: 20,
-        // rankPreference: 'DISTANCE',
-        locationRestriction: {
-            circle: {
-                center: {
-                    latitude: latitude,
-                    longitude: longitude,
-                },
-                radius: radius,
-            },
-        },
-        pageToken: pageToken
-    };
-
+export async function fetchPlaceDetails(placeId: string) {
+    const baseUrl = `https://places.googleapis.com/v1/places/${placeId}`;
+    console.log(baseUrl)
+  
     if (!mapsApiKey) {
         throw new Error('Google Places API key is not set');
     }
 
     const options = {
-        method: 'POST',
+        method: 'GET',
         headers: {
             'Content-Type': 'application/json',
             'X-Goog-Api-Key': mapsApiKey,
-            // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
-            'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType,places.photos'
+            'X-Goog-FieldMask': 'id,displayName.text,internationalPhoneNumber,formattedAddress,location,businessStatus,currentOpeningHours,goodForChildren,editorialSummary,rating,iconMaskBaseUri,iconBackgroundColor,primaryType,photos,name'
         },
-        body: JSON.stringify(data),
     };
 
     try {
+        console.log(baseUrl)
         const response = await fetch(baseUrl, options);
+        console.log(response)
         if (!response.ok) {
-            throw new Error(`Error fetching nearby locations: ${response.status}`);
+            throw new Error(`Error fetching location: ${response.status}`);
         }
-        const data: DataType = await response.json();
+        const data: placesDataType = await response.json();
         console.log(data)
-        data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
-        // shuffle results for random display
-
-        for (let i = data.places.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
-        }
-        //handle page token for pagination
-        // const mapPageToken = data.pageToken;
-        localStorage.setItem('placesData', JSON.stringify(data.places))
-        return data.places
+        return data
 
     } catch (error) {
         console.error('Error:', error);

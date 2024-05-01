@@ -1,5 +1,5 @@
 'use client'
-import { placesDataType } from "@/utils/map/googlePlacesAPI";
+import { placesDataType } from "@/utils/map/nearbyPlacesAPI";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

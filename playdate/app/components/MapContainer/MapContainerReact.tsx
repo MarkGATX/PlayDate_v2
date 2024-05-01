@@ -1,6 +1,6 @@
 'use client'
 import { LocationContext } from "@/utils/location/LocationContext";
-import { fetchNearbyPlaces, placesDataType } from "@/utils/map/googlePlacesAPI";
+import { fetchNearbyPlaces, placesDataType } from "@/utils/map/nearbyPlacesAPI";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
 import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
 import { useContext, useEffect, useState } from "react";
@@ -79,7 +79,7 @@ export default function MapContainerReact() {
                                 <AdvancedMarker key={place.id}
                                     position={{ lat: place.location.latitude, lng: place.location.longitude }}
                                     title={place.displayName.text}
-                                    onClick= {() => document.getElementById(place.id)?.scrollIntoView({ behavior: 'smooth' })}
+                                    onClick={() => document.getElementById(place.id)?.scrollIntoView({ behavior: 'smooth' })}
                                 >
                                     <div className={`p-1 bg-appBlue text-appGold rounded max-w-32 markerPin z-10 cursor-pointer`}  >
                                         <h3>{place.displayName.text.length >= 30 ? `${place.displayName.text.slice(0, 30)}...` : place.displayName.text}</h3>
