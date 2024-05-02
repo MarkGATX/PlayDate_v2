@@ -1,60 +1,8 @@
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 const radius = 3000; // Radius in meters
 
-export type locationType = {
-    latitude: number
-    longitude: number
-}
+import { DataType } from "../types/typeDefinitions";
 
-export type displayNameType = {
-    text: string
-}
-
-export type currentOpeningHoursType = {
-    openNow: boolean
-    weekdayDescriptions: string[]
-}
-
-
-export type editorialSummaryType = {
-    text: string
-    languageCode: string
-}
-
-export type authorAttributionType = {
-    displayName:string
-    photoUri: string
-    uri: string
-}
-
-export type PhotosArrayType = {
-    heightPx:number
-    name:string
-    widthPx:number
-    authorAttributions:authorAttributionType[]
-}
-
-export type placesDataType = {
-    id: string;
-    displayName: displayNameType;
-    internationalPhoneNumber: string;
-    formattedAddress: string;
-    location: locationType;
-    photos: PhotosArrayType[];
-    businessStatus: string;
-    currentOpeningHours: currentOpeningHoursType;
-    goodForChildren: boolean;
-    editorialSummary: editorialSummaryType;
-    rating: number;
-    iconMaskBaseUri: string;
-    iconBackgroundColor: string;
-    name:string
-}
-
-export type DataType = {
-    places: placesDataType[]
-    // pageToken:string
-}
 
 export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
     const baseUrl = 'https://places.googleapis.com/v1/places:searchNearby';
@@ -104,9 +52,13 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             const j = Math.floor(Math.random() * (i + 1));
             [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
         }
+        const dataWithExpiry = {
+            places:data.places,
+            expiryDate: new Date().getTime() + (60 * 60 * 1000)
+        }
         //handle page token for pagination
         // const mapPageToken = data.pageToken;
-        localStorage.setItem('placesData', JSON.stringify(data.places))
+        localStorage.setItem('placesData', JSON.stringify(dataWithExpiry))
         return data.places
 
     } catch (error) {

@@ -1,5 +1,5 @@
 'use client'
-import { placesDataType } from "@/utils/map/nearbyPlacesAPI";
+import { placesDataType } from "@/utils/types/typeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

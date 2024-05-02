@@ -1,6 +1,7 @@
 'use client'
 import { LocationContext } from "@/utils/location/LocationContext";
-import { fetchNearbyPlaces, placesDataType } from "@/utils/map/nearbyPlacesAPI";
+import { fetchNearbyPlaces} from "@/utils/map/nearbyPlacesAPI";
+import { placesDataTypeWithExpiry, placesDataType } from "@/utils/types/typeDefinitions";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
 import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
 import { useContext, useEffect, useState } from "react";
@@ -12,7 +13,6 @@ import PlaceCards from "../PlaceCards/PlaceCards";
 export default function MapContainerReact() {
 
     const [error, setError] = useState<string | null>(null);
-    // const [mapMarkers, setMapMarkers] = useState(null)
     const [places, setPlaces] = useState<placesDataType[] | undefined>()
     const [currentPage, setCurrentPage] = useState<number>(1)
     const currentLocation = useContext(LocationContext)
@@ -25,32 +25,37 @@ export default function MapContainerReact() {
                 const activityTypes = goodWeatherCodes.includes(currentWeather.weatherData?.current_icon || 0)
                     ? goodWeatherActivity
                     : badWeatherActivity;
-
-                let placesData: placesDataType[] | undefined;
+                // check for accurate types. placesDataTypeWithExpiry doesn't work
+                let placesData
                 const storedPlacesData = localStorage.getItem('placesData')
                 if (storedPlacesData) {
                     // Get the data from local storage
-                    console.log(storedPlacesData)
                     placesData = JSON.parse(storedPlacesData);
-                    console.log(placesData)
-                    console.log('local storage places')
-                    setPlaces(placesData)
+                    console.log(placesData.expiryDate, Date.now(), placesData.expiryDate > Date.now())
+                    if (placesData.expiryDate > Date.now()) {
+                        console.log(placesData)
+                        console.log('local storage places', placesData)
+                        setPlaces(placesData.places)
+                    } else {
+                        localStorage.removeItem('placesData')
+                        placesData = await fetchNearbyPlaces(activityTypes, currentLocation.latitude, currentLocation.longitude);
+                        // Store the places in local storage
+                        console.log('fetched places', placesData)
+                        setPlaces(placesData)
+                    }
                 } else {
                     //get the data from Google Places
                     placesData = await fetchNearbyPlaces(activityTypes, currentLocation.latitude, currentLocation.longitude);
                     // Store the places in local storage
-                    console.log('fetched places')
+                    console.log('fetched places', placesData)
                     setPlaces(placesData)
-
                 }
             } catch (error: any) {
                 setError(error)
             }
         }
         getPlaces();
-        console.log()
 
-        // }
     }, [currentLocation, currentWeather])
 
     if (error) {

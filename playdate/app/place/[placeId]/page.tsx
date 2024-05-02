@@ -1,6 +1,6 @@
 'use client'
 
-import { placesDataType } from "@/utils/map/nearbyPlacesAPI"
+import { placesDataType } from "@/utils/types/typeDefinitions"
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI"
 import Image from "next/image"
 import { useEffect, useState } from "react"
@@ -9,7 +9,7 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
-import '@/utils/SwiperCustom/swiperCustom.scss' 
+import '@/utils/SwiperCustom/swiperCustom.scss'
 import { Pagination, EffectFade, Navigation } from 'swiper/modules';
 
 export default function PlaceDetails({ params }: { params: { placeId: string } }) {
@@ -68,16 +68,20 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
     return (
         <>
             <main>
-                <div id='placePicContainer' className='flex h-[300px]'>
-                    
+                <div id='placePicContainer' className='flex h-[250px]'>
+
                     <Swiper pagination={true} effect={'fade'} navigation={true} modules={[Pagination, Navigation, EffectFade]} >
                         {currentPlace ?
                             currentPlace.photos.map((photo, index) => (
 
                                 <SwiperSlide >
                                     <Image src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=300&maxHeightPx=300`} key={currentPlace?.id} alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`} fill={true} style={{ objectFit: 'cover' }}></Image>
-                                    <a href={`${photo.authorAttributions[0].uri}`} target="_blank"><p className='z-10 absolute text-appGold text-xs pl-2 pt-2'>Image by {photo.authorAttributions[0].displayName}</p></a>
-
+                                    {photo.authorAttributions[0].displayName
+                                        ?
+                                        <a href={`${photo.authorAttributions[0].uri}`} target="_blank"><p className='z-10 absolute text-appGold text-xs pl-2 pt-2'>Image by {photo.authorAttributions[0].displayName}</p></a>
+                                        :
+                                        null
+                                    }
                                 </SwiperSlide>
                             ))
                             :
