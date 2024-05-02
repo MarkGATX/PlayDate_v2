@@ -10,10 +10,6 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  /* :root {
-    --backgroundColor: oklch(99.23% 0.006 325.627);
-    --appBlue: oklch(32.39% 0.177 266.91);
-  } */
   body {
     color: var(--appBlue);
   }
@@ -21,12 +17,6 @@
 
 body {
   color: var(--appBlue);
-  /* background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb)); */
   background: var(--backgroundColor)
 }
 
@@ -35,7 +25,6 @@ header {
 }
 
 @layer utilities {
-
   .map-container {
     height: 45dvh;
     width: 100dvw;
@@ -79,15 +68,6 @@ header {
     }
 
   }
-
-  /* .weatherToggle {
-    background-color: var(--appGold);
-  } */
-
-  /* #placeCardMoreInfo {
-    background-color:var(--buttonBackgroundColor); 
-     border-color:var(--textColor);
-  } */
 
   #weatherConditions {
     background-color: var(--backgroundColor);

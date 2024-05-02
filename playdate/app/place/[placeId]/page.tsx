@@ -1,17 +1,16 @@
 'use client'
 
-import { DataType, placesDataType } from "@/utils/map/nearbyPlacesAPI"
+import { placesDataType } from "@/utils/map/nearbyPlacesAPI"
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-// import function to register Swiper custom elements
-import { register } from 'swiper/element/bundle';
-// register Swiper custom elements
-register();
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { Pagination } from 'swiper/modules';
+import 'swiper/css/effect-fade';
+import 'swiper/css/navigation';
+import '@/utils/SwiperCustom/swiperCustom.scss' 
+import { Pagination, EffectFade, Navigation } from 'swiper/modules';
 
 export default function PlaceDetails({ params }: { params: { placeId: string } }) {
 
@@ -70,27 +69,26 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
         <>
             <main>
                 <div id='placePicContainer' className='flex h-[300px]'>
-                    <Swiper pagination={true} modules={[Pagination]} >
+                    
+                    <Swiper pagination={true} effect={'fade'} navigation={true} modules={[Pagination, Navigation, EffectFade]} >
                         {currentPlace ?
-                            currentPlace.photos.map((photo) => {
-                                console.log(photo.name)
-                                let imageSrc = `https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=300&maxHeightPx=300`
-                                return (
-                                    // <Image src={imageSrc} key={currentPlace?.id} alt={`pics of ${currentPlace?.displayName}`} width={300} height={300}></Image>
-                                    <SwiperSlide>
-                                        <Image src={imageSrc} key={currentPlace?.id} alt={`pics of ${currentPlace?.displayName}`} width={300} height={300}></Image>
-                                    </SwiperSlide>
-                                )
-                            })
+                            currentPlace.photos.map((photo, index) => (
 
+                                <SwiperSlide >
+                                    <Image src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=300&maxHeightPx=300`} key={currentPlace?.id} alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`} fill={true} style={{ objectFit: 'cover' }}></Image>
+                                    <a href={`${photo.authorAttributions[0].uri}`} target="_blank"><p className='z-10 absolute text-appGold text-xs pl-2 pt-2'>Image by {photo.authorAttributions[0].displayName}</p></a>
+
+                                </SwiperSlide>
+                            ))
                             :
                             <p >Loading Images...</p>
                         }
                     </Swiper>
+
                 </div>
                 <div id='placeDetails' className='p-4'>
                     <h1 className='text-lg font-bold'>{currentPlace?.displayName.text}</h1>
-                    <div id='starRatings' className='text-xs flex '>
+                    <div id='starRatings' className='text-xs flex mb-8'>
                         {Array.from({ length: fullStars }).map((_, index) => (
                             <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
                         )
@@ -104,6 +102,11 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                         )
                         )}
                         {currentPlace?.rating ? `${currentPlace.rating} on Google` : 'No ratings'}
+                    </div>
+                    <div id='placeDescription'>{currentPlace?.editorialSummary?.text}</div>
+                    <div id='placeButtons' className='my-8 flex justify-around w-full'>
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Start a Playdate</button>
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
                     </div>
                 </div>
             </main>

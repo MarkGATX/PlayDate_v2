@@ -1,0 +1,32 @@
+.swiper-pagination-bullet {
+    background:var(--appBlue) !important;
+    opacity:.5
+  }
+  
+  .swiper-pagination-bullet-active {
+    /* Styles for the active pagination bullet (current slide) */
+    background: var(--appBlue) !important;
+    scale:1.4;
+    border:2px solid var(--appGold);
+    opacity:1;
+  }
+  
+  .swiper-button-next {
+    color:var(--appBlue);
+  }
+
+  .swiper-button-next:hover {
+    text-shadow: 0 0 5px var(--appGold)   
+  }
+  
+  .swiper-button-prev {
+    color:var(--appBlue);
+  }
+
+  .swiper-button-prev:hover {
+    text-shadow:0 0 5px var(--appGold);    
+  }
+  
+  .swiper-button-disabled {
+    color:var(--appGold) !important;
+  }

@@ -21,10 +21,17 @@ export type editorialSummaryType = {
     languageCode: string
 }
 
+export type authorAttributionType = {
+    displayName:string
+    photoUri: string
+    uri: string
+}
+
 export type PhotosArrayType = {
     heightPx:number
     name:string
     widthPx:number
+    authorAttributions:authorAttributionType[]
 }
 
 export type placesDataType = {
