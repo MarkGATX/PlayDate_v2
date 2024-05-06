@@ -11,6 +11,7 @@ import 'swiper/css/effect-fade';
 import 'swiper/css/navigation';
 import '@/utils/SwiperCustom/swiperCustom.scss'
 import { Pagination, EffectFade, Navigation } from 'swiper/modules';
+import Link from "next/link"
 
 export default function PlaceDetails({ params }: { params: { placeId: string } }) {
 
@@ -77,17 +78,17 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                                 ?
                                 // use override class to force swiper to not define inline style of 150px width
                                 <SwiperSlide className='swiper-slide-override'>
-                                   
-                                        <Image
-                                            src="/logos/playdate_logo.webp"
-                                            alt='Playdate logo'
-                                            // width={250}
-                                            // height={250}
-                                            fill={true}
-                                            sizes="(max-width:768px) 100vw, 33vw"
-                                            style={{ objectFit: 'contain' }}
-                                        />
-                                    
+
+                                    <Image
+                                        src="/logos/playdate_logo.webp"
+                                        alt='Playdate logo'
+                                        // width={250}
+                                        // height={250}
+                                        fill={true}
+                                        sizes="(max-width:768px) 100vw, 33vw"
+                                        style={{ objectFit: 'contain' }}
+                                    />
+
                                 </SwiperSlide>
                                 :
                                 currentPlace.photos?.map((photo, index) => (
@@ -166,7 +167,9 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                     <div id='placeDescription'>{currentPlace?.editorialSummary?.text}</div>
                     <div id='placeButtons' className='my-8 flex justify-around w-full'>
                         <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Start a Playdate</button>
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
+                        <Link href={`/place/${currentPlace?.id}/CreateReview`}>
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
+                        </Link>
                     </div>
                 </div>
             </main >

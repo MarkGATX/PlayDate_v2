@@ -1,0 +1,21 @@
+export const amenityList: string[] = [
+        'Restrooms',
+        'Pool',
+        'Splash Pad',
+        'Wading Pool',
+        'Food for kids',
+        'Food for Grown-ups',
+        'Basketball',
+        'Tennis',
+        'Soccer',
+        'Vegetarian',
+        'Vegan',
+        'Desserts',
+        'Picnic Tables',
+        'Toddler Swings',
+        'Soccer',
+        'Hiking Trails',
+        'Pickle Ball',
+        'Softball',
+        'Baseball'
+]
