@@ -42,7 +42,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
                 ?
                 <h2 className='text-lg font-bold'>{currentPlace?.displayName.text} Review</h2>
                 :
-                <h2 className='text-lg font-bold'>That place isn't found. Check your link and try again.</h2>
+                <h2 className='text-lg font-bold'>{`That place isn't found. Check your link and try again.`}</h2>
             }
             <form className='flex'>
                 <fieldset className='flex flex-wrap mt-4'>
