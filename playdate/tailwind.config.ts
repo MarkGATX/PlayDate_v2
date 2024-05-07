@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        'appBG': 'oklch(99.23% 0.006 325.627)',
         'appGold': 'oklch(91.52% 0.079 80.18)',
         'appBlue': 'oklch(32.39% 0.177 266.91)',
         'inputBG': 'oklch(91.45% 0.015 294.45)'

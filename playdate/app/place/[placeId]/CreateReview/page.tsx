@@ -70,7 +70,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
                     ))}
                 </fieldset>
                 <div id='writtenReviewContainer' className="w-full mt-4">
-                    <label htmlFor='writtenReview'>Review (500/{`${reviewLength}`})</label>
+                    <label htmlFor='writtenReview'>What do you think? ({`${reviewLength}`}/500)</label>
                     <textarea id='writtenReview' className={`w-full border-2 rounded min-h-36 border-appBlue bg-inputBG p-2 ${reviewLength >= 300 ? 'text-red-500' : ''}`} maxLength={300} onKeyDown={updateReviewLength} placeholder="Write your review (300 characters or less)"></textarea>
                 </div>
                 <div id='reviewSaveButtonContainer' className='flex w-full justify-center mt-4'>
