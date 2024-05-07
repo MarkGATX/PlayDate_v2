@@ -10,7 +10,8 @@ const config: Config = {
     extend: {
       colors: {
         'appGold': 'oklch(91.52% 0.079 80.18)',
-        'appBlue': 'oklch(32.39% 0.177 266.91)'
+        'appBlue': 'oklch(32.39% 0.177 266.91)',
+        'inputBG': 'oklch(91.45% 0.015 294.45)'
       },
       boxShadow: {
         'activeButton': 'inset 3px 3px 5px oklch(0% 0 296.91 / .3)'

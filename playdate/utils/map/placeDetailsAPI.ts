@@ -1,6 +1,6 @@
-import { placesDataType } from "./nearbyPlacesAPI";
+import { placesDataType } from "../types/typeDefinitions";
 
-import { DataType } from "./nearbyPlacesAPI";
+import { DataType } from "../types/typeDefinitions";
 
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
