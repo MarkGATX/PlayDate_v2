@@ -8,13 +8,13 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  // apiKey: "AIzaSyBL5dWnLYW0_csHUt6KuhfFdDnPusBtI0w",
-  // authDomain: "playdate-v2.firebaseapp.com",
-  // projectId: "playdate-v2",
-  // storageBucket: "playdate-v2.appspot.com",
-  // messagingSenderId: "109508274123",
-  // appId: "1:109508274123:web:c652e73d734c128f7f784e",
-  // measurementId: "G-5CVNZJ2DZQ"
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECTID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APPID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUERMENTID
 };
 
 // Initialize Firebase
@@ -22,4 +22,4 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-export {auth}
+export {auth, app, analytics}
