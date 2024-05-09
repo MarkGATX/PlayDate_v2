@@ -10,6 +10,7 @@ import { AuthContext } from "@/utils/firebase/AuthContext";
 export default function Header() {
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false)
     const { user } = useContext(AuthContext)
+    console.log(user)
 
     const handleGoogleLogin = async () => {
         const provider = new GoogleAuthProvider();
@@ -18,9 +19,9 @@ export default function Header() {
         });
         await signInWithRedirect(auth, provider)
         try {
-            console.log(`successfully signed in`)
-            showMobileMenu ? setShowMobileMenu(previousValue => !previousValue) : null
+            console.log(`successfully signed in `)         
             /* do whatever is necessary after sign in, e.g. redirect */
+            showMobileMenu ? setShowMobileMenu(previousValue => !previousValue) : null
         } catch (error) {
             console.log(error)
         }
@@ -47,7 +48,7 @@ export default function Header() {
                         className=''>
                     </Image>
                 </Link>
-                <Image src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon' onClick={() => setShowMobileMenu(previousValue => !previousValue)}></Image>
+                <Image className='cursor-pointer' src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon' onClick={() => setShowMobileMenu(previousValue => !previousValue)}></Image>
                 <div id='mobileMenuContainer' className={`w-1/3 min-h-26 min-w-26 absolute z-10 border-t-2 border-l-2 border-b-2 border-appBlue rounded-l p-4 bg-appGold transition-all duration-500 top-12 ${showMobileMenu ? 'right-0' : 'right-[-300px]'}`}>
                     <ul className='flex flex-col'>
                         <li>Dashboard</li>
