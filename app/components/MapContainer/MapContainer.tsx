@@ -69,7 +69,7 @@ export default function MapContainer() {
                 <Map
                     style={{ width: '100vw', height: '40dvh', marginBottom: '2rem' }}
                     defaultCenter={{ lat: currentLocation.latitude, lng: currentLocation.longitude }}
-                    defaultZoom={13}
+                    defaultZoom={12}
                     gestureHandling={'greedy'}
                     disableDefaultUI={true}
                     mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}

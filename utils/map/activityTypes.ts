@@ -9,7 +9,8 @@ export const goodWeatherActivity: string[] = [
     'swimming_pool',
     'community_center',
     'amusement_park',
-
+    'tourist_attraction',
+    'art_gallery'
 ]
 
 export const badWeatherActivity: string[] = [
@@ -21,6 +22,11 @@ export const badWeatherActivity: string[] = [
     'cultural_center',
     'movie_theater',
     'book_store',
+    'art_gallery',
+    'bowling_alley',
+    'tourist_attraction',
+    'shopping_mall',
+    'historical_landmark'
 ]
 
 export const goodWeatherCodes: number[] = [
@@ -30,5 +36,6 @@ export const goodWeatherCodes: number[] = [
     803,
     804,
     741,
-    701
+    701,
+    721
 ];

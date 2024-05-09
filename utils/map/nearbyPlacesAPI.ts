@@ -1,5 +1,5 @@
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
-const radius = 3000; // Radius in meters
+const radius = 4000; // Radius in meters
 
 import { DataType } from "../types/typeDefinitions";
 

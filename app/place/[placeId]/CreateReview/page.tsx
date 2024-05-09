@@ -35,6 +35,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
             if (storedPlaces && storedPlaces.places.length > 0) {
                 console.log('places good')
                 setCurrentPlace(storedPlaces.places.find(place => place.id === params.placeId))
+                setLoading(false)
             } else {
                 console.log('fetch details')
                 fetchedPlaceDetails();
