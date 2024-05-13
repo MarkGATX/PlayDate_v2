@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { AuthContext, AuthContextType } from "./AuthContext";
-import { auth, app } from "./firebaseConfig";
+import { auth } from "./firebaseConfig";
 import { User } from "firebase/auth";
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {

@@ -6,21 +6,30 @@ import { useContext, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import { auth } from "@/utils/firebase/firebaseConfig";
 import { AuthContext } from "@/utils/firebase/AuthContext";
+import { checkUser } from "@/utils/checkUser/checkUser";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false)
     const { user } = useContext(AuthContext)
     console.log(user)
-
+    const router = useRouter();
     const handleGoogleLogin = async () => {
+        
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({
             prompt: 'select_account'
         });
-        await signInWithRedirect(auth, provider)
         try {
-            console.log(`successfully signed in `)         
-            /* do whatever is necessary after sign in, e.g. redirect */
+        const result = await signInWithPopup(auth, provider)
+        
+            console.log(`successfully signed in: `, result)         
+            /* check for existing user and redirect to sign-up page if false */
+            if (result.user) {
+                const existingUser = await checkUser(result.user.uid);
+                existingUser ? null : router.push(`/create-user/${result.user.uid}`)
+              }
+              /* close mobile menu */
             showMobileMenu ? setShowMobileMenu(previousValue => !previousValue) : null
         } catch (error) {
             console.log(error)

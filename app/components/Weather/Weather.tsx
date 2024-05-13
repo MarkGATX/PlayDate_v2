@@ -1,5 +1,5 @@
 'use client'
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { LocationContext } from "@/utils/location/LocationContext";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
@@ -8,10 +8,12 @@ import { WeatherContext } from "@/utils/weather/WeatherContext";
 export default function Weather() {
     const [currentTempLeftPosition, setCurrentTempLeftPosition] = useState<number>(0)
     const [showDetails, setShowDetails] = useState<boolean>(false)
+    const weatherDetailsRef = useRef<HTMLElement>(null);
     const locationData = useContext(LocationContext);
     const currentWeather = useContext(WeatherContext).weatherData
     const weatherError = useContext(WeatherContext).error
     console.log('weather context: ', currentWeather)
+    let weatherDetailsHeight:number = 0;
 
     useEffect(() => {
         if (currentWeather) {
@@ -20,7 +22,15 @@ export default function Weather() {
             const currentTempOffset = currentWeather.current_temp - currentWeather.low_temp;
             setCurrentTempLeftPosition((currentTempOffset / temperatureRange) * 100); // Percentage
         }
+       
     }, [currentWeather]);
+
+    // useEffect(() => {
+    //     if (weatherDetailsRef.current) {
+    //         weatherDetailsHeight = weatherDetailsRef.current.offsetHeight;
+            
+    //     }
+    // }, []);
 
     console.log(currentWeather)
     return (
@@ -62,7 +72,8 @@ export default function Weather() {
                                             <div>{currentWeather.rain_chance}% rain</div>
                                         }
                                     </section>
-                                    <section id='weather_details' className={`w-100 text-xs mt-2 p-1 overflow-y-hidden transition-all ease-in-out duration-700 ${showDetails ? 'opacity-100 h-20 ' : 'opacity-0 h-0'}`}
+                                    {/* need to use GSAP to animate open and close to exact height of element. Refs are set just need to implement. using h-20 now for smooth animation but doesn't work for large text areas */}
+                                    <section id='weather_details' ref={weatherDetailsRef} className={`w-100 text-xs mt-2 p-1 overflow-y-hidden transition-all ease-in-out duration-700 ${showDetails ? `opacity-100 h-20` : `opacity-0 h-0`}`}
                                     >{currentWeather.forecast}</section>
                                 </>
                             }
