@@ -1,7 +1,7 @@
 'use client'
 import { LocationContext } from "@/utils/location/LocationContext";
-import { fetchNearbyPlaces} from "@/utils/map/nearbyPlacesAPI";
-import { placesDataTypeWithExpiry, placesDataType } from "@/utils/types/typeDefinitions";
+import { fetchNearbyPlaces } from "@/utils/map/nearbyPlacesAPI";
+import { placesDataTypeWithExpiry, placesDataType } from "@/utils/types/placeTypeDefinitions";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
 import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
 import { useContext, useEffect, useState } from "react";

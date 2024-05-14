@@ -1,6 +1,6 @@
-import { placesDataType } from "../types/typeDefinitions";
+import { placesDataType } from "../types/placeTypeDefinitions";
 
-import { DataType } from "../types/typeDefinitions";
+import { DataType } from "../types/placeTypeDefinitions";
 
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
@@ -8,7 +8,7 @@ const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 export async function fetchPlaceDetails(placeId: string) {
     const baseUrl = `https://places.googleapis.com/v1/places/${placeId}`;
     console.log(baseUrl)
-  
+
     if (!mapsApiKey) {
         throw new Error('Google Places API key is not set');
     }

@@ -1,7 +1,7 @@
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 const radius = 4000; // Radius in meters
 
-import { DataType } from "../types/typeDefinitions";
+import { DataType } from "../types/placeTypeDefinitions";
 
 
 export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
@@ -53,7 +53,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
         }
         const dataWithExpiry = {
-            places:data.places,
+            places: data.places,
             expiryDate: new Date().getTime() + (60 * 60 * 1000)
         }
         //handle page token for pagination

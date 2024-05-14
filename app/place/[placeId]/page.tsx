@@ -1,6 +1,6 @@
 'use client'
 
-import { placesDataType } from "@/utils/types/typeDefinitions"
+import { placesDataType } from "@/utils/types/placeTypeDefinitions"
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI"
 import Image from "next/image"
 import { useEffect, useState } from "react"

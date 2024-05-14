@@ -1,5 +1,5 @@
 'use client'
-import { placesDataType } from "@/utils/types/typeDefinitions";
+import { placesDataType } from "@/utils/types/placeTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";

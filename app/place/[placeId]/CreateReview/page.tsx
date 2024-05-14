@@ -1,6 +1,6 @@
 'use client'
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI"
-import { placesDataType, placesDataTypeWithExpiry } from "@/utils/types/typeDefinitions"
+import { placesDataType, placesDataTypeWithExpiry } from "@/utils/types/placeTypeDefinitions"
 import { useEffect, useState } from "react"
 import { amenityList } from "@/utils/map/amenityList"
 
