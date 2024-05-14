@@ -6,13 +6,17 @@ import { Router } from "next/router";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_PLAYDATE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_PLAYDATE_API_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_KEY) {
-    throw new Error('Missing Supabase URL or API key');
-}
+// if (!SUPABASE_URL || !SUPABASE_KEY) {
+//     throw new Error('Missing Supabase URL or API key');
+// }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
 
 export async function checkUser(firebaseUser:string) {
+    if (!SUPABASE_URL || !SUPABASE_KEY) {
+        throw new Error('Missing Supabase URL or API key');
+    }
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
     // const router = useRouter();
     if (!firebaseUser) {
