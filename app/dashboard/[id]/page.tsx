@@ -43,7 +43,7 @@ export default function Dashboard() {
                     <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
                         <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
                     </div>
-                    <button className='px-1 w-90 text-sm cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
+                    <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
                 </div>
                 <div id='profileOptions' className='w-full'>
                     <fieldset className='text-sm'>
@@ -61,11 +61,11 @@ export default function Dashboard() {
                 <h2 className='font-bold text-lg w-full'>Kids:</h2>
                 <div className='singleKid flex flex-col bg-inputBG rounded-xl p-2 gap-4'>
                     <div className='flex justify-between items-start gap-4 w-full '>
-                        <div id='kidProfilePicContainer' className='flex flex-col w-1/4 items-start'>
+                        <div id='kidProfilePicContainer' className='flex flex-col w-1/4 items-center justify-start'>
                             <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
                                 <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
                             </div>
-                            <button className='px-1 w-90 text-sm cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
+                            <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
                         </div>
                         <div className='w-3/4 flex flex-col gap-y-1'>
                             <p className='w-full'>Kid's name</p>
