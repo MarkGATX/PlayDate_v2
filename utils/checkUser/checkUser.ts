@@ -13,13 +13,14 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
 
 export async function checkUser(firebaseUser:string) {
+
     // const router = useRouter();
     if (!firebaseUser) {
       return; // Handle the case where no user is logged in
     }
     
     const { data, error } = await supabase
-      .from('parents')
+      .from('Parents')
       .select('id') // Select only the ID for efficiency
       .eq('firebase_uid', firebaseUser);
   
