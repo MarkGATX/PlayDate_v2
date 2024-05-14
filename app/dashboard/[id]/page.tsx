@@ -68,12 +68,12 @@ export default function Dashboard() {
                             <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
                         </div>
                         <div className='w-3/4 flex flex-col gap-y-1'>
-                            <p className='w-full'>Kid's name</p>
+                            <p className='w-full'>{`Kid's name`}</p>
                             <div className='block w-full text-xs'>
                                 <input type='checkbox' id='showLastNameToggle' className='mr-2'></input><label htmlFor="showLastNameToggle">First name only</label>
                             </div>
                             <div className='block w-full text-xs'>
-                                <label htmlFor="showLastNameToggle" className='mr-2'>Birthday</label><input type='date' id='showLastNameToggle' className='w-4/6'></input>
+                                <label htmlFor="showLastNameToggle" className='mr-2'>Birthday</label><input type='date' id='showLastNameToggle' className='w-4/6 rounded'></input>
                             </div>
                         </div>
                     </div>
