@@ -13,7 +13,11 @@ const nextConfig = {
                 hostname: 'places.googleapis.com',
                 port: '',
                
-            }
+            },
+            {
+                protocol: 'https',
+                hostname: 'lh3.googleusercontent.com'
+              },
         ],
     },
 };

@@ -6,8 +6,10 @@ import { useContext, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, signOut } from "firebase/auth";
 import { auth } from "@/utils/firebase/firebaseConfig";
 import { AuthContext } from "@/utils/firebase/AuthContext";
-import { checkUser } from "@/utils/checkUser/checkUser";
+import { checkUser } from "@/utils/users/checkUser";
 import { useRouter } from "next/navigation";
+// import { AddNewUser } from "@/utils/users/addNewUser";
+import { AdultsType, NewUserType } from "@/utils/types/userTypeDefinitions";
 
 export default function Header() {
     const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false)
@@ -15,21 +17,31 @@ export default function Header() {
     console.log(user)
     const router = useRouter();
     const handleGoogleLogin = async () => {
-        
+
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({
             prompt: 'select_account'
         });
         try {
-        const result = await signInWithPopup(auth, provider)
-        
-            console.log(`successfully signed in: `, result)         
+            const result = await signInWithPopup(auth, provider)
             /* check for existing user and redirect to sign-up page if false */
             if (result.user) {
-                const existingUser = await checkUser(result.user.uid);
-                existingUser ? null : router.push(`/create-user/${result.user.uid}`)
-              }
-              /* close mobile menu */
+                console.log(result.user.displayName)
+                const names: string[] = result.user?.displayName?.split(' ') || [];
+                console.log(names)
+                const first_name = names[0] || '';
+                const last_name = names[1] || '';
+                const newUserData: NewUserType = {
+                    first_name: first_name,
+                    last_name: last_name,
+                    email: result.user.email,
+                    profilePicURL: result.user.photoURL,
+                    firebase_uid: result.user.uid,
+                }
+                const existingUser = await checkUser(newUserData);
+                console.log(existingUser, user)
+            }
+            /* close mobile menu */
             showMobileMenu ? setShowMobileMenu(previousValue => !previousValue) : null
         } catch (error) {
             console.log(error)
