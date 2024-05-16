@@ -33,23 +33,24 @@ export default function Dashboard() {
     //     }
     // }, [params.firebase_uid, user]); // Dependency array for useEffect
 
-    const getCurrentUser = async () => {
-        const firebase_uid = user?.uid
-        if (!firebase_uid) {
-            return <div>You need to be logged in to see this page.</div>;
-        }
-        const { data, error } = await supabase
-            .from('Adults')
-            .select('*') // Select only the ID for efficiency
-            .eq('firebase_uid', firebase_uid);
-        if (data) {
-            setCurrentUser(data[0])
-        }
-    }
+ 
 
     useEffect(() => {
+        const getCurrentUser = async () => {
+            const firebase_uid = user?.uid
+            if (!firebase_uid) {
+                return <div>You need to be logged in to see this page.</div>;
+            }
+            const { data, error } = await supabase
+                .from('Adults')
+                .select('*') // Select only the ID for efficiency
+                .eq('firebase_uid', firebase_uid);
+            if (data) {
+                setCurrentUser(data[0])
+            }
+        }
         getCurrentUser();
-    }, [user])
+    }, [user, supabase])
 
     if (!user) {
         return <div>You need to be logged in to see this page.</div>;
