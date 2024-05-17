@@ -70,9 +70,14 @@ export default function Header() {
                     </Image>
                 </Link>
                 <Image className='cursor-pointer' src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon' onClick={() => setShowMobileMenu(previousValue => !previousValue)}></Image>
-                <div id='mobileMenuContainer' className={`w-1/3 min-h-26 min-w-26 absolute z-10 border-t-2 border-l-2 border-b-2 border-appBlue rounded-l p-4 bg-appGold transition-all duration-500 top-12 ${showMobileMenu ? 'right-0' : 'right-[-300px]'}`}>
+                <div id='mobileMenuContainer' className={`w-5/12 min-h-26 min-w-26 absolute z-10 border-t-2 border-l-2 border-b-2 border-appBlue rounded-l p-4 bg-appGold transition-all duration-500 top-12 ${showMobileMenu ? 'right-0' : 'right-[-300px]'}`}>
                     <ul className='flex flex-col'>
-                        <li>Dashboard</li>
+                    <Link href='/' onClick={(()=> setShowMobileMenu(previousValue => !previousValue))}>
+                            <li>Home</li>
+                        </Link>
+                        <Link href='/dashboard' onClick={(()=> setShowMobileMenu(previousValue => !previousValue))}>
+                            <li>Dashboard</li>
+                        </Link>
                         {user ?
                             <li className='cursor-pointer' onClick={handleGoogleLogout}>Logout</li>
                             :
