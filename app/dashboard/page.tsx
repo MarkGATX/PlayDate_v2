@@ -50,7 +50,7 @@ export default function Dashboard() {
             }
         }
         getCurrentUser();
-    }, [user, supabaseClient])
+    }, [user])
 
     // useEffect(() => {
     //     const getKids = async () => {
@@ -123,7 +123,7 @@ export default function Dashboard() {
                         {currentUser && currentUser?.Kids.length > 0
                             ?
                             currentUser.Kids.map((kid) => (
-                                <div className='singleKid flex flex-col bg-inputBG rounded-xl p-2 gap-4'>
+                                <div key={kid.id} className='singleKid flex flex-col bg-inputBG rounded-xl p-2 gap-4'>
                                     <div className='flex justify-between items-start gap-4 w-full '>
                                         <div id='kidProfilePicContainer' className='flex flex-col w-1/4 items-center justify-start'>
                                             <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
