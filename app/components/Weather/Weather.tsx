@@ -13,22 +13,26 @@ export default function Weather() {
     const currentWeather = useContext(WeatherContext).weatherData
     const weatherError = useContext(WeatherContext).error
     console.log('weather context: ', currentWeather)
-    let weatherDetailsHeight:number = 0;
+    let weatherDetailsHeight: number = 0;
 
     useEffect(() => {
         if (currentWeather) {
             const temperatureRange = currentWeather.high_temp - currentWeather.low_temp;
 
             const currentTempOffset = currentWeather.current_temp - currentWeather.low_temp;
-            setCurrentTempLeftPosition((currentTempOffset / temperatureRange) * 100); // Percentage
+            if (currentTempOffset >= 0) {
+                setCurrentTempLeftPosition((currentTempOffset / temperatureRange) * 100); // Percentage
+            } else {
+                setCurrentTempLeftPosition(0)
+            }
         }
-       
+
     }, [currentWeather]);
 
     // useEffect(() => {
     //     if (weatherDetailsRef.current) {
     //         weatherDetailsHeight = weatherDetailsRef.current.offsetHeight;
-            
+
     //     }
     // }, []);
 
