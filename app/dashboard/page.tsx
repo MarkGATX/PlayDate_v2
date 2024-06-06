@@ -5,11 +5,12 @@ import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import { AddKid } from "@/utils/actions/actions";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import supabaseClient from "@/utils/supabase/client";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
 import { PostgrestError } from "@supabase/supabase-js";
+import gsap from "gsap";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -22,28 +23,46 @@ export default function Dashboard() {
     const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [kidsData, setKidsData] = useState<kidsArray>();
     const [isLoadingKids, setIsLoadingKids] = useState(false);
+    const [newKidFormOpen, setNewKidFormOpen] = useState<boolean>(false)
     const router = useRouter();
+    const newKidFormRef = useRef<HTMLDivElement | null>(null);
     // Track kid data loading state
     console.log(currentUser)
+    console.log(user)
 
 
 
     useEffect(() => {
         const getCurrentUser = async () => {
+            console.log('run get Current User from dash')
             try {
                 const firebase_uid = user?.uid
                 if (!firebase_uid) {
-                    return <div>You need to be logged in to see this page.</div>;
+                    return
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*, Kids (*)') // Select only the ID for efficiency
+                    .select('*, Adult_Kid (*)') // Select only the ID for efficiency
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
                 }
                 if (adultData) {
-                    setCurrentUser(adultData[0])
+                    const kidIds = adultData[0].Adult_Kid.map((akData: any) => akData.kid_id);
+                    console.dir(kidIds)
+                    const { data: kidsData, error: kidsError } = await supabaseClient
+                        .from('Kids')
+                        .select('*')
+                        .in('id', kidIds)
+                    if (kidsError) {
+                        throw kidsError;
+                    }
+                    if (kidsData) {
+                        setCurrentUser({
+                            ...adultData[0],
+                            Kids: kidsData,
+                        });
+                    }
                 }
             } catch (error) {
                 console.log(error)
@@ -51,6 +70,28 @@ export default function Dashboard() {
         }
         getCurrentUser();
     }, [user])
+
+    const toggleNewKidForm = () => {
+
+        if (newKidFormRef.current) {
+            if (newKidFormOpen) {
+                gsap.to(newKidFormRef.current, {
+                    autoAlpha:0,
+                    height: '0',
+                    duration: 0.5,
+                    ease: 'power1.out',
+                });
+            } else {
+                gsap.to(newKidFormRef.current, {
+                    autoAlpha:1,
+                    height: 'auto',
+                    duration: 0.5,
+                    ease: 'power1.out',
+                });
+            }
+            setNewKidFormOpen(previousValue => !previousValue)
+        }
+    }
 
     // useEffect(() => {
     //     const getKids = async () => {
@@ -81,14 +122,13 @@ export default function Dashboard() {
             <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
                 <h1 className='font-bold text-xl'>Dashboard</h1>
             </div>
-            {!user
+            {!currentUser
                 ?
                 <>
-                    <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
-                        <h1 className='font-bold text-xl'>Dashboard</h1>
-                    </div>
                     <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
-                    :
+                </>
+                :
+                <>
                     <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
                         <div id='profileName' className='w-7/12'>
                             <h2 className='font-bold text-lg'>
@@ -118,7 +158,7 @@ export default function Dashboard() {
                         </div>
 
                     </section>
-                    <section id='kidsSection' className='w-full p-4'>
+                    <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
                         <h2 className='font-bold text-lg w-full'>Kids:</h2>
                         {currentUser && currentUser?.Kids.length > 0
                             ?
@@ -141,14 +181,14 @@ export default function Dashboard() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='w-full'>
+                                    {/* <div className='w-full'>
                                         <p className='text-sm'>Parents: parent names</p>
                                         <p className='text-sm'>Caregivers: caregiver names</p>
                                         <div className='flex justify-between w-full my-4'>
                                             <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Parent</button>
                                             <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Caregiver</button>
                                         </div>
-                                    </div>
+                                    </div> */}
                                 </div>
                             ))
                             :
@@ -157,7 +197,7 @@ export default function Dashboard() {
                         {/* Make sure currentUser is true before rendering add kid form */}
                         {currentUser?.id
                             ?
-                            <div id='newKidForm' className=''>
+                            <div id='newKidForm' ref={newKidFormRef} className='h-0 overflow-hidden'>
                                 <form action={AddKid} id='addNewKidForm' className='flex justify-between flex-wrap'>
 
                                     <input type="hidden" name='primary_caregiver' value={currentUser.id} />
@@ -174,24 +214,22 @@ export default function Dashboard() {
                                         <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label><input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
                                     </div>
                                     {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
-                                    <SubmitButton text='Add New Kid' />
+                                    <SubmitButton text='Save New Kid' />
                                 </form>
                             </div>
                             :
                             <div> You have to be logged in to do this</div>
                         }
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Add New Kid</button>
+                       
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidFormOpen ? `Close form` : `Add New Kid`}</button>
+                     
 
                     </section>
                     <section id='notificationSection' className='w-full p-4'>
                         <h2 className='font-bold text-lg w-full'>Notifications:</h2>
                     </section>
                 </>
-                :
-                <>
 
-                    <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
-                </>
             }
         </main>
     )

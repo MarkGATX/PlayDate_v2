@@ -16,7 +16,15 @@ export type AdultsType = {
     emergency_contact?:string
     profilePicURL: string | null | undefined
     firebase_uid:string
+    Adult_Kid: AdultKidRelationshipType[]
     Kids: KidsType[]
+}
+
+export type AdultKidRelationshipType = {
+    id:string
+    adult_id:string
+    kid_id:string
+    relationship:string
 }
 
 export type KidsType = {
