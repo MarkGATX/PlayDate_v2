@@ -11,6 +11,7 @@ import supabaseClient from "@/utils/supabase/client";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
 import { PostgrestError } from "@supabase/supabase-js";
 import gsap from "gsap";
+import KidsCard from "../components/KidsCard/KidsCard";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -76,14 +77,14 @@ export default function Dashboard() {
         if (newKidFormRef.current) {
             if (newKidFormOpen) {
                 gsap.to(newKidFormRef.current, {
-                    autoAlpha:0,
+                    autoAlpha: 0,
                     height: '0',
                     duration: 0.5,
                     ease: 'power1.out',
                 });
             } else {
                 gsap.to(newKidFormRef.current, {
-                    autoAlpha:1,
+                    autoAlpha: 1,
                     height: 'auto',
                     duration: 0.5,
                     ease: 'power1.out',
@@ -163,33 +164,7 @@ export default function Dashboard() {
                         {currentUser && currentUser?.Kids.length > 0
                             ?
                             currentUser.Kids.map((kid) => (
-                                <div key={kid.id} className='singleKid flex flex-col bg-inputBG rounded-xl p-2 gap-4'>
-                                    <div className='flex justify-between items-start gap-4 w-full '>
-                                        <div id='kidProfilePicContainer' className='flex flex-col w-1/4 items-center justify-start'>
-                                            <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
-                                                <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                            </div>
-                                            <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
-                                        </div>
-                                        <div className='w-3/4 flex flex-col gap-y-1'>
-                                            <p className='w-full'>{kid.first_name} {kid.last_name}</p>
-                                            <div className='block w-full text-xs'>
-                                                <input type='checkbox' id='showLastNameToggle' className='mr-2'></input><label htmlFor="showLastNameToggle">First name only</label>
-                                            </div>
-                                            <div className='block w-full text-xs'>
-                                                <label htmlFor="showLastNameToggle" className='mr-2'>Birthday</label><input type='date' id='showLastNameToggle' className='w-4/6 rounded' value={kid.birthday ? kid.birthday : undefined}></input>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* <div className='w-full'>
-                                        <p className='text-sm'>Parents: parent names</p>
-                                        <p className='text-sm'>Caregivers: caregiver names</p>
-                                        <div className='flex justify-between w-full my-4'>
-                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Parent</button>
-                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Caregiver</button>
-                                        </div>
-                                    </div> */}
-                                </div>
+                                <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id}/>
                             ))
                             :
                             null
@@ -220,9 +195,9 @@ export default function Dashboard() {
                             :
                             <div> You have to be logged in to do this</div>
                         }
-                       
+
                         <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidFormOpen ? `Close form` : `Add New Kid`}</button>
-                     
+
 
                     </section>
                     <section id='notificationSection' className='w-full p-4'>
