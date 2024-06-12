@@ -2,7 +2,7 @@
 
 import { KidsType, RelationshipType } from "../types/userTypeDefinitions"
 import supabaseClient from "../supabase/client";
-import { PostgrestError } from "@supabase/supabase-js";
+import { PostgrestError, PostgrestResponse } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -51,35 +51,60 @@ export async function AddKid(formData: FormData) {
     }
 }
 
-export async function EditKid( id:string, formData: FormData) {
+export async function EditKid(editedKidData: KidsType) {
 
-    if (!formData) {
+    if (!editedKidData) {
         return; // Handle the case where form has no data
     }
 
     try {
-        const editKidData: Omit<KidsType, 'primary_caregiver'> = {
-            id: id,
-            first_name: formData.get('first_name') as string,
-            last_name: formData.get('last_name') as string,
-            birthday: formData.get('birthday') as string,
-            first_name_only: formData.get('first_name_only') === 'on',
-        }
- 
-        const { data: editedKidData, error: editedKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
+        
+        const { data: updatedKidData, error: updatedKidError } = await supabaseClient
             .from('Kids')
-            .update(editKidData)
-            .eq('id', editKidData.id)
-        if (editedKidError) {
-            throw handleSupabaseError(editedKidError)
+            .update(editedKidData)
+            .eq('id', editedKidData.id)
+            .select()
+        if (updatedKidError) {
+            throw handleSupabaseError(updatedKidError)
         }
-        console.log(editedKidData)
+        console.log(updatedKidData)
+        return updatedKidData
         
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure (optional)
     }
 }
+
+// export async function EditKid( id:string, formData: FormData) {
+
+//     if (!formData) {
+//         return; // Handle the case where form has no data
+//     }
+
+//     try {
+//         const editKidData: Omit<KidsType, 'primary_caregiver'> = {
+//             id: id,
+//             first_name: formData.get('first_name') as string,
+//             last_name: formData.get('last_name') as string,
+//             birthday: formData.get('birthday') as string,
+//             first_name_only: formData.get('first_name_only') === 'on',
+//         }
+ 
+//         const { data: editedKidData, error: editedKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
+//             .from('Kids')
+//             .update(editKidData)
+//             .eq('id', editKidData.id)
+//         if (editedKidError) {
+//             throw handleSupabaseError(editedKidError)
+//         }
+//         console.log(editedKidData)
+        
+//     } catch (error) {
+//         console.error("Unexpected error:", error); // Log unexpected errors
+//         return undefined; // Indicate failure (optional)
+//     }
+// }
 
 function handleSupabaseError(error: PostgrestError): Error {
     const { message, details } = error;
