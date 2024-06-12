@@ -8,7 +8,7 @@ export default function Page() {
     const { user } = useContext(AuthContext)
     
     const params = useParams();
-    console.log(params.firebase_uid)
+
     // State flag for potential authorization error
     const [isAuthorized, setIsAuthorized] = useState(true);
 
