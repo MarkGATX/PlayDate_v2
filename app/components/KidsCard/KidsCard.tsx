@@ -1,6 +1,6 @@
 import { KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import SubmitButton from "../SubmitButton/SubmitButton";
 import { EditKid } from "@/utils/actions/actions";
 import { useFormStatus } from "react-dom";
@@ -16,9 +16,12 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
     const [kidFirstNameOnly, setKidFirstNameOnly] = useState<boolean>(kid.first_name_only)
     const [kidFirstNameBlank, setKidFirstNameBlank] = useState<boolean>(false)
     const [kidLastNameBlank, setKidLastNameBlank] = useState<boolean>(false)
+    const [kidTooOld, setKidTooOld] = useState<boolean>(false)
+    const [kidAge, setKidAge] = useState<number | undefined>(undefined)
     const { pending } = useFormStatus()
     const firstNameErrorMessageRef = useRef<HTMLParagraphElement | null>(null);
     const lastNameErrorMessageRef = useRef<HTMLParagraphElement | null>(null);
+    const birthdayErrorMessageRef = useRef<HTMLParagraphElement | null>(null);
     const editFormRef = useRef<HTMLFormElement | null>(null)
     const readOnlyKidContentRef = useRef<HTMLDivElement | null>(null)
 
@@ -29,8 +32,23 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
         setEditKidInfo(previousValue => !previousValue)
     }
 
+    //calculate current age
+    const findKidAge = useMemo(() => {
+        if (kidBirthday) {
+            const parsedKidBirthday = new Date(kidBirthday)
+            const today = new Date()
+            const kidAgeMS = today.getTime() - parsedKidBirthday.getTime()
+            const kidAgeYears = kidAgeMS / (1000 * 60 * 60 * 24 * 365.25)
+            // round age down
+            setKidAge(Math.floor(kidAgeYears))
+        }
+    }, [kidBirthday])
+
     const saveKidEdits = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
+        const minDate = new Date(2000, 0, 1)
+
+        console.log(kidBirthday)
         const editedKidData: KidsType = {
 
             id: kid.id,
@@ -41,6 +59,46 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
             primary_caregiver: kid.primary_caregiver
         }
         console.log(editedKidData)
+        if (kidBirthday) {
+            const parsedKidEditedBirthday = new Date(kidBirthday)
+            const today = new Date()
+            const editedKidAgeMS = today.getTime() - parsedKidEditedBirthday.getTime()
+            const editedKidAgeYears = editedKidAgeMS / (1000 * 60 * 60 * 24 * 365.25)
+            if (editedKidAgeYears >= 19) {
+                setKidTooOld(true)
+                
+                if (birthdayErrorMessageRef.current) {
+                    // using separate declaration because gsap oddly animating the number 18 from 0 to 18 instead of displaying just the number
+                    birthdayErrorMessageRef.current.innerText= 'Kids must be 18 or younger'
+                    gsap.to(birthdayErrorMessageRef.current,
+                        {
+                            autoAlpha: 1,
+                            maxHeight: '200px',
+                            duration: 2,
+                            ease: 'power1.out',
+                            // textContent: 'Kids must be 18 or younger'
+                        }
+                    )
+                }
+                return //exit process
+            } else {
+                setKidTooOld(false)
+                if (birthdayErrorMessageRef.current) {
+                    // using separate declaration because gsap oddly animating the number 18 from 0 to 18 instead of displaying just the number
+                    birthdayErrorMessageRef.current.innerText= ''
+                    gsap.to(birthdayErrorMessageRef.current,
+                        {
+                            autoAlpha: 0,
+                            maxHeight: 0,
+                            duration: 2,
+                            ease: 'power1.out',
+                            // textContent: ``
+                        }
+                    )
+                }
+            }
+        }
+
         if (!editedKidData.first_name || editedKidData.first_name === '') {
             setKidFirstNameBlank(true)
             if (firstNameErrorMessageRef.current) {
@@ -55,7 +113,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                     }
                 )
             }
-            return
+            return //exit process
         } else if (editedKidData.first_name) {
             setKidFirstNameBlank(false)
             if (firstNameErrorMessageRef.current) {
@@ -83,7 +141,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                     }
                 )
             }
-            return
+            return //exit process
         } else if (editedKidData.last_name) {
             setKidLastNameBlank(false)
             if (lastNameErrorMessageRef.current) {
@@ -139,6 +197,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
         setEditKidInfo(false)
         setKidFirstNameBlank(false)
         setKidLastNameBlank(false)
+        setKidTooOld(false)
     }
 
     // useEffect(() => {
@@ -238,7 +297,8 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                                 <input type='checkbox' id='showLastNameToggle' className='mr-2' checked={kidFirstNameOnly} onChange={(event) => { setKidFirstNameOnly(event.target.checked) }}></input><label htmlFor="showLastNameToggle">First name only</label>
                             </div>
                             <div className='block w-full text-xs'>
-                                <label htmlFor="birthday" className='mr-2'>Birthday</label><input id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3' value={kidBirthday} onChange={(event) => { setKidBirthday(event.target.value) }}></input>
+                                <p id='birthdayErrorMessage' ref={birthdayErrorMessageRef} className='opacity-0 max-h-0 text-xs text-red-700 font-bold'></p>
+                                <label htmlFor="birthday" className='mr-2'>Birthday</label><input id='kidsBirthdayInput' name='birthday' type="date" className={`rounded border-2 p-1 text-sm ml-2 w-2/3 ${kidTooOld ? 'border-red-500' : 'border-appBlue'}`} value={kidBirthday} onChange={(event) => { setKidBirthday(event.target.value) }}></input>
                             </div>
                             <div className='block w-full text-xs'>
                                 <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2' onClick={(event) => saveKidEdits(event)} disabled={pending}>
@@ -248,7 +308,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                                 <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={cancelKidEdits}>Cancel</button>
                             </div>
                         </form>
-                         : 
+                        :
                         <div ref={readOnlyKidContentRef}>
 
                             <p className='w-full'>{kidFirstName} {kidLastName}</p>
@@ -263,11 +323,12 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                             <div className='block w-full text-xs'>
                                 <label htmlFor="birthday" className='mr-2'>Birthday: </label><input disabled type='date' id='birthday' className='w-4/6 rounded' value={kidBirthday ? kidBirthday : undefined}></input>
                             </div>
+                            <p className='text-xs'>{kidAge ? `${kidAge} years old` : null}</p>
                             <div className='block w-full text-xs'>
                                 <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleEditKid}>Edit Kid Info</button>
                             </div>
                         </div>
-                    }  
+                    }
 
                 </div>
             </div>
