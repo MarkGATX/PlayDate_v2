@@ -24,9 +24,10 @@ export default function Dashboard() {
     const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [kidsData, setKidsData] = useState<kidsArray>();
     const [isLoadingKids, setIsLoadingKids] = useState(false);
-    const [newKidFormOpen, setNewKidFormOpen] = useState<boolean>(false)
+    const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
     const router = useRouter();
     const newKidFormRef = useRef<HTMLDivElement | null>(null);
+    const newKidSectionRef = useRef<HTMLElement | null>(null)
     // Track kid data loading state
     console.log(currentUser)
     console.log(user)
@@ -73,24 +74,24 @@ export default function Dashboard() {
     }, [user])
 
     const toggleNewKidForm = () => {
-
-        if (newKidFormRef.current) {
-            if (newKidFormOpen) {
-                gsap.to(newKidFormRef.current, {
+        console.log(newKidSectionRef)
+        if (newKidSectionRef.current) {
+            if (newKidSectionOpen) {
+                gsap.to(newKidSectionRef.current, {
                     autoAlpha: 0,
                     height: '0',
                     duration: 0.5,
-                    ease: 'power1.out',
+                    ease: 'power1.inOut',
                 });
             } else {
-                gsap.to(newKidFormRef.current, {
+                gsap.to(newKidSectionRef.current, {
                     autoAlpha: 1,
                     height: 'auto',
                     duration: 0.5,
-                    ease: 'power1.out',
+                    ease: 'power1.inOut',
                 });
             }
-            setNewKidFormOpen(previousValue => !previousValue)
+            setNewKidSectionOpen(previousValue => !previousValue)
         }
     }
 
@@ -164,7 +165,7 @@ export default function Dashboard() {
                         {currentUser && currentUser?.Kids.length > 0
                             ?
                             currentUser.Kids.map((kid) => (
-                                <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id}/>
+                                <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id} />
                             ))
                             :
                             null
@@ -172,31 +173,43 @@ export default function Dashboard() {
                         {/* Make sure currentUser is true before rendering add kid form */}
                         {currentUser?.id
                             ?
-                            <div id='newKidForm' ref={newKidFormRef} className='h-0 overflow-hidden'>
-                                <form action={AddKid} id='addNewKidForm' className='flex justify-between flex-wrap'>
+                            <>
+                                <section id='addNewKidSection' ref={newKidSectionRef} className='h-0 overflow-hidden rounded-xl p-2 gap-4 border-2 border-appBlue'>
+                                    <div>
+                                        <h3 className='font-bold'>Search for kid...</h3>
+                                    </div>
+                                    <h3 className='text-center w-full'>OR</h3>
+                                    <div>
+                                        <h3 className='font-bold'>Add new kid...</h3>
+                                        <div id='newKidForm' ref={newKidFormRef}>
+                                            <form action={AddKid} id='addNewKidForm' className='flex justify-between flex-wrap'>
 
-                                    <input type="hidden" name='primary_caregiver' value={currentUser.id} />
-                                    <div className='pt-2 pb-1 flex justify-between w-full items-center'>
-                                        <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label><input id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                <input type="hidden" name='primary_caregiver' value={currentUser.id} />
+                                                <div className='pt-2 pb-1 flex justify-between w-full items-center'>
+                                                    <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label><input id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                </div>
+                                                <div className='py-1 flex justify-between w-full items-center'>
+                                                    <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label><input id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                </div>
+                                                <div className='py-1 flex justify-between w-full items-center'>
+                                                    <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label><input id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                </div>
+                                                <div className='py-1'>
+                                                    <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label><input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
+                                                </div>
+                                                {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
+                                                <SubmitButton text='Save New Kid' />
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div className='py-1 flex justify-between w-full items-center'>
-                                        <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label><input id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
-                                    </div>
-                                    <div className='py-1 flex justify-between w-full items-center'>
-                                        <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label><input id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
-                                    </div>
-                                    <div className='py-1'>
-                                        <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label><input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
-                                    </div>
-                                    {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
-                                    <SubmitButton text='Save New Kid' />
-                                </form>
-                            </div>
+                                </section>
+                            </>
                             :
                             <div> You have to be logged in to do this</div>
+
                         }
 
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidFormOpen ? `Close form` : `Add New Kid`}</button>
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidSectionOpen ? `Close form` : `Add New Kid`}</button>
 
 
                     </section>
