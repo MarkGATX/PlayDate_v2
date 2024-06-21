@@ -5,13 +5,15 @@ import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import { AddKid } from "@/utils/actions/actions";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Suspense, useContext, useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import supabaseClient from "@/utils/supabase/client";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
 import { PostgrestError } from "@supabase/supabase-js";
 import gsap from "gsap";
 import KidsCard from "../components/KidsCard/KidsCard";
+import KidSearchResults from "../components/KidSearch/KidSearch";
+import KidSearchResultsSuspense from "../components/KidSearchResults/KidSearchResultsSuspense";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -24,6 +26,7 @@ export default function Dashboard() {
     const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [kidsData, setKidsData] = useState<kidsArray>();
     const [isLoadingKids, setIsLoadingKids] = useState(false);
+    const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
     const router = useRouter();
     const newKidFormRef = useRef<HTMLDivElement | null>(null);
@@ -94,6 +97,21 @@ export default function Dashboard() {
             setNewKidSectionOpen(previousValue => !previousValue)
         }
     }
+
+    const handleSearchChange = (value:string) => {
+        const newSearchTerm = value;
+      
+        // Debouncing logic:
+        const timeoutId = setTimeout(() => {
+          setKidSearchTerm(newSearchTerm);
+        }, 500); // Adjust delay (in milliseconds) as needed
+      
+        // Cleanup function to clear the timeout when the component unmounts
+        // or the search term changes before the timeout fires:
+        return () => clearTimeout(timeoutId);
+      };
+
+
 
     // useEffect(() => {
     //     const getKids = async () => {
@@ -174,9 +192,14 @@ export default function Dashboard() {
                         {currentUser?.id
                             ?
                             <>
-                                <section id='addNewKidSection' ref={newKidSectionRef} className='h-0 overflow-hidden rounded-xl p-2 gap-4 border-2 border-appBlue'>
+                                <section id='addNewKidSection' ref={newKidSectionRef} className='h-0 overflow-hidden rounded-xl p-2 opacity-0 border-2 border-appBlue'>
                                     <div>
                                         <h3 className='font-bold'>Search for kid...</h3>
+                                        <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
+                                        {/* <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => handleSearchChange(event.target.value)}></input> */}
+                                        <Suspense fallback={<KidSearchResultsSuspense />}>
+                                            <KidSearchResults searchType='addKidToParent' searchTerm={kidSearchTerm} />
+                                        </Suspense>
                                     </div>
                                     <h3 className='text-center w-full'>OR</h3>
                                     <div>
