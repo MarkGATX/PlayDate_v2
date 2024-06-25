@@ -34,6 +34,7 @@ export type KidsType = {
     birthday?:string
     first_name_only:boolean
     primary_caregiver:string
+    profile_pic?:string
    
 }
 

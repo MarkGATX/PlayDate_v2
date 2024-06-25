@@ -5,14 +5,14 @@ import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import { AddKid } from "@/utils/actions/actions";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { Suspense, useContext, useEffect, useRef, useState } from "react";
+import { Suspense, createRef, useContext, useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import supabaseClient from "@/utils/supabase/client";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
 import { PostgrestError } from "@supabase/supabase-js";
 import gsap from "gsap";
 import KidsCard from "../components/KidsCard/KidsCard";
-import KidSearchResults from "../components/KidSearch/KidSearch";
+import KidSearchResults from "../components/KidSearchResults/KidSearchResults";
 import KidSearchResultsSuspense from "../components/KidSearchResults/KidSearchResultsSuspense";
 
 export type kidsArray = {
@@ -31,6 +31,9 @@ export default function Dashboard() {
     const router = useRouter();
     const newKidFormRef = useRef<HTMLDivElement | null>(null);
     const newKidSectionRef = useRef<HTMLElement | null>(null)
+    const kidsFirstNameInputRef = createRef<HTMLInputElement>()
+    const kidsLastNameInputRef = createRef<HTMLInputElement>()
+    const kidsBirthdayInputRef = createRef<HTMLInputElement>()
     // Track kid data loading state
     console.log(currentUser)
     console.log(user)
@@ -86,6 +89,16 @@ export default function Dashboard() {
                     duration: 0.5,
                     ease: 'power1.inOut',
                 });
+                if (kidsFirstNameInputRef.current) {
+                    kidsFirstNameInputRef.current.value = ''
+                }
+                if (kidsLastNameInputRef.current) {
+                    kidsLastNameInputRef.current.value = ''
+                }
+                if (kidsBirthdayInputRef.current) {
+                    kidsBirthdayInputRef.current.value = ''
+                }
+
             } else {
                 gsap.to(newKidSectionRef.current, {
                     autoAlpha: 1,
@@ -98,18 +111,18 @@ export default function Dashboard() {
         }
     }
 
-    const handleSearchChange = (value:string) => {
+    const handleSearchChange = (value: string) => {
         const newSearchTerm = value;
-      
+
         // Debouncing logic:
         const timeoutId = setTimeout(() => {
-          setKidSearchTerm(newSearchTerm);
+            setKidSearchTerm(newSearchTerm);
         }, 500); // Adjust delay (in milliseconds) as needed
-      
+
         // Cleanup function to clear the timeout when the component unmounts
         // or the search term changes before the timeout fires:
         return () => clearTimeout(timeoutId);
-      };
+    };
 
 
 
@@ -198,7 +211,7 @@ export default function Dashboard() {
                                         <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
                                         {/* <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => handleSearchChange(event.target.value)}></input> */}
                                         <Suspense fallback={<KidSearchResultsSuspense />}>
-                                            <KidSearchResults searchType='addKidToParent' searchTerm={kidSearchTerm} />
+                                            <KidSearchResults searchType='addKidToParent' currentUser={currentUser} searchTerm={kidSearchTerm} />
                                         </Suspense>
                                     </div>
                                     <h3 className='text-center w-full'>OR</h3>
@@ -209,16 +222,71 @@ export default function Dashboard() {
 
                                                 <input type="hidden" name='primary_caregiver' value={currentUser.id} />
                                                 <div className='pt-2 pb-1 flex justify-between w-full items-center'>
-                                                    <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label><input id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                    <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label>
+                                                    <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
                                                 </div>
                                                 <div className='py-1 flex justify-between w-full items-center'>
-                                                    <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label><input id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                    <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label>
+                                                    <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
                                                 </div>
                                                 <div className='py-1 flex justify-between w-full items-center'>
-                                                    <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label><input id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                    <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label>
+                                                    <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
                                                 </div>
                                                 <div className='py-1'>
-                                                    <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label><input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
+                                                    <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label>
+                                                    <input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
+                                                </div>
+                                                <div id='defaultProfilePics' className="py-1 w-full flex flex-wrap">
+                                                    <h4 className='font-bold text-xs w-full mb-2'>Choose default avatar</h4>
+                                                    <input type="radio" name="profile_pic" id="dinoProfilePic" value="/pics/dino_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="dinoProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/dino_profile_pic.webp" alt="Default Dino Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="dogProfilePic" value="/pics/dog_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="dogProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/dog_profile_pic.webp" alt="Default Dog Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="genericProfilePic" value="/pics/generic_profile_pic.webp" className='hidden' defaultChecked/>
+                                                    <label htmlFor="genericProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/generic_profile_pic.webp" alt="Default generic Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="knightProfilePic" value="/pics/knight_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="knightProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/knight_profile_pic.webp" alt="Default knight Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="princessProfilePic" value="/pics/princess_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="princessProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/princess_profile_pic.webp" alt="Default princess Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="robot1ProfilePic" value="/pics/robot1_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="robot1ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/robot1_profile_pic.webp" alt="Default robot1 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="robot2ProfilePic" value="/pics/robot2_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="robot2ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/robot2_profile_pic.webp" alt="Default robot2 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="robot3ProfilePic" value="/pics/robot3_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="robot3ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/robot3_profile_pic.webp" alt="Default robot3 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="superheroProfilePic" value="/pics/superhero_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="superheroProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/superhero_profile_pic.webp" alt="Default superhero Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="unicornProfilePic" value="/pics/unicorn_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="unicornProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/unicorn_profile_pic.webp" alt="Default unicorn Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="fairyProfilePic" value="/pics/fairy_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="fairyProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/fairy_profile_pic.webp" alt="Default fairy Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
+                                                    <input type="radio" name="profile_pic" id="ninjaProfilePic" value="/pics/ninja_profile_pic.webp" className='hidden' />
+                                                    <label htmlFor="ninjaProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                        <Image src="/pics/ninja_profile_pic.webp" alt="Default ninja Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                    </label>
                                                 </div>
                                                 {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
                                                 <SubmitButton text='Save New Kid' />

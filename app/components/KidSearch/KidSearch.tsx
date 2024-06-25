@@ -10,20 +10,20 @@ export default function KidSearchResults({ searchType, searchTerm }: { searchTyp
 
     useEffect(() => {
         const kidSearchResults = async () => {
-            const rawKidData = await searchForKids({ searchTerm })
-            if (rawKidData && rawKidData.length > 0) {
+            const kidResultArray = await searchForKids({ searchTerm })
+            if (kidResultArray && kidResultArray.length > 0) {
                 console.log('show results')
-                setSearchResults(rawKidData);
+                setSearchResults(kidResultArray);
                 gsap.to(kidSearchResultsRef.current,
                     {
                         autoAlpha: 1,
                         maxHeight: '200px',
                         duration: 1,
-                        ease: 'power1.inOut',                      
+                        ease: 'power1.inOut',
                     }
                 )
-                console.log(rawKidData)
-              } else {
+                console.log(kidResultArray)
+            } else {
                 // Handle the case where data is not available (e.g., set an empty array or loading state)
                 setSearchResults([]); // Set an empty array or display a loading message
                 gsap.to(kidSearchResultsRef.current,
@@ -34,20 +34,28 @@ export default function KidSearchResults({ searchType, searchTerm }: { searchTyp
                         ease: 'power1.inOut',
                     }
                 )
-              }
+            }
         }
-        
+
         kidSearchResults()
     }, [searchTerm])
 
     return (
         <section id='kidSearchResults' ref={kidSearchResultsRef} className='max-h-0 opacity-0 relative w-full overflow-hidden my-2 border-2 border-appBlue rounded-lg py-1'>
-            
+
             <Image src='/pics/test_playground.webp' fill={true} style={{ objectFit: 'cover' }} alt='background image of an empty playground' className='-z-10 opacity-20'></Image>
-            {searchResults ?
-            <div className='h-32 border-2 rounded border-appBlue ml-4 w-32'>test</div>
-        :
-        null}
-        </section>
+            {searchResults
+                ?
+                // searchResults.map((kid) => {
+                //     return (
+                //     <KidSearchResults key={kid.id} kidData={kid} />
+                //     )
+                // })
+
+                <div className='h-32 border-2 rounded border-appBlue ml-4 w-32'>test</div>
+                :
+                null
+            }
+                </section >
     )
 }

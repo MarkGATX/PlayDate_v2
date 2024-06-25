@@ -26,8 +26,8 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
             const { data: kidSearchData, error: kidSearchError }: { data: KidsType[] | null; error: PostgrestError | null } = await supabaseClient
                 .from('Kids')
                 .select('*')
-                // .or(`first_name.ilike.%${searchTerm}, last_name.ilike.%${searchTerm}`)
-                .ilike('first_name', `%${searchTerm}%`)
+                .or(`first_name.ilike.%${searchTerm}%, last_name.ilike.%${searchTerm}%`)
+                // .ilike('first_name', `%${searchTerm}%`)
             if (kidSearchError) {
                 console.error('Error searching for kids:', kidSearchError);
 
