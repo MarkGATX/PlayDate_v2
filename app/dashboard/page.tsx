@@ -124,32 +124,6 @@ export default function Dashboard() {
         return () => clearTimeout(timeoutId);
     };
 
-
-
-    // useEffect(() => {
-    //     const getKids = async () => {
-    //         setIsLoadingKids(true); // Set loading state for kids
-    //         try {
-    //             const { data: kidsRawData, error: kidsRawError }: { data: kidsArray | null, error: PostgrestError | null } = await supabaseClient
-    //                 .from('Adult_Kid')
-    //                 .select('Kids (*)')
-    //                 .eq('Adult_id', currentUser?.id); // Use adult ID only if fetched
-
-    //             if (kidsRawError) {
-    //                 throw kidsRawError;
-    //             }
-
-    //             setKidsData(kidsData);
-    //         } catch (error) {
-    //             console.error('Error fetching kids:', error);
-    //             // Handle errors appropriately
-    //         } finally {
-    //             setIsLoadingKids(false); // Reset loading state
-    //         }
-    //     };
-    //     getKids();
-    // }, [currentUser]); // Dependency on adultData
-
     return (
         <main>
             <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
@@ -237,54 +211,54 @@ export default function Dashboard() {
                                                     <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label>
                                                     <input id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 '></input>
                                                 </div>
-                                                <div id='defaultProfilePics' className="py-1 w-full flex flex-wrap">
+                                                <div id='defaultProfilePics' className="py-1 w-full flex flex-wrap gap-2 transition-all justify-center">
                                                     <h4 className='font-bold text-xs w-full mb-2'>Choose default avatar</h4>
                                                     <input type="radio" name="profile_pic" id="dinoProfilePic" value="/pics/dino_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="dinoProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="dinoProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/dino_profile_pic.webp" alt="Default Dino Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="dogProfilePic" value="/pics/dog_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="dogProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="dogProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/dog_profile_pic.webp" alt="Default Dog Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="genericProfilePic" value="/pics/generic_profile_pic.webp" className='hidden' defaultChecked/>
-                                                    <label htmlFor="genericProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="genericProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/generic_profile_pic.webp" alt="Default generic Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="knightProfilePic" value="/pics/knight_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="knightProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="knightProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/knight_profile_pic.webp" alt="Default knight Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="princessProfilePic" value="/pics/princess_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="princessProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="princessProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/princess_profile_pic.webp" alt="Default princess Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="robot1ProfilePic" value="/pics/robot1_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="robot1ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="robot1ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/robot1_profile_pic.webp" alt="Default robot1 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="robot2ProfilePic" value="/pics/robot2_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="robot2ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="robot2ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/robot2_profile_pic.webp" alt="Default robot2 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="robot3ProfilePic" value="/pics/robot3_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="robot3ProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="robot3ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/robot3_profile_pic.webp" alt="Default robot3 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="superheroProfilePic" value="/pics/superhero_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="superheroProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="superheroProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/superhero_profile_pic.webp" alt="Default superhero Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="unicornProfilePic" value="/pics/unicorn_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="unicornProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="unicornProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/unicorn_profile_pic.webp" alt="Default unicorn Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="fairyProfilePic" value="/pics/fairy_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="fairyProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="fairyProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/fairy_profile_pic.webp" alt="Default fairy Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                     <input type="radio" name="profile_pic" id="ninjaProfilePic" value="/pics/ninja_profile_pic.webp" className='hidden' />
-                                                    <label htmlFor="ninjaProfilePic" className='flex flex-col w-12 h-12 mx-2 cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <label htmlFor="ninjaProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
                                                         <Image src="/pics/ninja_profile_pic.webp" alt="Default ninja Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
                                                     </label>
                                                 </div>

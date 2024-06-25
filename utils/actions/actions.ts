@@ -18,7 +18,8 @@ export async function AddKid(formData: FormData) {
             last_name: formData.get('last_name') as string,
             birthday: formData.get('birthday') as string,
             first_name_only: formData.get('first_name_only') === 'on',
-            primary_caregiver: formData.get('primary_caregiver') as string
+            primary_caregiver: formData.get('primary_caregiver') as string,
+            profile_pic:formData.get('profile_pic') as string
         }
         console.log(rawAddKidData)
         const { data: newKidData, error: newKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
