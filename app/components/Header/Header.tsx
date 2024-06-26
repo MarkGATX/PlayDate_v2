@@ -59,7 +59,7 @@ export default function Header() {
 
     return (
         <>
-            <header className="w-full pt-4 pr-4 pl-4 flex flex-wrap justify-between gap-3">
+            <header className="w-full pt-4 pr-4 pl-4 flex flex-wrap justify-between gap-3 overflow-hidden z-10">
                 <Link href='/'>
                     <Image
                         src="/logos/playdate_logo.webp"
@@ -69,22 +69,24 @@ export default function Header() {
                         className=''>
                     </Image>
                 </Link>
-                <Image className='cursor-pointer' src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon' onClick={() => setShowMobileMenu(previousValue => !previousValue)}></Image>
-                <div id='mobileMenuContainer' className={`w-5/12 min-h-26 min-w-26 absolute z-10 border-t-2 border-l-2 border-b-2 border-appBlue rounded-l p-4 bg-appGold transition-all duration-500 top-12 ${showMobileMenu ? 'right-0' : 'right-[-300px]'}`}>
-                    <ul className='flex flex-col'>
-                    <Link href='/' onClick={(()=> setShowMobileMenu(previousValue => !previousValue))}>
-                            <li>Home</li>
-                        </Link>
-                        <Link href='/dashboard' onClick={(()=> setShowMobileMenu(previousValue => !previousValue))}>
-                            <li>Dashboard</li>
-                        </Link>
-                        {user ?
-                            <li className='cursor-pointer' onClick={handleGoogleLogout}>Logout</li>
-                            :
-                            <li className='cursor-pointer' onClick={handleGoogleLogin}>Login</li>
-                        }
-                    </ul>
-                </div>
+                <nav >
+                    <Image className='cursor-pointer' src='/icons/hamburger_icon.webp' height={32} width={32} alt='menu icon' onClick={() => setShowMobileMenu(previousValue => !previousValue)}></Image>
+                    <div id='mobileMenuContainer' className={`w-5/12 min-h-26 min-w-26 absolute border-t-2 border-l-2 border-b-2 border-appBlue rounded-l p-4 bg-appGold transition-all duration-500 top-12 z-10 right-0 ${showMobileMenu ? 'translate-x-0' : 'translate-x-full'}`}>
+                        <ul className='flex flex-col'>
+                            <Link href='/' onClick={(() => setShowMobileMenu(previousValue => !previousValue))}>
+                                <li>Home</li>
+                            </Link>
+                            <Link href='/dashboard' onClick={(() => setShowMobileMenu(previousValue => !previousValue))}>
+                                <li>Dashboard</li>
+                            </Link>
+                            {user ?
+                                <li className='cursor-pointer' onClick={handleGoogleLogout}>Logout</li>
+                                :
+                                <li className='cursor-pointer' onClick={handleGoogleLogin}>Login</li>
+                            }
+                        </ul>
+                    </div>
+                </nav>
                 <div id='weatherContainer' className='min-h-12 w-full'>
 
                     <Weather />

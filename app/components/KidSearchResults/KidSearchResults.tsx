@@ -23,19 +23,30 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
             //     )
             // }
             const kidResultArray = await searchForKids({ searchTerm })
-            if (kidResultArray && kidResultArray.length > 0) {
+            if (searchTerm && kidResultArray && kidResultArray.length > 0) {
                 console.log('show results')
                 setSearchResults(kidResultArray);
                 gsap.to(kidSearchResultsRef.current,
                     {
                         autoAlpha: 1,
                         maxHeight: '280px',
-                        height:'280px',
-                        duration: 1,
+                        height: '280px',
+                        duration: .5,
                         ease: 'power1.inOut',
                     }
                 )
                 console.log(kidResultArray)
+            } else if (searchTerm && kidResultArray && kidResultArray.length === 0) {
+                setSearchResults(kidResultArray);
+                gsap.to(kidSearchResultsRef.current,
+                    {
+                        autoAlpha: 1,
+                        maxHeight: '280px',
+                        height: '280px',
+                        duration: .5,
+                        ease: 'power1.inOut',
+                    }
+                )
             } else {
                 // Handle the case where data is not available (e.g., set an empty array or loading state)
                 setSearchResults([]); // Set an empty array or display a loading message
@@ -45,7 +56,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
                         autoAlpha: 0,
                         maxHeight: '280px',
                         height: 0,
-                        duration: 1,
+                        duration: .5,
                         ease: 'power1.inOut',
                     }
                 )
@@ -53,19 +64,30 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
         }
 
         kidSearchResults()
-    }, [searchTerm])
+    }, [searchTerm, searchResults])
 
     return (
         <section id='kidSearchResults' ref={kidSearchResultsRef} className='max-h-0 h-0 opacity-0 relative w-full overflow-hidden my-2 border-2 border-appBlue rounded-lg py-1 flex gap-2'>
 
             <Image src='/pics/test_playground.webp' fill={true} style={{ objectFit: 'cover' }} alt='background image of an empty playground' className='-z-10 opacity-20 '></Image>
-            {/* {searchTerm && searchResults.length === 0
+            {searchTerm && searchResults.length === 0
                 ?
                 <div className='p-2'>{`Sorry, we can't find that kid.`}</div>
                 :
-                null
-            } */}
-            {searchResults
+                searchTerm && searchResults.length > 0
+                    ?
+                    searchResults.map((kid) => {
+                        return (
+                            <KidSearchCard key={kid.id} searchType={searchType} currentUserId={currentUser.id} kidData={kid} />
+                        )
+                    })
+
+                    // < div className='h-32 border-2 rounded border-appBlue ml-4 w-32'>test</>
+                    :
+                    null
+
+            }
+            {/* {searchResults
                 ?
                 searchResults.map((kid) => {
                     return (
@@ -76,7 +98,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
                 // < div className='h-32 border-2 rounded border-appBlue ml-4 w-32'>test</>
                 :
                 null
-            }
+            } */}
         </section >
     )
 }

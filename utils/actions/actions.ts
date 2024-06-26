@@ -6,22 +6,15 @@ import { PostgrestError, PostgrestResponse } from "@supabase/supabase-js";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-export async function AddKid(formData: FormData) {
+export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
 
-    if (!formData) {
-        return; // Handle the case where form has no data
-    }
+    // if (!formData) {
+    //     return; // Handle the case where form has no data
+    // }
 
     try {
-        const rawAddKidData: Omit<KidsType, 'id'> = {
-            first_name: formData.get('first_name') as string,
-            last_name: formData.get('last_name') as string,
-            birthday: formData.get('birthday') as string,
-            first_name_only: formData.get('first_name_only') === 'on',
-            primary_caregiver: formData.get('primary_caregiver') as string,
-            profile_pic:formData.get('profile_pic') as string
-        }
-        console.log(rawAddKidData)
+        
+        
         const { data: newKidData, error: newKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
             .from('Kids')
             .insert([rawAddKidData])
@@ -35,7 +28,8 @@ export async function AddKid(formData: FormData) {
             const newRelationshipData: RelationshipType = {
                 relationship: 'parent',
                 kid_id: newKidData.id,
-                adult_id: formData.get('primary_caregiver') as string
+                adult_id: rawAddKidData.primary_caregiver
+                // adult_id: formData.get('primary_caregiver') as string
             }
             console.log(newRelationshipData)
             const { data: newRelationship, error: newRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
@@ -45,6 +39,7 @@ export async function AddKid(formData: FormData) {
             if (newRelationshipError) {
                 throw handleSupabaseError(newRelationshipError)
             }
+            return newKidData
         }
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors

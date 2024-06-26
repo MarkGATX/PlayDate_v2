@@ -14,7 +14,7 @@ export default function KidSearchCard({ kidData, searchType, currentUserId }: { 
                 ?
                 kidData.primary_caregiver === currentUserId //if current user is already primary, render nothing. else render card
                     ?
-                    null
+                    <p className='text-xs w-full text-center'>Primary Caregiver</p>
                     :
                     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4'>Request add</button>
                 :

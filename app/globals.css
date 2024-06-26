@@ -17,7 +17,14 @@
 
 body {
   color: var(--appBlue);
-  background: var(--backgroundColor)
+  background: var(--backgroundColor);
+  position:relative;
+  overflow-x:hidden;
+}
+
+main {
+  position:relative;
+  z-index:1;
 }
 
 header {
