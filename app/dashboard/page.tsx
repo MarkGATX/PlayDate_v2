@@ -16,7 +16,7 @@ import KidSearchResults from "../components/KidSearchResults/KidSearchResults";
 import KidSearchResultsSuspense from "../components/KidSearchResults/KidSearchResultsSuspense";
 import { unstable_cache } from "next/cache";
 
-export const revalidate = 60
+// export const revalidate = 60
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -55,6 +55,9 @@ export default function Dashboard() {
     const kidsFirstNameOnlyInputRef = createRef<HTMLInputElement>()
     const kidsProfilePicInputRef = createRef<HTMLInputElement>()
     const saveNewKidButtonRef = useRef<HTMLButtonElement>(null)
+    const firstNameErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const lastNameErrorRef = useRef<HTMLParagraphElement>(null)
+    const birthdayErrorRef = useRef<HTMLParagraphElement>(null)
     // Track kid data loading state
     console.log(currentUser)
     console.log(user)
@@ -149,9 +152,9 @@ export default function Dashboard() {
                     height: '0',
                     duration: 0.5,
                     ease: 'power1.inOut',
-                    
+
                 });
-               
+
                 if (kidsFirstNameInputRef.current) {
                     kidsFirstNameInputRef.current.value = ''
                 }
@@ -161,6 +164,10 @@ export default function Dashboard() {
                 if (kidsBirthdayInputRef.current) {
                     kidsBirthdayInputRef.current.value = ''
                 }
+                setNewKidFirstName('')
+                setNewKidLastName('')
+                setNewKidBirthday('')
+                setNewKidProfilePic('')
                 setKidSearchTerm('')
 
             } else {
@@ -173,7 +180,7 @@ export default function Dashboard() {
                         console.log('animation complete')
                         // Scroll to top after animation completes
                         newKidSection.scrollIntoView({ behavior: "smooth" });
-                      }
+                    }
                 });
             }
             setNewKidSectionOpen(previousValue => !previousValue)
@@ -199,6 +206,22 @@ export default function Dashboard() {
         //error handling for fields
         if (!newKidFirstName) {
             setNewKidFormError({ firstNameError: `First name can't be blank` })
+            if (firstNameErrorRef.current) {
+                firstNameErrorRef.current.innerText = `First name can't be blank`
+                gsap.to(firstNameErrorRef.current, {
+                    height: '2em',
+                    autoAlpha: 1
+                })
+            }
+        } else {
+            setNewKidFormError({ firstNameError: undefined })
+            if (firstNameErrorRef.current) {
+                firstNameErrorRef.current.innerText = ``
+                gsap.to(firstNameErrorRef.current, {
+                    height: 0,
+                    autoAlpha: 1
+                })
+            }
         }
         if (newKidFirstName && !alphanumericRegex.test(newKidFirstName)) {
             setNewKidFormError({ firstNameError: `First name can only be letters and numbers` })
@@ -258,7 +281,7 @@ export default function Dashboard() {
                 //                         duration: 0.5
                 //                     });
                 //                     toggleNewKidForm();
-                                    
+
                 //                 }, 2000);
                 //             }
                 //         }
@@ -283,7 +306,7 @@ export default function Dashboard() {
                 //                         duration: 0.5
                 //                     });
                 //                     toggleNewKidForm();
-                                    
+
                 //                 }, 2000);
                 //             }
                 //         }
@@ -366,17 +389,18 @@ export default function Dashboard() {
                                             <form id='addNewKidForm' className='flex justify-between flex-wrap'>
 
                                                 <input type="hidden" name='primary_caregiver' value={currentUser.id} />
-                                                <div className='pt-2 pb-1 flex justify-between w-full items-center'>
+                                                <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
                                                     <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label>
-                                                    <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                    <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className={`rounded border-2  p-1 text-sm  w-2/3 ${newKidFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                                    <p ref={firstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'>herlo</p>
                                                 </div>
                                                 <div className='py-1 flex justify-between w-full items-center'>
                                                     <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label>
-                                                    <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3'></input>
+                                                    <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm  w-2/3'></input>
                                                 </div>
                                                 <div className='py-1 flex justify-between w-full items-center'>
                                                     <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label>
-                                                    <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm ml-2 w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
+                                                    <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
                                                 </div>
                                                 <div className='py-1'>
                                                     <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label>
@@ -434,7 +458,7 @@ export default function Dashboard() {
                                                     </label>
                                                 </div>
                                                 {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
-                                                <button ref={saveNewKidButtonRef} className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2' disabled={pending} onClick={(event) => handleAddNewKid(event)} >
+                                                <button ref={saveNewKidButtonRef} className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2 ml-auto' disabled={pending} onClick={(event) => handleAddNewKid(event)} >
                                                     Save New Kid
                                                 </button>
                                                 {/* <SubmitButton text='Save New Kid' uiHandler={toggleNewKidForm} /> */}

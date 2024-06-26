@@ -375,7 +375,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                             <div className='block w-full text-xs'>
                                 {kidFirstNameOnly ? `Show only first name in search` : `Show full name in search`}
                             </div>
-                            <div className='block w-full text-xs'>
+                            <div className='w-full text-xs flex'>
                                 <label htmlFor="birthday" className='mr-2'>Birthday: </label><input disabled type='date' id='birthday' className='w-4/6 rounded' value={kidBirthday ? kidBirthday : undefined}></input>
                             </div>
                             <p className='text-xs'>{kidAge ? `${kidAge} years old` : null}</p>

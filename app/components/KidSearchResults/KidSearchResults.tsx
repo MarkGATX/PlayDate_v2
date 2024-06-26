@@ -64,7 +64,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
         }
 
         kidSearchResults()
-    }, [searchTerm, searchResults])
+    }, [searchTerm])
 
     return (
         <section id='kidSearchResults' ref={kidSearchResultsRef} className='max-h-0 h-0 opacity-0 relative w-full overflow-hidden my-2 border-2 border-appBlue rounded-lg py-1 flex gap-2'>
