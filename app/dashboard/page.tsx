@@ -204,10 +204,19 @@ export default function Dashboard() {
         event.preventDefault();
         const alphanumericRegex = /^[a-z0-9]+$/i;
         //error handling for fields
-        if (!newKidFirstName) {
+        if (newKidFirstName === null || newKidFirstName === undefined || !newKidFirstName?.trim()) {
             setNewKidFormError({ firstNameError: `First name can't be blank` })
             if (firstNameErrorRef.current) {
+                gsap.to(firstNameErrorRef.current, {
+                    height: '2em',
+                    autoAlpha: 1
+                })
                 firstNameErrorRef.current.innerText = `First name can't be blank`
+            }
+        } else if (newKidFirstName && !alphanumericRegex.test(newKidFirstName)) {
+            setNewKidFormError({ firstNameError: `First name can only be letters and numbers` })
+            if (firstNameErrorRef.current) {
+                firstNameErrorRef.current.innerText = `First name can only be letters and numbers`
                 gsap.to(firstNameErrorRef.current, {
                     height: '2em',
                     autoAlpha: 1
@@ -219,270 +228,338 @@ export default function Dashboard() {
                 firstNameErrorRef.current.innerText = ``
                 gsap.to(firstNameErrorRef.current, {
                     height: 0,
-                    autoAlpha: 1
+                    autoAlpha: 0
                 })
             }
         }
-        if (newKidFirstName && !alphanumericRegex.test(newKidFirstName)) {
-            setNewKidFormError({ firstNameError: `First name can only be letters and numbers` })
-        }
-        if (!newKidLastName) {
-            setNewKidFormError({ lastNameError: `Last name can't be blank` })
-        }
-        if (newKidLastName && !alphanumericRegex.test(newKidLastName)) {
-            setNewKidFormError({ lastNameError: `Last name can only be letters and numbers` })
-        }
-        if (!newKidBirthday) {
-            setNewKidFormError({ birthdayError: `Birthday is required` })
-        }
 
-        if (!newKidProfilePic) {
-            setNewKidProfilePic(`/pics/generic_profile_pic.webp`)
+    if (!newKidLastName) {
+        setNewKidFormError({ lastNameError: `Last name can't be blank` })
+        if (lastNameErrorRef.current) {
+            lastNameErrorRef.current.innerText = `Last name can't be blank`
+            gsap.to(lastNameErrorRef.current, {
+                height: '2em',
+                autoAlpha: 1
+            })
         }
-        if (!currentUser) {
-            console.log('return from current user false: ', currentUser)
-            return
+    } else if (newKidLastName && !alphanumericRegex.test(newKidLastName)) {
+        setNewKidFormError({ lastNameError: `Last name can only be letters and numbers` })
+        if (lastNameErrorRef.current) {
+            lastNameErrorRef.current.innerText = `Last name can only be letters and numbers`
+            gsap.to(lastNameErrorRef.current, {
+                height: '2em',
+                autoAlpha: 1
+            })
         }
-        console.log(newKidFormError)
-        console.log(currentUser)
-        console.log(newKidFirstName)
-        console.log(newKidLastName)
-        console.log(newKidBirthday)
-        console.log(newKidProfilePic)
-        console.log(newKidFirstNameOnly)
-        console.log(!newKidFormError && currentUser && newKidFirstName && newKidLastName && newKidBirthday && newKidProfilePic && newKidFirstNameOnly)
-        // build data and create new kid after double checking that fields are valid
-        if (!newKidFormError && currentUser && newKidFirstName && newKidLastName && newKidBirthday && newKidProfilePic) {
-            console.log('run new kid action')
-            const rawAddKidData = {
-                first_name: newKidFirstName,
-                last_name: newKidLastName,
-                birthday: newKidBirthday,
-                first_name_only: newKidFirstNameOnly,
-                primary_caregiver: currentUser.id,
-                profile_pic: newKidProfilePic
-            }
-
-            try {
-                const addKidResult = await AddKid(rawAddKidData)
-                console.log(addKidResult)
-                // if (saveNewKidButtonRef.current) {
-                //     const buttonElement = saveNewKidButtonRef.current;
-                //     gsap.to(buttonElement,
-                //         {
-                //             text: 'New Kid added',
-                //             duration: .5,
-                //             onComplete: () => {
-                //                 // Delay before switching back (using setTimeout)
-                //                 setTimeout(() => {
-                //                     // Switch back to default text using GSAP
-                //                     gsap.to(buttonElement, {
-                //                         text: 'Save New Kid', // Use defaultText data attribute or fallback
-                //                         duration: 0.5
-                //                     });
-                //                     toggleNewKidForm();
-
-                //                 }, 2000);
-                //             }
-                //         }
-                //     )
-                //     toggleNewKidForm();
-                // }
-                toggleNewKidForm();
-                setReRenderEffect(previousValue => !previousValue)
-            } catch (error) {
-                // if (saveNewKidButtonRef.current) {
-                //     const buttonElement = saveNewKidButtonRef.current;
-                //     gsap.to(buttonElement,
-                //         {
-                //             text: 'Error: Kid NOT Added',
-                //             duration: .5,
-                //             onComplete: () => {
-                //                 // Delay before switching back (using setTimeout)
-                //                 setTimeout(() => {
-                //                     // Switch back to default text using GSAP
-                //                     gsap.to(buttonElement, {
-                //                         text: 'Save New Kid', // Use defaultText data attribute or fallback
-                //                         duration: 0.5
-                //                     });
-                //                     toggleNewKidForm();
-
-                //                 }, 2000);
-                //             }
-                //         }
-                //     )
-                //     toggleNewKidForm();
-                // }
-                console.log(error)
-            }
+    } else {
+        setNewKidFormError({ lastNameError: undefined })
+        if (lastNameErrorRef.current) {
+            lastNameErrorRef.current.innerText = ``
+            gsap.to(lastNameErrorRef.current, {
+                height: 0,
+                autoAlpha: 0
+            })
         }
     }
-
-    return (
-        <main>
-            <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
-                <h1 className='font-bold text-xl'>Dashboard</h1>
-            </div>
-            {!currentUser
-                ?
-                <>
-                    <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
-                </>
-                :
-                <>
-                    <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
-                        <div id='profileName' className='w-7/12'>
-                            <h2 className='font-bold text-lg'>
-                                {currentUser?.first_name} {currentUser?.last_name}
-                            </h2>
-                            <p className='text-xs'>{currentUser?.phone_number ? currentUser.phone_number : `No phone number`}</p>
-                            <p className='text-xs'>{currentUser?.email ? currentUser.email : `No e-mail`}</p>
-                            {/* add toggle later for editing inputs */}
-                            {/* <input inputMode="email"></input> */}
-
-                        </div>
-                        <div id='profilePicContainer' className='flex flex-col items-center'>
-                            <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
-                                <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
-                            </div>
-                            <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
-                        </div>
-                        <div id='profileOptions' className='w-full'>
-                            <fieldset className='text-sm'>
-                                <div className='block'>
-                                    <input type='checkbox' id='showPhoneNumberToggle' className='mr-2'></input><label htmlFor="showPhoneNumberToggle">Show phone number to connections</label>
-                                </div>
-                                <div className='block'>
-                                    <input type='checkbox' id='showLastNameToggle' className='mr-2'></input><label htmlFor="showLastNameToggle">Show e-mail to connections</label>
-                                </div>
-                            </fieldset>
-                        </div>
-
-                    </section>
-                    <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
-                        <h2 className='font-bold text-lg w-full'>Kids:</h2>
-                        {currentUser && currentUser?.Kids.length > 0
-                            ?
-                            currentUser.Kids.map((kid) => (
-                                <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id} />
-                            ))
-                            :
-                            null
-                        }
-                        {/* Make sure currentUser is true before rendering add kid form */}
-                        {currentUser?.id
-                            ?
-                            <>
-                                <section id='addNewKidSection' ref={newKidSectionRef} className='h-0 overflow-hidden rounded-xl p-2 opacity-0 border-2 border-appBlue'>
-                                    <div>
-                                        <h3 className='font-bold'>Search for kid...</h3>
-                                        <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
-                                        {/* <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => handleSearchChange(event.target.value)}></input> */}
-                                        <Suspense fallback={<KidSearchResultsSuspense />}>
-                                            <KidSearchResults searchType='addKidToParent' currentUser={currentUser} searchTerm={kidSearchTerm} />
-                                        </Suspense>
-                                    </div>
-                                    <h3 className='text-center w-full'>OR</h3>
-                                    <div>
-                                        <h3 className='font-bold'>Add new kid...</h3>
-                                        <div id='newKidForm' ref={newKidFormRef}>
-                                            <form id='addNewKidForm' className='flex justify-between flex-wrap'>
-
-                                                <input type="hidden" name='primary_caregiver' value={currentUser.id} />
-                                                <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
-                                                    <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label>
-                                                    <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className={`rounded border-2  p-1 text-sm  w-2/3 ${newKidFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
-                                                    <p ref={firstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'>herlo</p>
-                                                </div>
-                                                <div className='py-1 flex justify-between w-full items-center'>
-                                                    <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label>
-                                                    <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm  w-2/3'></input>
-                                                </div>
-                                                <div className='py-1 flex justify-between w-full items-center'>
-                                                    <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label>
-                                                    <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
-                                                </div>
-                                                <div className='py-1'>
-                                                    <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label>
-                                                    <input ref={kidsFirstNameOnlyInputRef} id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setNewKidFirstNameOnly(event.target.checked)}></input>
-                                                </div>
-                                                <div id='defaultProfilePics' className="py-1 w-full flex flex-wrap gap-2 transition-all justify-center">
-                                                    <h4 className='font-bold text-xs w-full mb-2'>Choose default avatar</h4>
-                                                    <input type="radio" name="profile_pic" id="dinoProfilePic" value="/pics/dino_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/dino_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="dinoProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/dino_profile_pic.webp" alt="Default Dino Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="dogProfilePic" value="/pics/dog_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/dog_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="dogProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/dog_profile_pic.webp" alt="Default Dog Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="genericProfilePic" value="/pics/generic_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/generic_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="genericProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/generic_profile_pic.webp" alt="Default generic Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="knightProfilePic" value="/pics/knight_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/knight_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="knightProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/knight_profile_pic.webp" alt="Default knight Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="princessProfilePic" value="/pics/princess_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/princess_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="princessProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/princess_profile_pic.webp" alt="Default princess Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="robot1ProfilePic" value="/pics/robot1_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot1_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="robot1ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/robot1_profile_pic.webp" alt="Default robot1 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="robot2ProfilePic" value="/pics/robot2_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot2_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="robot2ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/robot2_profile_pic.webp" alt="Default robot2 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="robot3ProfilePic" value="/pics/robot3_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot3_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="robot3ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/robot3_profile_pic.webp" alt="Default robot3 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="superheroProfilePic" value="/pics/superhero_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/superhero_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="superheroProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/superhero_profile_pic.webp" alt="Default superhero Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="unicornProfilePic" value="/pics/unicorn_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/unicorn_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="unicornProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/unicorn_profile_pic.webp" alt="Default unicorn Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="fairyProfilePic" value="/pics/fairy_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/fairy_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="fairyProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/fairy_profile_pic.webp" alt="Default fairy Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                    <input type="radio" name="profile_pic" id="ninjaProfilePic" value="/pics/ninja_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/ninja_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
-                                                    <label htmlFor="ninjaProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
-                                                        <Image src="/pics/ninja_profile_pic.webp" alt="Default ninja Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                                    </label>
-                                                </div>
-                                                {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
-                                                <button ref={saveNewKidButtonRef} className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2 ml-auto' disabled={pending} onClick={(event) => handleAddNewKid(event)} >
-                                                    Save New Kid
-                                                </button>
-                                                {/* <SubmitButton text='Save New Kid' uiHandler={toggleNewKidForm} /> */}
-
-                                            </form>
-                                        </div>
-                                    </div>
-                                </section>
-                            </>
-                            :
-                            <div> You have to be logged in to do this</div>
-
-                        }
-
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidSectionOpen ? `Cancel` : `Add New Kid`}</button>
-
-
-                    </section>
-                    <section id='notificationSection' className='w-full p-4'>
-                        <h2 className='font-bold text-lg w-full'>Notifications:</h2>
-                    </section>
-                </>
-
+    
+    if (!newKidBirthday) {
+        setNewKidFormError({ birthdayError: `Birthday is required` })
+        if (birthdayErrorRef.current) {
+            birthdayErrorRef.current.innerText = `Birthday is required`
+            gsap.to(birthdayErrorRef.current, {
+                height: '2em',
+                autoAlpha: 1
+            })
+        }
+    } else {
+        setNewKidFormError({ birthdayError: undefined })
+        if (birthdayErrorRef.current) {
+            birthdayErrorRef.current.innerText = ``
+            gsap.to(lastNameErrorRef.current, {
+                height: 0,
+                autoAlpha: 0
+            })
+        }
+    }
+    if (newKidBirthday) {
+        const parsedKidEditedBirthday = new Date(newKidBirthday)
+        const today = new Date()
+        const editedKidAgeMS = today.getTime() - parsedKidEditedBirthday.getTime()
+        const editedKidAgeYears = editedKidAgeMS / (1000 * 60 * 60 * 24 * 365.25)
+        if (editedKidAgeYears >= 19) {
+            setNewKidFormError({ birthdayError: 'Kids must be 18 or younger' })
+            if (birthdayErrorRef.current) {
+                // using separate declaration because gsap oddly animating the number 18 from 0 to 18 instead of displaying just the number
+                birthdayErrorRef.current.innerText = 'Kids must be 18 or younger'
+                gsap.to(birthdayErrorRef.current,
+                    {
+                        autoAlpha: 1,
+                        maxHeight: '2em',
+                    }
+                )
             }
-        </main>
-    )
+        } else {
+            setNewKidFormError({ birthdayError: undefined })
+            if (birthdayErrorRef.current) {
+                birthdayErrorRef.current.innerText = ``
+                gsap.to(lastNameErrorRef.current, {
+                    height: 0,
+                    autoAlpha: 0
+                })
+            }
+
+        }
+    }
+    if (!newKidProfilePic) {
+        setNewKidProfilePic(`/pics/generic_profile_pic.webp`)
+    }
+    if (!currentUser) {
+        console.log('return from current user false: ', currentUser)
+        return
+    }
+    console.log(newKidFormError)
+    console.log(currentUser)
+    console.log(newKidFirstName)
+    console.log(newKidLastName)
+    console.log(newKidBirthday)
+    console.log(newKidProfilePic)
+    console.log(newKidFirstNameOnly)
+    console.log(!newKidFormError && currentUser && newKidFirstName && newKidLastName && newKidBirthday && newKidProfilePic && newKidFirstNameOnly)
+    // build data and create new kid after double checking that fields are valid
+    if (!newKidFormError && currentUser && newKidFirstName && newKidLastName && newKidBirthday && newKidProfilePic) {
+        console.log('run new kid action')
+        const rawAddKidData = {
+            first_name: newKidFirstName.trim(),
+            last_name: newKidLastName.trim(),
+            birthday: newKidBirthday,
+            first_name_only: newKidFirstNameOnly,
+            primary_caregiver: currentUser.id,
+            profile_pic: newKidProfilePic
+        }
+
+        try {
+            const addKidResult = await AddKid(rawAddKidData)
+            console.log(addKidResult)
+            // if (saveNewKidButtonRef.current) {
+            //     const buttonElement = saveNewKidButtonRef.current;
+            //     gsap.to(buttonElement,
+            //         {
+            //             text: 'New Kid added',
+            //             duration: .5,
+            //             onComplete: () => {
+            //                 // Delay before switching back (using setTimeout)
+            //                 setTimeout(() => {
+            //                     // Switch back to default text using GSAP
+            //                     gsap.to(buttonElement, {
+            //                         text: 'Save New Kid', // Use defaultText data attribute or fallback
+            //                         duration: 0.5
+            //                     });
+            //                     toggleNewKidForm();
+
+            //                 }, 2000);
+            //             }
+            //         }
+            //     )
+            //     toggleNewKidForm();
+            // }
+            toggleNewKidForm();
+            setReRenderEffect(previousValue => !previousValue)
+        } catch (error) {
+            // if (saveNewKidButtonRef.current) {
+            //     const buttonElement = saveNewKidButtonRef.current;
+            //     gsap.to(buttonElement,
+            //         {
+            //             text: 'Error: Kid NOT Added',
+            //             duration: .5,
+            //             onComplete: () => {
+            //                 // Delay before switching back (using setTimeout)
+            //                 setTimeout(() => {
+            //                     // Switch back to default text using GSAP
+            //                     gsap.to(buttonElement, {
+            //                         text: 'Save New Kid', // Use defaultText data attribute or fallback
+            //                         duration: 0.5
+            //                     });
+            //                     toggleNewKidForm();
+
+            //                 }, 2000);
+            //             }
+            //         }
+            //     )
+            //     toggleNewKidForm();
+            // }
+            console.log(error)
+        }
+    }
+}
+
+return (
+    <main>
+        <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
+            <h1 className='font-bold text-xl'>Dashboard</h1>
+        </div>
+        {!currentUser
+            ?
+            <>
+                <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
+            </>
+            :
+            <>
+                <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
+                    <div id='profileName' className='w-7/12'>
+                        <h2 className='font-bold text-lg'>
+                            {currentUser?.first_name} {currentUser?.last_name}
+                        </h2>
+                        <p className='text-xs'>{currentUser?.phone_number ? currentUser.phone_number : `No phone number`}</p>
+                        <p className='text-xs'>{currentUser?.email ? currentUser.email : `No e-mail`}</p>
+                        {/* add toggle later for editing inputs */}
+                        {/* <input inputMode="email"></input> */}
+
+                    </div>
+                    <div id='profilePicContainer' className='flex flex-col items-center'>
+                        <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
+                            <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
+                        </div>
+                        <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
+                    </div>
+                    <div id='profileOptions' className='w-full'>
+                        <fieldset className='text-sm'>
+                            <div className='block'>
+                                <input type='checkbox' id='showPhoneNumberToggle' className='mr-2'></input><label htmlFor="showPhoneNumberToggle">Show phone number to connections</label>
+                            </div>
+                            <div className='block'>
+                                <input type='checkbox' id='showLastNameToggle' className='mr-2'></input><label htmlFor="showLastNameToggle">Show e-mail to connections</label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                </section>
+                <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
+                    <h2 className='font-bold text-lg w-full'>Kids:</h2>
+                    {currentUser && currentUser?.Kids.length > 0
+                        ?
+                        currentUser.Kids.map((kid) => (
+                            <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id} />
+                        ))
+                        :
+                        null
+                    }
+                    {/* Make sure currentUser is true before rendering add kid form */}
+                    {currentUser?.id
+                        ?
+                        <>
+                            <section id='addNewKidSection' ref={newKidSectionRef} className='h-0 overflow-hidden rounded-xl p-2 opacity-0 border-2 border-appBlue'>
+                                <div>
+                                    <h3 className='font-bold'>Search for kid...</h3>
+                                    <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
+                                    {/* <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => handleSearchChange(event.target.value)}></input> */}
+                                    <Suspense fallback={<KidSearchResultsSuspense />}>
+                                        <KidSearchResults searchType='addKidToParent' currentUser={currentUser} searchTerm={kidSearchTerm} />
+                                    </Suspense>
+                                </div>
+                                <h3 className='text-center w-full'>OR</h3>
+                                <div>
+                                    <h3 className='font-bold'>Add new kid...</h3>
+                                    <div id='newKidForm' ref={newKidFormRef}>
+                                        <form id='addNewKidForm' className='flex justify-between flex-wrap'>
+
+                                            <input type="hidden" name='primary_caregiver' value={currentUser.id} />
+                                            <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
+                                                <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label>
+                                                <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className={`rounded border-2  p-1 text-sm  w-2/3 ${newKidFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                                <p ref={firstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+                                            </div>
+                                            <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
+                                                <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label>
+                                                <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm  w-2/3'></input>
+                                                <p ref={lastNameErrorRef} className='w-full text-xs h-0 opacity-0  text-red-700'></p>
+                                            </div>
+                                            <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
+                                                <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label>
+                                                <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
+                                                <p ref={birthdayErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+                                            </div>
+                                            <div className='py-1'>
+                                                <label htmlFor="kidsShowLastNameInput" className='text-sm w-1/2'>Show First Name Only</label>
+                                                <input ref={kidsFirstNameOnlyInputRef} id='kidsShowLastNameInput' type="checkbox" name='first_name_only' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setNewKidFirstNameOnly(event.target.checked)}></input>
+
+                                            </div>
+                                            <div id='defaultProfilePics' className="py-1 w-full flex flex-wrap gap-2 transition-all justify-center">
+                                                <h4 className='font-bold text-xs w-full mb-2'>Choose default avatar</h4>
+                                                <input type="radio" name="profile_pic" id="dinoProfilePic" value="/pics/dino_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/dino_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="dinoProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/dino_profile_pic.webp" alt="Default Dino Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="dogProfilePic" value="/pics/dog_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/dog_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="dogProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/dog_profile_pic.webp" alt="Default Dog Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="genericProfilePic" value="/pics/generic_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/generic_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="genericProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/generic_profile_pic.webp" alt="Default generic Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="knightProfilePic" value="/pics/knight_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/knight_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="knightProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/knight_profile_pic.webp" alt="Default knight Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="princessProfilePic" value="/pics/princess_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/princess_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="princessProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/princess_profile_pic.webp" alt="Default princess Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="robot1ProfilePic" value="/pics/robot1_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot1_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="robot1ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/robot1_profile_pic.webp" alt="Default robot1 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="robot2ProfilePic" value="/pics/robot2_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot2_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="robot2ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/robot2_profile_pic.webp" alt="Default robot2 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="robot3ProfilePic" value="/pics/robot3_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/robot3_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="robot3ProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/robot3_profile_pic.webp" alt="Default robot3 Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="superheroProfilePic" value="/pics/superhero_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/superhero_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="superheroProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/superhero_profile_pic.webp" alt="Default superhero Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="unicornProfilePic" value="/pics/unicorn_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/unicorn_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="unicornProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/unicorn_profile_pic.webp" alt="Default unicorn Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="fairyProfilePic" value="/pics/fairy_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/fairy_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="fairyProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/fairy_profile_pic.webp" alt="Default fairy Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                                <input type="radio" name="profile_pic" id="ninjaProfilePic" value="/pics/ninja_profile_pic.webp" className='hidden' checked={newKidProfilePic === '/pics/ninja_profile_pic.webp'} onChange={(event) => setNewKidProfilePic(event.target.value)} />
+                                                <label htmlFor="ninjaProfilePic" className='flex flex-col w-12 h-12  cursor-pointer items-center justify-start relative hover:scale-110 transition-all'>
+                                                    <Image src="/pics/ninja_profile_pic.webp" alt="Default ninja Profile Pic" className='relative w-16 h-16 max-h-20 rounded-full border-appGold border-2 bg-appBG overflow-hidden' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </label>
+                                            </div>
+                                            {/* <button type='submit' disabled={pending}>Save New Kid</button> */}
+                                            <button ref={saveNewKidButtonRef} className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2 ml-auto' disabled={pending} onClick={(event) => handleAddNewKid(event)} >
+                                                Save New Kid
+                                            </button>
+                                            {/* <SubmitButton text='Save New Kid' uiHandler={toggleNewKidForm} /> */}
+
+                                        </form>
+                                    </div>
+                                </div>
+                            </section>
+                        </>
+                        :
+                        <div> You have to be logged in to do this</div>
+
+                    }
+
+                    <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={toggleNewKidForm}>{newKidSectionOpen ? `Cancel` : `Add New Kid`}</button>
+
+
+                </section>
+                <section id='notificationSection' className='w-full p-4'>
+                    <h2 className='font-bold text-lg w-full'>Notifications:</h2>
+                </section>
+            </>
+
+        }
+    </main>
+)
 }
