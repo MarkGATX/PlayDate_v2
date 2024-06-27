@@ -5,7 +5,7 @@ import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import { AddKid } from "@/utils/actions/actions";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { Suspense, createRef, useContext, useEffect, useRef, useState } from "react";
+import { RefObject, Suspense, createRef, useContext, useEffect, useRef, useState } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import supabaseClient from "@/utils/supabase/client";
 import SubmitButton from "../components/SubmitButton/SubmitButton";
@@ -144,6 +144,20 @@ export default function Dashboard() {
         getCurrentUser();
     }, [user, reRenderEffect])
 
+    const showErrorMessage = contextSafe((messageRef:RefObject<HTMLElement>) => {
+        gsap.to(messageRef.current, {
+            height: '2em',
+            autoAlpha: 1
+        })
+    })
+
+    const closeErrorMessage = contextSafe((messageRef:RefObject<HTMLElement>) => {
+        gsap.to(messageRef.current, {
+            height: 0,
+            autoAlpha: 0
+        })
+    })
+
     const toggleNewKidForm = contextSafe(() => {
         console.log(newKidSectionRef)
         if (newKidSectionRef.current) {
@@ -202,10 +216,11 @@ export default function Dashboard() {
             }))
             formError = true
             if (firstNameErrorRef.current) {
-                gsap.to(firstNameErrorRef.current, {
-                    height: '2em',
-                    autoAlpha: 1
-                })
+                // gsap.to(firstNameErrorRef.current, {
+                //     height: '2em',
+                //     autoAlpha: 1
+                // })
+                showErrorMessage(firstNameErrorRef)
                 firstNameErrorRef.current.innerText = `First name can't be blank`
             }
         } else if (newKidFirstName && !alphanumericRegex.test(newKidFirstName)) {
@@ -216,10 +231,11 @@ export default function Dashboard() {
             formError = true
             if (firstNameErrorRef.current) {
                 firstNameErrorRef.current.innerText = `First name can only be letters and numbers`
-                gsap.to(firstNameErrorRef.current, {
-                    height: '2em',
-                    autoAlpha: 1
-                })
+                // gsap.to(firstNameErrorRef.current, {
+                //     height: '2em',
+                //     autoAlpha: 1
+                // })
+                showErrorMessage(firstNameErrorRef)
             }
         } else {
             formError = false
@@ -232,10 +248,11 @@ export default function Dashboard() {
             // setNewKidFormError({ firstNameError: undefined })
             if (firstNameErrorRef.current) {
                 firstNameErrorRef.current.innerText = ``
-                gsap.to(firstNameErrorRef.current, {
-                    height: 0,
-                    autoAlpha: 0
-                })
+                // gsap.to(firstNameErrorRef.current, {
+                //     height: 0,
+                //     autoAlpha: 0
+                // })
+                closeErrorMessage(firstNameErrorRef)
             }
         }
         // check last name for empty or invalid
@@ -247,10 +264,11 @@ export default function Dashboard() {
             formError = true
             if (lastNameErrorRef.current) {
                 lastNameErrorRef.current.innerText = `Last name can't be blank`
-                gsap.to(lastNameErrorRef.current, {
-                    height: '2em',
-                    autoAlpha: 1
-                })
+                // gsap.to(lastNameErrorRef.current, {
+                //     height: '2em',
+                //     autoAlpha: 1
+                // })
+                showErrorMessage(lastNameErrorRef)
             }
         } else if (newKidLastName && !alphanumericRegex.test(newKidLastName)) {
             setNewKidFormError(prevState => ({ 
@@ -260,10 +278,11 @@ export default function Dashboard() {
             formError = true
             if (lastNameErrorRef.current) {
                 lastNameErrorRef.current.innerText = `Last name can only be letters and numbers`
-                gsap.to(lastNameErrorRef.current, {
-                    height: '2em',
-                    autoAlpha: 1
-                })
+                // gsap.to(lastNameErrorRef.current, {
+                //     height: '2em',
+                //     autoAlpha: 1
+                // })
+                showErrorMessage(lastNameErrorRef)
             }
         } else {
             formError = false
@@ -275,10 +294,11 @@ export default function Dashboard() {
             )
             if (lastNameErrorRef.current) {
                 lastNameErrorRef.current.innerText = ``
-                gsap.to(lastNameErrorRef.current, {
-                    height: 0,
-                    autoAlpha: 0
-                })
+                // gsap.to(lastNameErrorRef.current, {
+                //     height: 0,
+                //     autoAlpha: 0
+                // })
+                closeErrorMessage(lastNameErrorRef)
             }
         }
         // check birthday for empty or too old
@@ -290,10 +310,11 @@ export default function Dashboard() {
             formError = true
             if (birthdayErrorRef.current) {
                 birthdayErrorRef.current.innerText = `Birthday is required`
-                gsap.to(birthdayErrorRef.current, {
-                    height: '2em',
-                    autoAlpha: 1
-                })
+                // gsap.to(birthdayErrorRef.current, {
+                //     height: '2em',
+                //     autoAlpha: 1
+                // })
+                showErrorMessage(birthdayErrorRef)
             }
         } else if (newKidBirthday) {
             const parsedKidEditedBirthday = new Date(newKidBirthday)
@@ -309,12 +330,13 @@ export default function Dashboard() {
                 if (birthdayErrorRef.current) {
                     // using separate declaration because gsap oddly animating the number 18 from 0 to 18 instead of displaying just the number
                     birthdayErrorRef.current.innerText = 'Kids must be 18 or younger'
-                    gsap.to(birthdayErrorRef.current,
-                        {
-                            autoAlpha: 1,
-                            maxHeight: '2em',
-                        }
-                    )
+                    // gsap.to(birthdayErrorRef.current,
+                    //     {
+                    //         autoAlpha: 1,
+                    //         maxHeight: '2em',
+                    //     }
+                    // )
+                    showErrorMessage(birthdayErrorRef)
                 }
             } else {
                 setNewKidFormError(prevState => {
@@ -326,10 +348,11 @@ export default function Dashboard() {
                 formError = false
                 if (birthdayErrorRef.current) {
                     birthdayErrorRef.current.innerText = ``
-                    gsap.to(birthdayErrorRef.current, {
-                        height: 0,
-                        autoAlpha: 0
-                    })
+                    // gsap.to(birthdayErrorRef.current, {
+                    //     height: 0,
+                    //     autoAlpha: 0
+                    // })
+                    closeErrorMessage(birthdayErrorRef)
                 }
 
             }
