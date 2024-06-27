@@ -5,11 +5,13 @@ import { useContext } from "react";
 export default function KidSearchCard({ kidData, searchType, currentUserId }: { kidData: KidsType, searchType: string, currentUserId: string }) {
     console.log(currentUserId)
     return (
-        <div id='kidSearchResultCard' className='h-48 border-2 rounded border-appBlue ml-4 w-36 p-2 bg-appBG flex flex-col items-center justify-between'>
-            <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 bg-appBG overflow-hidden '>
-                <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
+        <div id='kidSearchResultCard' className='h-48 border-2 rounded border-appBlue mx-2 mt-2 w-32 p-2 bg-appBG flex flex-col items-center justify-between'>
+            <div className='flex justify-center flex-col items-center gap-2'>
+                <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 bg-appBG overflow-hidden '>
+                    <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
+                </div>
+                <h2 className='text-center text-xs'>{kidData.first_name} {kidData.first_name_only ? null : kidData.last_name}</h2>
             </div>
-            <h2 className='text-center tex-sm'>{kidData.first_name} {kidData.first_name_only ? null : kidData.last_name}</h2>
             {searchType === 'addKidToParent'
                 ?
                 kidData.primary_caregiver === currentUserId //if current user is already primary, render nothing. else render card
