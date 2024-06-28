@@ -30,7 +30,7 @@ export type newKidFormErrorType = {
 }
 
 export default function Dashboard() {
-    const [reRenderEffect, setReRenderEffect] = useState<Boolean>(false)
+    const [reRenderEffect, setReRenderEffect] = useState<boolean>(false)
     const { pending } = useFormStatus()
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [firebaseUid, setFirebaseUid] = useState<string | undefined>()
@@ -164,7 +164,7 @@ export default function Dashboard() {
 
     const handleAddNewKid = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        let formError: Boolean = false
+        let formError: boolean = false
         const alphanumericRegex = /^[a-z0-9]+$/i;
         //error handling for fields
         // check first name field for empty or invalid
@@ -361,7 +361,7 @@ export default function Dashboard() {
                 </>
                 :
                 <>
-                    <AdultInfo user={currentUser} />
+                    <AdultInfo user={currentUser} reRender={setReRenderEffect}/>
 
                     <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
                         <h2 className='font-bold text-lg w-full'>Kids:</h2>

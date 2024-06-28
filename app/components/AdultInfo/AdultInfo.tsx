@@ -14,16 +14,16 @@ export type editAdultFormErrorType = {
 }
 
 
-export default function AdultInfo({ user }: { user: AdultsType }) {
+export default function AdultInfo({ user, reRender }: { user: AdultsType , reRender:React.Dispatch<React.SetStateAction<boolean>>}) {
 
     const [editAdultFormError, setEditAdultFormError] = useState<editAdultFormErrorType | null>(null)
-    const [editAdultInfo, setEditAdultInfo] = useState<Boolean>(false)
-    const [newAdultFirstName, setAdultFirstName] = useState<string>()
-    const [newAdultLastName, setAdultLastName] = useState<string>()
-    const [newAdultPhoneNumber, setAdultPhoneNumber] = useState<string>()
-    const [newAdultEmail, setAdultEmail] = useState<string | null>(user.email)
-    const [newAdultShowPhoneNumber, setAdultShowPhoneNumber] = useState<boolean>(false)
-    const [newAdultShowEmail, setAdultShowEmail] = useState<boolean>(false)
+    const [editAdultInfo, setEditAdultInfo] = useState<boolean>(false)
+    const [adultFirstName, setAdultFirstName] = useState<string>(user.first_name)
+    const [adultLastName, setAdultLastName] = useState<string>(user.last_name)
+    const [adultPhoneNumber, setAdultPhoneNumber] = useState<string | undefined>(user.phone_number)
+    const [adultEmail, setAdultEmail] = useState<string>(user.email)
+    const [adultShowPhoneNumber, setAdultShowPhoneNumber] = useState(user.show_phone_number)
+    const [adultShowEmail, setAdultShowEmail] = useState(user.show_email)
     const adultFirstNameInputRef = createRef<HTMLInputElement>()
     const adultLastNameInputRef = createRef<HTMLInputElement>()
     const adultEmailInputRef = createRef<HTMLInputElement>()
@@ -64,11 +64,11 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
 
     const handleSaveAdultInfoEdits = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        let formError: Boolean = false
+        let formError: boolean = false
         const alphanumericRegex = /^[a-z0-9]+$/i;
         //error handling for fields
         // check first name field for empty or invalid
-        if (newAdultFirstName === null || newAdultFirstName === undefined || !newAdultFirstName?.trim()) {
+        if (adultFirstName === null || adultFirstName === undefined || !adultFirstName?.trim()) {
             setEditAdultFormError(prevState => ({
                 ...prevState,
                 firstNameError: `First name can't be blank`
@@ -78,7 +78,7 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
                 showAdultInfoErrorMessage(adultFirstNameErrorRef)
                 adultFirstNameErrorRef.current.innerText = `First name can't be blank`
             }
-        } else if (newAdultFirstName && !alphanumericRegex.test(newAdultFirstName)) {
+        } else if (adultFirstName && !alphanumericRegex.test(adultFirstName)) {
             setEditAdultFormError(prevState => ({
                 ...prevState,
                 firstNameError: `First name can only be letters and numbers`
@@ -103,7 +103,7 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
             }
         }
         // check last name for empty or invalid
-        if (newAdultLastName === null || newAdultLastName === undefined || !newAdultLastName?.trim()) {
+        if (adultLastName === null || adultLastName === undefined || !adultLastName?.trim()) {
             setEditAdultFormError(prevState => ({
                 ...prevState,
                 lastNameError: `Last name can't be blank`
@@ -113,7 +113,7 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
                 adultLastNameErrorRef.current.innerText = `Last name can't be blank`
                 showAdultInfoErrorMessage(adultLastNameErrorRef)
             }
-        } else if (newAdultLastName && !alphanumericRegex.test(newAdultLastName)) {
+        } else if (adultLastName && !alphanumericRegex.test(adultLastName)) {
             setEditAdultFormError(prevState => ({
                 ...prevState,
                 lastNameError: `Last name can only be letters and numbers`
@@ -137,15 +137,15 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
             }
         }
 
-        if (!formError && newAdultFirstName && newAdultLastName) {
+        if (!formError && adultFirstName && adultLastName) {
             console.log('run new kid action')
             const editAdultData: Omit<AdultsType, 'firebase_uid' | 'profilePicURL' | 'Kids' | 'Adult_Kid' | 'emergency_contact'> = {
-                first_name: newAdultFirstName.trim(),
-                last_name: newAdultLastName.trim(),
-                show_phone_number: newAdultShowPhoneNumber,
-                show_email: newAdultShowEmail,
-                phone_number:newAdultPhoneNumber,
-                email:newAdultEmail,
+                first_name: adultFirstName.trim(),
+                last_name: adultLastName.trim(),
+                show_phone_number: adultShowPhoneNumber,
+                show_email: adultShowEmail,
+                phone_number:adultPhoneNumber,
+                email:adultEmail,
                 id:user.id
 
             }
@@ -153,7 +153,8 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
             try {
                 const editAdultResult = await EditAdult(editAdultData)
                 console.log(editAdultResult)
-
+                setEditAdultInfo(false)
+                reRender(previousValue => !previousValue)
                 // toggleNewKidForm();
                 // setReRenderEffect(previousValue => !previousValue)
             } catch (error) {
@@ -170,16 +171,16 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
                     <>
                         <div id='profileName' className='w-7/12'>
 
-                            <input ref={adultFirstNameInputRef} id='adultFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setAdultFirstName(event.target.value)} required={true} value={user?.first_name} className={`rounded border-2 p-1 text-sm  w-full ${editAdultFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultFirstNameInputRef} id='adultFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setAdultFirstName(event.target.value)} required={true} value={adultFirstName} className={`rounded border-2 p-1 text-sm  w-full ${editAdultFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultFirstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
 
-                            <input ref={adultLastNameInputRef} id='adultLastNameInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultLastName(event.target.value)} required={true} value={user?.last_name} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.lastNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultLastNameInputRef} id='adultLastNameInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultLastName(event.target.value)} required={true} value={adultLastName} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.lastNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultLastNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
 
-                            <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="text" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={user?.phone_number} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="text" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={adultPhoneNumber} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultPhoneNumberErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
 
-                            <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="text" placeholder="E-mail" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={user?.last_name} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="text" placeholder="E-mail" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={adultEmail} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultEmailErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
                         </div>
                         <div id='profilePicContainer' className='flex flex-col items-center'>
@@ -191,7 +192,7 @@ export default function AdultInfo({ user }: { user: AdultsType }) {
                         <div id='profileOptions' className='w-full'>
                             <div>
                                 <input ref={adultShowPhoneNumberInputRef} id='adultShowPhoneNumber' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm mx-2 ' onChange={(event) => setAdultShowPhoneNumber(event.target.checked)}></input>
-                                <label htmlFor="adultShowPhoneNumber" className='text-sm w-1/2'>Show First Name Only to Connections</label>
+                                <label htmlFor="adultShowPhoneNumber" className='text-sm w-1/2'>Show Phone Number to Connections</label>
                             </div>
                             <div>
                                 <input ref={adultShowEmailInputRef} id='adultShowEmail' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm mx-2 ' onChange={(event) => setAdultShowEmail(event.target.checked)}></input>
