@@ -16,8 +16,7 @@ import KidSearchResults from "../components/KidSearchResults/KidSearchResults";
 import KidSearchResultsSuspense from "../components/KidSearchResults/KidSearchResultsSuspense";
 import { unstable_cache } from "next/cache";
 import { useGSAP } from "@gsap/react";
-
-// export const revalidate = 60
+import AdultInfo from "../components/AdultInfo/AdultInfo";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -27,14 +26,6 @@ export type newKidFormErrorType = {
     firstNameError?: string
     lastNameError?: string
     birthdayError?: string
-    profilePicError?: string
-}
-
-export type editAdultFormErrorType = {
-    firstNameError?: string
-    lastNameError?: string
-    phoneNumberError?: string
-    emailError?: string
     profilePicError?: string
 }
 
@@ -50,8 +41,6 @@ export default function Dashboard() {
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
     const [newKidFormError, setNewKidFormError] = useState<newKidFormErrorType | null>(null)
-    const [editAdultFormError, setEditAdultFormError] = useState<editAdultFormErrorType | null>(null)
-    const [editAdultInfo, setEditAdultInfo] = useState<Boolean>(false)
     const [newKidFirstName, setNewKidFirstName] = useState<string>();
     const [newKidLastName, setNewKidLastName] = useState<string>();
     const [newKidBirthday, setNewKidBirthday] = useState<string>();
@@ -68,65 +57,8 @@ export default function Dashboard() {
     const firstNameErrorRef = useRef<HTMLParagraphElement | null>(null)
     const lastNameErrorRef = useRef<HTMLParagraphElement | null>(null)
     const birthdayErrorRef = useRef<HTMLParagraphElement | null>(null)
-    const adultFirstNameInputRef = createRef<HTMLInputElement>()
-    const adultLastNameInputRef = createRef<HTMLInputElement>()
-    const adultEmailInputRef = createRef<HTMLInputElement>()
-    const adultShowPhoneNumberInputRef = createRef<HTMLInputElement>()
-    const adultShowEmailInputRef = createRef<HTMLInputElement>()
-    const adultPhoneNumberInputRef = createRef<HTMLInputElement>()
-    const adultFirstNameErrorRef = useRef<HTMLParagraphElement | null>(null)
-    const adultLastNameErrorRef = useRef<HTMLParagraphElement | null>(null)
-    const adultPhoneNumberErrorRef = useRef<HTMLParagraphElement | null>(null)
-    const adultEmailErrorRef = useRef<HTMLParagraphElement | null>(null)
-    const [newAdultFirstName, setAdultFirstName] = useState<string>()
-    const [newAdultLastName, setAdultLastName] = useState<string>()
-    const [newAdultPhoneNumber, setAdultPhoneNumber] = useState<string>()
-    const [newAdultEmail, setAdultEmail] = useState<string>()
-    const [newAdultShowPhoneNumber, setAdultShowPhoneNumber] = useState<boolean>()
-    const [newAdultShowEmail, setAdultShowEmail] = useState<boolean>()
-    // Track kid data loading state
-    console.log(currentUser)
-    console.log(user)
 
-    // const getCachedUser = unstable_cache(
-    //     async () =>  {
-    //         try {
-    //         const firebase_uid = user?.uid
-    //         if (!firebase_uid) {
-    //             return
-    //         }
-    //         const { data: adultData, error: adultError } = await supabaseClient
-    //             .from('Adults')
-    //             .select('*, Adult_Kid (*)') // Select only the ID for efficiency
-    //             .eq('firebase_uid', firebase_uid);
-    //         if (adultError) {
-    //             throw adultError;
-    //         }
-    //         if (adultData) {
-    //             const kidIds = adultData[0].Adult_Kid.map((akData: any) => akData.kid_id);
-    //             console.dir(kidIds)
-    //             const { data: kidsData, error: kidsError } = await supabaseClient
-    //                 .from('Kids')
-    //                 .select('*')
-    //                 .in('id', kidIds)
-    //             if (kidsError) {
-    //                 throw kidsError;
-    //             }
-    //             if (kidsData) {
-    //                 setCurrentUser({
-    //                     ...adultData[0],
-    //                     Kids: kidsData,
-    //                 });
-    //             }
-    //         }
-    //     } catch (error) {
-    //         console.log(error)
-    //     }
-    // },
-    // ['cached-user-data'],
-    // {tags:['currentUserData']}
-    // )
-
+    //set context for gsap cleanups
     const { contextSafe } = useGSAP();
 
     useEffect(() => {
@@ -182,6 +114,8 @@ export default function Dashboard() {
             autoAlpha: 0
         })
     })
+
+
 
     const toggleNewKidForm = contextSafe(() => {
         console.log(newKidSectionRef)
@@ -427,87 +361,7 @@ export default function Dashboard() {
                 </>
                 :
                 <>
-                    {editAdultInfo
-                        ?
-                        <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
-                            <div id='profileName' className='w-7/12'>
-
-                                <input ref={adultFirstNameInputRef} id='adultFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setAdultFirstName(event.target.value)} required={true} value={currentUser?.first_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
-                                <p ref={adultFirstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
-
-                                <input ref={adultLastNameInputRef} id='adultLastNameInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultLastName(event.target.value)} required={true} value={currentUser?.last_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.lastNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
-                                <p ref={adultLastNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
-
-                                <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="text" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={currentUser?.phone_number} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
-                                <p ref={adultPhoneNumberErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
-
-                                <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={currentUser?.last_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
-                                <p ref={adultEmailErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
-
-
-
-
-                                {/* add toggle later for editing inputs */}
-                                {/* <input inputMode="email"></input> */}
-
-                            </div>
-                            <div id='profilePicContainer' className='flex flex-col items-center'>
-                                <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
-                                    <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                </div>
-                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
-                            </div>
-                            <div id='profileOptions' className='w-full'>
-                                <label htmlFor="adultShowPhoneNumber" className='text-sm w-1/2'>Show First Name Only</label>
-                                <input ref={adultShowPhoneNumberInputRef} id='adultShowPhoneNumber' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setAdultShowPhoneNumber(event.target.checked)}></input>
-
-                                <label htmlFor="adultShowEmail" className='text-sm w-1/2'>Show First Name Only</label>
-                                <input ref={adultShowEmailInputRef} id='adultShowEmail' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setAdultShowEmail(event.target.checked)}></input>
-                            </div>
-
-                        </section>
-                        :
-                        <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
-                            <div id='profileName' className='w-7/12'>
-                                <h2 className='font-bold text-lg'>
-                                    {currentUser?.first_name} {currentUser?.last_name}
-                                </h2>
-                                <p className='text-xs'>{currentUser?.phone_number ? currentUser.phone_number : `No phone number`}</p>
-                                <p className='text-xs'>{currentUser?.email ? currentUser.email : `No e-mail`}</p>
-                                {/* add toggle later for editing inputs */}
-                                {/* <input inputMode="email"></input> */}
-
-                            </div>
-                            <div id='profilePicContainer' className='flex flex-col items-center'>
-                                <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
-                                    <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
-                                </div>
-                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
-                            </div>
-                            <div id='profileOptions' className='w-full'>
-                                <fieldset className='text-sm'>
-                                    <div className='block'>
-                                    {currentUser.show_phone_number
-                                            ?
-                                            <p>Show <span className='font-bold'>phone number</span> to connections</p>
-                                            :
-                                            <p>Do <span className="font-bold">NOT</span> show phone number to connections</p>
-                                        }
-                                        
-                                    </div>
-                                    <div className='block'>
-                                        {currentUser.show_email
-                                            ?
-                                            <p>Show <span className='font-bold'>email</span> to connections</p>
-                                            :
-                                            <p>Do <span className="font-bold">NOT</span> show email to connections</p>
-                                        }
-                                    </div>
-                                </fieldset>
-                            </div>
-
-                        </section>
-                    }
+                    <AdultInfo user={currentUser} />
 
                     <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
                         <h2 className='font-bold text-lg w-full'>Kids:</h2>

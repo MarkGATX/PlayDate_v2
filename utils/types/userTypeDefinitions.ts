@@ -12,7 +12,6 @@ export type AdultsType = {
     last_name:string
     phone_number?:string
     email:string | null
-    show_last_name:boolean
     emergency_contact?:string
     profilePicURL: string | null | undefined
     show_phone_number: boolean
