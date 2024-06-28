@@ -30,6 +30,14 @@ export type newKidFormErrorType = {
     profilePicError?: string
 }
 
+export type editAdultFormErrorType = {
+    firstNameError?: string
+    lastNameError?: string
+    phoneNumberError?: string
+    emailError?: string
+    profilePicError?: string
+}
+
 export default function Dashboard() {
     const [reRenderEffect, setReRenderEffect] = useState<Boolean>(false)
     const { pending } = useFormStatus()
@@ -42,7 +50,8 @@ export default function Dashboard() {
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
     const [newKidFormError, setNewKidFormError] = useState<newKidFormErrorType | null>(null)
-    const router = useRouter();
+    const [editAdultFormError, setEditAdultFormError] = useState<editAdultFormErrorType | null>(null)
+    const [editAdultInfo, setEditAdultInfo] = useState<Boolean>(false)
     const [newKidFirstName, setNewKidFirstName] = useState<string>();
     const [newKidLastName, setNewKidLastName] = useState<string>();
     const [newKidBirthday, setNewKidBirthday] = useState<string>();
@@ -59,6 +68,22 @@ export default function Dashboard() {
     const firstNameErrorRef = useRef<HTMLParagraphElement | null>(null)
     const lastNameErrorRef = useRef<HTMLParagraphElement | null>(null)
     const birthdayErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const adultFirstNameInputRef = createRef<HTMLInputElement>()
+    const adultLastNameInputRef = createRef<HTMLInputElement>()
+    const adultEmailInputRef = createRef<HTMLInputElement>()
+    const adultShowPhoneNumberInputRef = createRef<HTMLInputElement>()
+    const adultShowEmailInputRef = createRef<HTMLInputElement>()
+    const adultPhoneNumberInputRef = createRef<HTMLInputElement>()
+    const adultFirstNameErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const adultLastNameErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const adultPhoneNumberErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const adultEmailErrorRef = useRef<HTMLParagraphElement | null>(null)
+    const [newAdultFirstName, setAdultFirstName] = useState<string>()
+    const [newAdultLastName, setAdultLastName] = useState<string>()
+    const [newAdultPhoneNumber, setAdultPhoneNumber] = useState<string>()
+    const [newAdultEmail, setAdultEmail] = useState<string>()
+    const [newAdultShowPhoneNumber, setAdultShowPhoneNumber] = useState<boolean>()
+    const [newAdultShowEmail, setAdultShowEmail] = useState<boolean>()
     // Track kid data loading state
     console.log(currentUser)
     console.log(user)
@@ -144,14 +169,14 @@ export default function Dashboard() {
         getCurrentUser();
     }, [user, reRenderEffect])
 
-    const showErrorMessage = contextSafe((messageRef:RefObject<HTMLElement>) => {
+    const showErrorMessage = contextSafe((messageRef: RefObject<HTMLElement>) => {
         gsap.to(messageRef.current, {
             height: '2em',
             autoAlpha: 1
         })
     })
 
-    const closeErrorMessage = contextSafe((messageRef:RefObject<HTMLElement>) => {
+    const closeErrorMessage = contextSafe((messageRef: RefObject<HTMLElement>) => {
         gsap.to(messageRef.current, {
             height: 0,
             autoAlpha: 0
@@ -205,14 +230,14 @@ export default function Dashboard() {
 
     const handleAddNewKid = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        let formError:Boolean = false
+        let formError: Boolean = false
         const alphanumericRegex = /^[a-z0-9]+$/i;
         //error handling for fields
         // check first name field for empty or invalid
         if (newKidFirstName === null || newKidFirstName === undefined || !newKidFirstName?.trim()) {
-            setNewKidFormError(prevState => ({ 
+            setNewKidFormError(prevState => ({
                 ...prevState,
-                firstNameError: `First name can't be blank` 
+                firstNameError: `First name can't be blank`
             }))
             formError = true
             if (firstNameErrorRef.current) {
@@ -224,9 +249,9 @@ export default function Dashboard() {
                 firstNameErrorRef.current.innerText = `First name can't be blank`
             }
         } else if (newKidFirstName && !alphanumericRegex.test(newKidFirstName)) {
-            setNewKidFormError(prevState => ({ 
+            setNewKidFormError(prevState => ({
                 ...prevState,
-                firstNameError: `First name can only be letters and numbers` 
+                firstNameError: `First name can only be letters and numbers`
             }))
             formError = true
             if (firstNameErrorRef.current) {
@@ -257,9 +282,9 @@ export default function Dashboard() {
         }
         // check last name for empty or invalid
         if (newKidLastName === null || newKidLastName === undefined || !newKidLastName?.trim()) {
-            setNewKidFormError(prevState => ({ 
+            setNewKidFormError(prevState => ({
                 ...prevState,
-                lastNameError: `Last name can't be blank` 
+                lastNameError: `Last name can't be blank`
             }))
             formError = true
             if (lastNameErrorRef.current) {
@@ -271,9 +296,9 @@ export default function Dashboard() {
                 showErrorMessage(lastNameErrorRef)
             }
         } else if (newKidLastName && !alphanumericRegex.test(newKidLastName)) {
-            setNewKidFormError(prevState => ({ 
+            setNewKidFormError(prevState => ({
                 ...prevState,
-                lastNameError: `Last name can only be letters and numbers` 
+                lastNameError: `Last name can only be letters and numbers`
             }))
             formError = true
             if (lastNameErrorRef.current) {
@@ -303,9 +328,9 @@ export default function Dashboard() {
         }
         // check birthday for empty or too old
         if (!newKidBirthday) {
-            setNewKidFormError(prevState => ({ 
+            setNewKidFormError(prevState => ({
                 ...prevState,
-                birthdayError: `Birthday is required` 
+                birthdayError: `Birthday is required`
             }))
             formError = true
             if (birthdayErrorRef.current) {
@@ -322,9 +347,9 @@ export default function Dashboard() {
             const editedKidAgeMS = today.getTime() - parsedKidEditedBirthday.getTime()
             const editedKidAgeYears = editedKidAgeMS / (1000 * 60 * 60 * 24 * 365.25)
             if (editedKidAgeYears >= 19) {
-                setNewKidFormError(prevState => ({ 
+                setNewKidFormError(prevState => ({
                     ...prevState,
-                    birthdayError: 'Kids must be 18 or younger' 
+                    birthdayError: 'Kids must be 18 or younger'
                 }))
                 formError = true
                 if (birthdayErrorRef.current) {
@@ -380,11 +405,11 @@ export default function Dashboard() {
             try {
                 const addKidResult = await AddKid(rawAddKidData)
                 console.log(addKidResult)
-              
+
                 toggleNewKidForm();
                 setReRenderEffect(previousValue => !previousValue)
             } catch (error) {
-               
+
                 console.log(error)
             }
         }
@@ -402,35 +427,88 @@ export default function Dashboard() {
                 </>
                 :
                 <>
-                    <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
-                        <div id='profileName' className='w-7/12'>
-                            <h2 className='font-bold text-lg'>
-                                {currentUser?.first_name} {currentUser?.last_name}
-                            </h2>
-                            <p className='text-xs'>{currentUser?.phone_number ? currentUser.phone_number : `No phone number`}</p>
-                            <p className='text-xs'>{currentUser?.email ? currentUser.email : `No e-mail`}</p>
-                            {/* add toggle later for editing inputs */}
-                            {/* <input inputMode="email"></input> */}
+                    {editAdultInfo
+                        ?
+                        <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
+                            <div id='profileName' className='w-7/12'>
 
-                        </div>
-                        <div id='profilePicContainer' className='flex flex-col items-center'>
-                            <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
-                                <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                <input ref={adultFirstNameInputRef} id='adultFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setAdultFirstName(event.target.value)} required={true} value={currentUser?.first_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                <p ref={adultFirstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+
+                                <input ref={adultLastNameInputRef} id='adultLastNameInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultLastName(event.target.value)} required={true} value={currentUser?.last_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.lastNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                <p ref={adultLastNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+
+                                <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="text" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={currentUser?.phone_number} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                <p ref={adultPhoneNumberErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+
+                                <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={currentUser?.last_name} className={`rounded border-2  p-1 text-sm  w-2/3 ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                <p ref={adultEmailErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
+
+
+
+
+                                {/* add toggle later for editing inputs */}
+                                {/* <input inputMode="email"></input> */}
+
                             </div>
-                            <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
-                        </div>
-                        <div id='profileOptions' className='w-full'>
-                            <fieldset className='text-sm'>
-                                <div className='block'>
-                                    <input type='checkbox' id='showPhoneNumberToggle' className='mr-2'></input><label htmlFor="showPhoneNumberToggle">Show phone number to connections</label>
+                            <div id='profilePicContainer' className='flex flex-col items-center'>
+                                <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
+                                    <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
                                 </div>
-                                <div className='block'>
-                                    <input type='checkbox' id='showLastNameToggle' className='mr-2'></input><label htmlFor="showLastNameToggle">Show e-mail to connections</label>
-                                </div>
-                            </fieldset>
-                        </div>
+                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
+                            </div>
+                            <div id='profileOptions' className='w-full'>
+                                <label htmlFor="adultShowPhoneNumber" className='text-sm w-1/2'>Show First Name Only</label>
+                                <input ref={adultShowPhoneNumberInputRef} id='adultShowPhoneNumber' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setAdultShowPhoneNumber(event.target.checked)}></input>
 
-                    </section>
+                                <label htmlFor="adultShowEmail" className='text-sm w-1/2'>Show First Name Only</label>
+                                <input ref={adultShowEmailInputRef} id='adultShowEmail' type="checkbox" name='show_phone_number' className='rounded border-2 border-appBlue p-1 text-sm ml-2 ' onChange={(event) => setAdultShowEmail(event.target.checked)}></input>
+                            </div>
+
+                        </section>
+                        :
+                        <section id='profileDetails' className='flex justify-between p-4 w-full flex-wrap gap-y-4'>
+                            <div id='profileName' className='w-7/12'>
+                                <h2 className='font-bold text-lg'>
+                                    {currentUser?.first_name} {currentUser?.last_name}
+                                </h2>
+                                <p className='text-xs'>{currentUser?.phone_number ? currentUser.phone_number : `No phone number`}</p>
+                                <p className='text-xs'>{currentUser?.email ? currentUser.email : `No e-mail`}</p>
+                                {/* add toggle later for editing inputs */}
+                                {/* <input inputMode="email"></input> */}
+
+                            </div>
+                            <div id='profilePicContainer' className='flex flex-col items-center'>
+                                <div id='profilePic' className='relative w-20 h-20 max-h-20 rounded-full border-appBlue border-2 overflow-hidden'>
+                                    <Image src={currentUser?.profilePicURL ? currentUser.profilePicURL : `/pics/generic_profile_pic.webp`} alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                </div>
+                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button>
+                            </div>
+                            <div id='profileOptions' className='w-full'>
+                                <fieldset className='text-sm'>
+                                    <div className='block'>
+                                    {currentUser.show_phone_number
+                                            ?
+                                            <p>Show <span className='font-bold'>phone number</span> to connections</p>
+                                            :
+                                            <p>Do <span className="font-bold">NOT</span> show phone number to connections</p>
+                                        }
+                                        
+                                    </div>
+                                    <div className='block'>
+                                        {currentUser.show_email
+                                            ?
+                                            <p>Show <span className='font-bold'>email</span> to connections</p>
+                                            :
+                                            <p>Do <span className="font-bold">NOT</span> show email to connections</p>
+                                        }
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                        </section>
+                    }
+
                     <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
                         <h2 className='font-bold text-lg w-full'>Kids:</h2>
                         {currentUser && currentUser?.Kids.length > 0

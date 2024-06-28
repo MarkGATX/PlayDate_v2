@@ -37,6 +37,7 @@ export default function Header() {
                     email: result.user.email,
                     profilePicURL: result.user.photoURL,
                     firebase_uid: result.user.uid,
+                    
                 }
                 const existingUser = await checkUser(newUserData);
                 console.log(existingUser, user)

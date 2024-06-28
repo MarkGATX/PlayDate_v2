@@ -15,6 +15,8 @@ export type AdultsType = {
     show_last_name:boolean
     emergency_contact?:string
     profilePicURL: string | null | undefined
+    show_phone_number: boolean
+    show_email:boolean
     firebase_uid:string
     Adult_Kid: AdultKidRelationshipType[]
     Kids: KidsType[]
