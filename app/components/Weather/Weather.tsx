@@ -3,12 +3,15 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { LocationContext } from "@/utils/location/LocationContext";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 // export default function Weather({ locationData }: WeatherProps) {
 export default function Weather() {
     const [currentTempLeftPosition, setCurrentTempLeftPosition] = useState<number>(0)
     const [showDetails, setShowDetails] = useState<boolean>(false)
     const weatherDetailsRef = useRef<HTMLElement>(null);
+    const weatherForecastText = useRef<HTMLDivElement>(null)
     const locationData = useContext(LocationContext);
     const currentWeather = useContext(WeatherContext).weatherData
     const weatherError = useContext(WeatherContext).error
@@ -29,12 +32,34 @@ export default function Weather() {
 
     }, [currentWeather]);
 
-    // useEffect(() => {
-    //     if (weatherDetailsRef.current) {
-    //         weatherDetailsHeight = weatherDetailsRef.current.offsetHeight;
+    const { contextSafe } = useGSAP()
 
-    //     }
-    // }, []);
+    const handleShowWeather = contextSafe(() => {
+        if (weatherForecastText.current) {
+            if (!showDetails) {
+                
+                const weatherForecastHeight = weatherForecastText.current.offsetHeight
+                console.log(weatherForecastHeight)
+                gsap.to(weatherDetailsRef.current, {
+                    height: weatherForecastHeight * 2,
+                    autoAlpha: 1,
+                    ease:'power2.out',
+                    duration:.5
+
+                })
+                setShowDetails(previousValue => !previousValue)
+            }
+            else {
+                // console.log(weatherForecastHeight)
+                gsap.to(weatherDetailsRef.current, {
+                    height: 0,
+                    autoAlpha: 0,
+                    ease:'power2.out'
+                })
+                setShowDetails(previousValue => !previousValue)
+            }
+        }
+    })
 
     console.log(currentWeather)
     return (
@@ -55,7 +80,7 @@ export default function Weather() {
                                 </div>
                                 :
                                 <>
-                                    <section id='tempRange' className="w-2/3 max-w-2/3 pr-1 flex items-center justify-between z-1">
+                                    <section id='tempRange' className="w-2/3 max-w-2/3 pr-1 mb-2 flex items-center justify-between z-1">
                                         <Image src={`/weather_icons/${currentWeather.current_id}.webp`} width={32} height={32} alt="current weather icon" className='mr-1.5' title={currentWeather.forecast}></Image>
                                         <div className='w-4 mr-3 text-xs'>{currentWeather.low_temp.toFixed(0)}°</div>
                                         <span className='relative w-3/4 h-0.5 tempBackground'>
@@ -65,7 +90,8 @@ export default function Weather() {
                                             </div>
                                         </span>
                                         <div className='w-4 ml-3 mr-3 text-xs'>{currentWeather.high_temp.toFixed(0)}°</div>
-                                        <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={(() => setShowDetails(previousState => !previousState))}>
+                                        {/* <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={(() => setShowDetails(previousState => !previousState))}> */}
+                                        <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={handleShowWeather}>
                                             <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700 ${showDetails ? '-rotate-180' : 'rotate-0'} `}></Image>
                                         </div>
                                     </section>
@@ -77,8 +103,12 @@ export default function Weather() {
                                         }
                                     </section>
                                     {/* need to use GSAP to animate open and close to exact height of element. Refs are set just need to implement. using h-20 now for smooth animation but doesn't work for large text areas */}
-                                    <section id='weather_details' ref={weatherDetailsRef} className={`w-100 text-xs mt-2 p-1 overflow-y-hidden transition-all ease-in-out duration-700 ${showDetails ? `opacity-100 h-20` : `opacity-0 h-0`}`}
-                                    >{currentWeather.forecast}</section>
+                                    <section id='weather_details' ref={weatherDetailsRef} className={`w-100 text-xs overflow-y-hidden transition-all ease-in-out duration-700 h-0 opacity-0`}
+                                    >
+                                        <div ref={weatherForecastText}>
+                                            {currentWeather.forecast}
+                                        </div>
+                                    </section>
                                 </>
                             }
                         </>
