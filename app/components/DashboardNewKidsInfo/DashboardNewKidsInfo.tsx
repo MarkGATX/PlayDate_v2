@@ -19,7 +19,7 @@ export type newKidFormErrorType = {
     profilePicError?: string
 }
 
-export default function DashboardKidsInfo({ kids, currentUser, reRender }: { kids: KidsType[], currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function DashboardNewKidsInfo({  currentUser, reRender }: {  currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
     const { pending } = useFormStatus()
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)

@@ -1,3 +1,5 @@
+import { NotificationsType } from "./notificationTypeDefinitions"
+
 export type NewUserType = {
     first_name: string | undefined
     last_name: string | undefined
@@ -17,8 +19,9 @@ export type AdultsType = {
     show_phone_number: boolean
     show_email:boolean
     firebase_uid:string
-    Adult_Kid: AdultKidRelationshipType[]
-    Kids: KidsType[]
+    Adult_Kid?: AdultKidRelationshipType[]
+    Kids?: KidsType[]
+    Notifications?: NotificationsType[]
 }
 
 export type AdultKidRelationshipType = {

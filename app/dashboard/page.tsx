@@ -1,13 +1,15 @@
 'use client'
 import { AuthContext } from "@/utils/firebase/AuthContext";
 import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
-import { useContext, useEffect, useState } from "react";
+import { Suspense, useContext, useEffect, useState } from "react";
 import supabaseClient from "@/utils/supabase/client";
-
 import KidsCard from "../components/KidsCard/KidsCard";
 import { useGSAP } from "@gsap/react";
 import DashboardAdultInfo from "../components/DashboardAdultInfo/DashboardAdultInfo";
-import DashboardKidsInfo from "../components/DashboardKidsInfo/DashboardKidsInfo";
+import DashboardNewKidsInfo from "../components/DashboardNewKidsInfo/DashboardNewKidsInfo";
+import Notification from "../Notifications/Notification";
+import NotificationSuspense from "../Notifications/NotificationSuspense";
+import DashboardKidsSection from "../DashboardKidsSection/DashboardKidsSection";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -41,27 +43,51 @@ export default function Dashboard() {
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*, Adult_Kid (*)') // Select only the ID for efficiency
+                    .select('*') // Select only the ID for efficiency
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
                 }
                 if (adultData) {
-                    const kidIds = adultData[0].Adult_Kid.map((akData: any) => akData.kid_id);
-                    console.dir(kidIds)
-                    const { data: kidsData, error: kidsError } = await supabaseClient
-                        .from('Kids')
-                        .select('*')
-                        .in('id', kidIds)
-                    if (kidsError) {
-                        throw kidsError;
-                    }
-                    if (kidsData) {
-                        setCurrentUser({
-                            ...adultData[0],
-                            Kids: kidsData,
-                        });
-                    }
+                    setCurrentUser(adultData[0])
+                    // const kidIds = adultData[0].Adult_Kid.map((akData: any) => akData.kid_id);
+                    // console.dir(kidIds)
+                    // const { data: kidsData, error: kidsError } = await supabaseClient
+                    //     .from('Kids')
+                    //     .select('*')
+                    //     .in('id', kidIds)
+                    // console.log(kidsData)
+                    // const { data: notificationData, error: notificationError } = await supabaseClient
+                    //     .from('Notifications')
+                    //     .select('*')
+                    //     .eq('receiver_id', adultData[0].id)
+                    // if (notificationError) {
+                    //     throw notificationError
+                    // }
+                    // if (kidsError) {
+                    //     throw kidsError;
+                    // }
+                    // if (kidsData && !notificationData) {
+                    //     console.log('run kids into user')
+                    //     setCurrentUser({
+                    //         ...adultData[0],
+                    //         Kids: kidsData,
+                    //     });
+                    //     console.log(currentUser)
+                    // } else if (notificationData && !kidsData) {
+                    //     setCurrentUser({
+                    //         ...adultData[0],
+                    //         Notifications: notificationData,
+                    //     });
+                    // } else {
+
+                    //     setCurrentUser({
+                    //         ...adultData[0],
+                    //         Notifications: notificationData,
+                    //         Kids: kidsData
+                    //     })
+                    // }
+
                 }
             } catch (error) {
                 console.log(error)
@@ -69,6 +95,8 @@ export default function Dashboard() {
         }
         getCurrentUser();
     }, [user, reRenderEffect])
+
+    console.log(currentUser)
 
     return (
         <main>
@@ -82,35 +110,40 @@ export default function Dashboard() {
                 </>
                 :
                 <>
-                    <DashboardAdultInfo user={currentUser} reRender={setReRenderEffect}/>
-
+                    <DashboardAdultInfo user={currentUser} reRender={setReRenderEffect} />
                     <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
-                        <h2 className='font-bold text-lg w-full'>Kids:</h2>
-                        {currentUser && currentUser?.Kids.length > 0
-                            ?
-                            currentUser.Kids.map((kid) => (
-                                <KidsCard key={kid.id} kid={kid} currentUser={currentUser.id} />
-                            ))
-                            :
-                            null
-                        }
-                        {/* Make sure currentUser is true before rendering add kid form */}
-                        {currentUser?.id
-                            ?
-                            <DashboardKidsInfo currentUser={currentUser} kids={currentUser.Kids} reRender={setReRenderEffect} />
-                            :
-                            <div> You have to be logged in to do this</div>
+                    <DashboardKidsSection adultData={currentUser} />
 
-                        }
+                    {/* Add kids forms */}
+                    {currentUser?.id
+                        ?
+                        <DashboardNewKidsInfo currentUser={currentUser} reRender={setReRenderEffect} />
+                        :
+                        <div> You have to be logged in to do this</div>
 
-
+                    }
                     </section>
-                    <section id='notificationSection' className='w-full p-4'>
-                        <h2 className='font-bold text-lg w-full'>Notifications:</h2>
-                    </section>
-                </>
+
+
+                
+            <section id='notificationSection' className='w-full p-4'>
+                <h2 className='font-bold text-lg w-full'>Notifications:</h2>
+                {currentUser.Notifications && currentUser.Notifications.length > 0
+                    ?
+                    currentUser.Notifications.map((notification) => (
+                        <Suspense key={notification.id} fallback={<NotificationSuspense />}  >
+                            <Notification key={notification.id} currentUser={currentUser} notification={notification} reRender={setReRenderEffect} />
+                        </Suspense>
+                    ))
+
+                    :
+                    <p>No notifications</p>
+                }
+
+            </section>
+        </>
 
             }
-        </main>
+        </main >
     )
 }

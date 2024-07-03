@@ -1,9 +1,21 @@
+import { addKidRequestNotification } from "@/utils/actions/notificationActions";
 import { KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import { useContext } from "react";
 
+
 export default function KidSearchCard({ kidData, searchType, currentUserId }: { kidData: KidsType, searchType: string, currentUserId: string }) {
     console.log(currentUserId)
+
+    const handleAddKidRequest = async() => {
+        try {
+            const addRequest = await addKidRequestNotification(currentUserId, kidData.primary_caregiver, kidData.id)
+            console.log(addRequest)
+        } catch (error) {
+
+        }
+    }
+
     return (
         <div id='kidSearchResultCard' className='h-48 border-2 rounded border-appBlue mx-2 mt-2 w-32 p-2 bg-appBG flex flex-col items-center justify-between'>
             <div className='flex justify-center flex-col items-center gap-2'>
@@ -18,7 +30,7 @@ export default function KidSearchCard({ kidData, searchType, currentUserId }: { 
                     ?
                     <p className='text-xs w-full text-center'>Primary Caregiver</p>
                     :
-                    <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4'>Request add</button>
+                    <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={handleAddKidRequest}>Request add</button>
                 :
                 null
             }

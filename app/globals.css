@@ -18,13 +18,13 @@
 body {
   color: var(--appBlue);
   background: var(--backgroundColor);
-  position:relative;
-  overflow-x:hidden;
+  position: relative;
+  overflow-x: hidden;
 }
 
 main {
-  position:relative;
-  z-index:1;
+  position: relative;
+  z-index: 1;
 }
 
 header {
@@ -76,12 +76,37 @@ header {
 
   }
 
+  #scrollButtons {
+    & svg {
+      fill: var(--appGold);
+      stroke: var(--appBlue);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-miterlimit: 10;
+      transition: all .3s;
+    }
+
+    & svg:hover {
+
+      fill: var(--appBlue);
+      stroke: var(--appGold);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-miterlimit: 10;
+      transform: scale(1.03);
+    }
+
+    & svg:active {
+      transform: scale(.9);
+    }
+  }
+
   #weatherConditions {
     background-color: var(--backgroundColor);
   }
 
-  #defaultProfilePics input[type="radio"]:checked + label img{
-    border-width:4px;
-    border-color:var(--appBlue);
+  #defaultProfilePics input[type="radio"]:checked+label img {
+    border-width: 4px;
+    border-color: var(--appBlue);
   }
 }

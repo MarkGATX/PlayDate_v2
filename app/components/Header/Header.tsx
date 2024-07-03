@@ -53,6 +53,7 @@ export default function Header() {
         try {
             await signOut(auth);
             showMobileMenu ? setShowMobileMenu(previousValue => !previousValue) : null
+            router.push('/')
         } catch (error) {
             console.log(error)
         }

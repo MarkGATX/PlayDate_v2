@@ -177,10 +177,10 @@ export default function DashboardAdultInfo({ user, reRender }: { user: AdultsTyp
                             <input ref={adultLastNameInputRef} id='adultLastNameInput' name='last' type="text" placeholder="Last name" onChange={(event) => setAdultLastName(event.target.value)} required={true} value={adultLastName} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.lastNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultLastNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
 
-                            <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="text" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={adultPhoneNumber} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultPhoneNumberInputRef} id='adultPhoneNumberInput' name='last' type="tel" placeholder="Phone number" onChange={(event) => setAdultPhoneNumber(event.target.value)} required={true} value={adultPhoneNumber} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.phoneNumberError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultPhoneNumberErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
 
-                            <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="text" placeholder="E-mail" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={adultEmail} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                            <input ref={adultEmailInputRef} id='adultEmailInput' name='last' type="email" placeholder="E-mail" onChange={(event) => setAdultEmail(event.target.value)} required={true} value={adultEmail} className={`rounded border-2 mt-2 p-1 text-sm  w-full ${editAdultFormError?.emailError ? 'border-red-700' : 'border-appBlue'}`}></input>
                             <p ref={adultEmailErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
                         </div>
                         <div id='profilePicContainer' className='flex flex-col items-center'>
