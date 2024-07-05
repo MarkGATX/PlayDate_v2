@@ -57,17 +57,18 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
         }
 
         const subscription = supabaseClient
-            .channel('public:Adult_Kid')
+            .channel('public')
             .on(
                 'postgres_changes',
                 {
                     event: '*',
                     schema: 'public',
                     table: 'Adult_Kid',
-                    filter: 'adult_id=eq.adultData.id'
+                    filter: `adult_id=eq.${adultData.id}`
                 },
                 (payload) => {
                     console.log(payload)
+                    getKidsData();
 
                 })
             .subscribe();
