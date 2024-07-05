@@ -41,7 +41,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
     //         gsap.to(scroll, { scrollLeft: '-=100' })
     //     // }, 10);
     //     // scrollInterval();
-        
+
     // });
 
     // const handlePointerUp = contextSafe(() => {
@@ -68,51 +68,54 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
 
 
     //memoize function outside of useEffect to break re-render loops on searhResults dependency
-    const memoizedKidSearchResults = useMemo(() => async () => {
-        const kidResultArray = await searchForKids({ searchTerm })
-        if (searchTerm && kidResultArray && kidResultArray.length > 0) {
-            console.log('show results')
-            setSearchResults(previousValue => kidResultArray);
-            gsap.to(kidSearchResultsRef.current,
-                {
-                    autoAlpha: 1,
-                    maxHeight: '350px',
-                    height: '350px',
-                    duration: .5,
-                    ease: 'power1.inOut',
-                }
-            )
-            console.log(kidResultArray)
-        } else if (searchTerm && kidResultArray && kidResultArray.length === 0) {
-            setSearchResults(previousValue => kidResultArray);
-            gsap.to(kidSearchResultsRef.current,
-                {
-                    autoAlpha: 1,
-                    maxHeight: '350px',
-                    height: '350px',
-                    duration: .5,
-                    ease: 'power1.inOut',
-                }
-            )
-        } else {
-            // Handle the case where data is not available (e.g., set an empty array or loading state)
-            setSearchResults([]); // Set an empty array or display a loading message
-            console.log(searchResults)
-            gsap.to(kidSearchResultsRef.current,
-                {
-                    autoAlpha: 0,
-                    maxHeight: '350px',
-                    height: 0,
-                    duration: .5,
-                    ease: 'power1.inOut',
-                }
-            )
+    // const memoizedKidSearchResults = useMemo(() => async () => {
+    useEffect(() => {
+        const fetchKidSearchResults = async() => {
+        const kidResultArray =  await searchForKids({ searchTerm })
+            if (searchTerm && kidResultArray && kidResultArray.length > 0) {
+                console.log('show results')
+                setSearchResults(previousValue => kidResultArray);
+                gsap.to(kidSearchResultsRef.current,
+                    {
+                        autoAlpha: 1,
+                        maxHeight: '350px',
+                        height: '350px',
+                        duration: .5,
+                        ease: 'power1.inOut',
+                    }
+                )
+                console.log(kidResultArray)
+            } else if (searchTerm && kidResultArray && kidResultArray.length === 0) {
+                setSearchResults(previousValue => kidResultArray);
+                gsap.to(kidSearchResultsRef.current,
+                    {
+                        autoAlpha: 1,
+                        maxHeight: '350px',
+                        height: '350px',
+                        duration: .5,
+                        ease: 'power1.inOut',
+                    }
+                )
+            } else {
+                // Handle the case where data is not available (e.g., set an empty array or loading state)
+                setSearchResults([]); // Set an empty array or display a loading message
+                gsap.to(kidSearchResultsRef.current,
+                    {
+                        autoAlpha: 0,
+                        maxHeight: '350px',
+                        height: 0,
+                        duration: .5,
+                        ease: 'power1.inOut',
+                    }
+                )
+            }
         }
+        fetchKidSearchResults();
     }, [searchTerm])
 
-    useEffect(() => {
-        memoizedKidSearchResults()
-    }, [memoizedKidSearchResults])
+    // useEffect(() => {
+    //     memoizedKidSearchResults()
+    // }, [searchTerm])
 
     return (
         <>

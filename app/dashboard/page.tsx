@@ -9,7 +9,8 @@ import DashboardAdultInfo from "../components/DashboardAdultInfo/DashboardAdultI
 import DashboardNewKidsInfo from "../components/DashboardNewKidsInfo/DashboardNewKidsInfo";
 import Notification from "../Notifications/Notification";
 import NotificationSuspense from "../Notifications/NotificationSuspense";
-import DashboardKidsSection from "../DashboardKidsSection/DashboardKidsSection";
+import DashboardKidsSection from "../components/DashboardKidsSection/DashboardKidsSection";
+import DashboardKidsSectionSuspense from "../components/DashboardKidsSection/DashboardKidsSectionSuspense";
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -57,10 +58,10 @@ export default function Dashboard() {
                     //     .select('*')
                     //     .in('id', kidIds)
                     // console.log(kidsData)
-                    // const { data: notificationData, error: notificationError } = await supabaseClient
-                    //     .from('Notifications')
-                    //     .select('*')
-                    //     .eq('receiver_id', adultData[0].id)
+                    const { data: notificationData, error: notificationError } = await supabaseClient
+                        .from('Notifications')
+                        .select('*')
+                        .eq('receiver_id', adultData[0].id)
                     // if (notificationError) {
                     //     throw notificationError
                     // }
@@ -81,11 +82,11 @@ export default function Dashboard() {
                     //     });
                     // } else {
 
-                    //     setCurrentUser({
-                    //         ...adultData[0],
-                    //         Notifications: notificationData,
-                    //         Kids: kidsData
-                    //     })
+                        setCurrentUser({
+                            ...adultData[0],
+                            Notifications: notificationData,
+                            // Kids: kidsData
+                        })
                     // }
 
                 }
@@ -112,36 +113,38 @@ export default function Dashboard() {
                 <>
                     <DashboardAdultInfo user={currentUser} reRender={setReRenderEffect} />
                     <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
-                    <DashboardKidsSection adultData={currentUser} />
+                        <Suspense fallback={<DashboardKidsSectionSuspense />}>
+                            <DashboardKidsSection adultData={currentUser} />
+                        </Suspense>
 
-                    {/* Add kids forms */}
-                    {currentUser?.id
-                        ?
-                        <DashboardNewKidsInfo currentUser={currentUser} reRender={setReRenderEffect} />
-                        :
-                        <div> You have to be logged in to do this</div>
+                        {/* Add kids forms */}
+                        {currentUser?.id
+                            ?
+                            <DashboardNewKidsInfo currentUser={currentUser} reRender={setReRenderEffect} />
+                            :
+                            <div> You have to be logged in to do this</div>
 
-                    }
+                        }
                     </section>
 
 
-                
-            <section id='notificationSection' className='w-full p-4'>
-                <h2 className='font-bold text-lg w-full'>Notifications:</h2>
-                {currentUser.Notifications && currentUser.Notifications.length > 0
-                    ?
-                    currentUser.Notifications.map((notification) => (
-                        <Suspense key={notification.id} fallback={<NotificationSuspense />}  >
-                            <Notification key={notification.id} currentUser={currentUser} notification={notification} reRender={setReRenderEffect} />
-                        </Suspense>
-                    ))
 
-                    :
-                    <p>No notifications</p>
-                }
+                    <section id='notificationSection' className='w-full p-4'>
+                        <h2 className='font-bold text-lg w-full'>Notifications:</h2>
+                        {currentUser.Notifications && currentUser.Notifications.length > 0
+                            ?
+                            currentUser.Notifications.map((notification) => (
+                                <Suspense key={notification.id} fallback={<NotificationSuspense />}  >
+                                    <Notification key={notification.id} currentUser={currentUser} notification={notification} reRender={setReRenderEffect} />
+                                </Suspense>
+                            ))
 
-            </section>
-        </>
+                            :
+                            <p>No notifications</p>
+                        }
+
+                    </section>
+                </>
 
             }
         </main >
