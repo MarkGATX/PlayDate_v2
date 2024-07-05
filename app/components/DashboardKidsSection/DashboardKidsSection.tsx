@@ -3,40 +3,33 @@ import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import { useEffect, useState } from "react";
 import KidsCard from "../KidsCard/KidsCard";
 
+
 export default function DashboardKidsSection({ adultData }: { adultData: AdultsType }) {
-    const [kids, setKids] = useState<KidsType[]>()
+    const [kids, setKids] = useState<KidsType[]>([])
 
-    useEffect(() => {
-        const subscription = supabaseClient
-            .channel('public:Adult_Kid')
-            .on(
-                'postgres_changes',
-                {
-                    event:'*',
-                    schema: 'public',
-                    table:'Adult_Kid',
-                    filter:'adult_id=eq.adultData.id'
-                },
-                (payload) => {
-                    console.log('subscription payload: ', payload);
-                })
-            .subscribe();
-    },[])
+    // useEffect(() => {
+    //     const subscription = supabaseClient
+    //         .channel('public:Adult_Kid')
+    //         .on(
+    //             'postgres_changes',
+    //             {
+    //                 event:'*',
+    //                 schema: 'public',
+    //                 table:'Adult_Kid',
+    //                 filter:'adult_id=eq.adultData.id'
+    //             },
+    //             (payload) => {
+    //                 console.log('subscription payload: ', payload);
 
+    //             })
+    //         .subscribe();
 
-        // const subscription = supabaseClient
-        //   .from('Adult_Kid')
-        //   .on('INSERT', (snapshot) => {
-        //     const newKidId = snapshot.new.data.kid_id;
-        //     if (snapshot.new.data.adult_id === adultData.id) {
-        //       setKids((prevKids) => (prevKids ? [...prevKids] : []).concat(newKidId));
-        //     }
-        //   })
-        //   .subscribe();
+    //         return () => {
+    //             supabaseClient.removeChannel(subscription)
 
-        // // Cleanup function to unsubscribe on component unmount
-    //     return () => subscription.unsubscribe();
-    // }, [adultData]);
+    //         }
+    // },[])
+
 
     useEffect(() => {
         const getKidsData = async () => {
@@ -62,7 +55,29 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                 }
             }
         }
+
+        const subscription = supabaseClient
+            .channel('public:Adult_Kid')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'Adult_Kid',
+                    filter: 'adult_id=eq.adultData.id'
+                },
+                (payload) => {
+                    console.log(payload)
+
+                })
+            .subscribe();
+
         getKidsData();
+
+        return () => {
+            supabaseClient.removeChannel(subscription)
+
+        }
     }, [adultData.id])
 
 
@@ -70,7 +85,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
 
         <>
             <h2 className='font-bold text-lg w-full'>Kids:</h2>
-            {kids && kids.length > 0
+            {kids && kids?.length > 0
                 ?
                 kids.map((kid) => (
                     <KidsCard key={kid.id} kid={kid} currentUser={adultData.id} />
