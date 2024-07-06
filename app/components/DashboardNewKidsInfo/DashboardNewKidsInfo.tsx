@@ -19,7 +19,7 @@ export type newKidFormErrorType = {
     profilePicError?: string
 }
 
-export default function DashboardNewKidsInfo({  currentUser, reRender }: {  currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function DashboardNewKidsInfo({ currentUser, reRender }: { currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
     const { pending } = useFormStatus()
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
@@ -70,7 +70,6 @@ export default function DashboardNewKidsInfo({  currentUser, reRender }: {  curr
                     ease: 'power1.inOut',
 
                 });
-
                 if (kidsFirstNameInputRef.current) {
                     kidsFirstNameInputRef.current.value = ''
                 }
@@ -85,7 +84,6 @@ export default function DashboardNewKidsInfo({  currentUser, reRender }: {  curr
                 setNewKidBirthday('')
                 setNewKidProfilePic('')
                 setKidSearchTerm('')
-
             } else {
                 gsap.to(newKidSectionRef.current, {
                     autoAlpha: 1,
@@ -246,10 +244,7 @@ export default function DashboardNewKidsInfo({  currentUser, reRender }: {  curr
                 const addKidResult = await AddKid(rawAddKidData)
                 console.log(addKidResult)
                 toggleNewKidForm();
-                setNewKidFirstName('')
-                setNewKidLastName('')
-                setNewKidBirthday('')
-                setNewKidFirstNameOnly(false)
+
                 // reRender(previousValue => !previousValue)
             } catch (error) {
                 console.error(error)
@@ -276,17 +271,17 @@ export default function DashboardNewKidsInfo({  currentUser, reRender }: {  curr
                             <input type="hidden" name='primary_caregiver' value={currentUser.id} />
                             <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
                                 <label htmlFor="kidsFirstNameInput" className='text-sm w-1/3'>First Name</label>
-                                <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className={`rounded border-2  p-1 text-sm  w-2/3 ${newKidFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
+                                <input ref={kidsFirstNameInputRef} id='kidsFirstNameInput' value={newKidFirstName} name='first_name' type="text" placeholder="First name" onChange={(event) => setNewKidFirstName(event.target.value)} required={true} className={`rounded border-2  p-1 text-sm  w-2/3 ${newKidFormError?.firstNameError ? 'border-red-700' : 'border-appBlue'}`}></input>
                                 <p ref={firstNameErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
                             </div>
                             <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
                                 <label htmlFor="kidsLastNameInput" className='text-sm w-1/3'>Last Name</label>
-                                <input ref={kidsLastNameInputRef} id='kidsLastNameInput' name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm  w-2/3'></input>
+                                <input ref={kidsLastNameInputRef} id='kidsLastNameInput' value={newKidLastName} name='last_name' type="text" placeholder="Last name" required={true} onChange={(event) => setNewKidLastName(event.target.value)} className='rounded border-2 border-appBlue p-1 text-sm  w-2/3'></input>
                                 <p ref={lastNameErrorRef} className='w-full text-xs h-0 opacity-0  text-red-700'></p>
                             </div>
                             <div className='pt-2 pb-1 flex flex-wrap justify-between w-full items-center'>
                                 <label htmlFor="kidsBirthdayInput" className='text-sm w-1/3'>Birthday</label>
-                                <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
+                                <input ref={kidsBirthdayInputRef} id='kidsBirthdayInput' value={newKidBirthday} name='birthday' type="date" className='rounded border-2 border-appBlue p-1 text-sm w-2/3' onChange={(event) => setNewKidBirthday(event.target.value)} required></input>
                                 <p ref={birthdayErrorRef} className='w-full text-xs h-0 opacity-0 text-red-700'></p>
                             </div>
                             <div className='py-1'>
