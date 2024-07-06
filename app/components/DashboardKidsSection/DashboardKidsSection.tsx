@@ -43,7 +43,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                     filter: `adult_id=eq.${adultData.id}`
                 },
                 (payload) => {
-                    console.log(payload)
+                    console.log('GET NEW KIDS PAYLOAD: ', payload)
                     getKidsData();
 
                 })
