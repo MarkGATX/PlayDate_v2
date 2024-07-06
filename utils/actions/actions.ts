@@ -9,6 +9,7 @@ import { redirect } from "next/navigation";
 export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
 
     try {
+        //add kid to kid table
         const { data: newKidData, error: newKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
             .from('Kids')
             .insert([rawAddKidData])
@@ -18,6 +19,7 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
             throw handleSupabaseError(newKidError)
         }
         console.log('New Kid Added: ', newKidData, newKidError)
+        // add kid to adult_kid table to show parent relationship
         if (newKidData) {
             const newRelationshipData: RelationshipType = {
                 relationship: 'parent',

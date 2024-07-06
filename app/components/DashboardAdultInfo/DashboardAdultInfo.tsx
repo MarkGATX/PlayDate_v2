@@ -138,7 +138,7 @@ export default function DashboardAdultInfo({ user, reRender }: { user: AdultsTyp
         }
 
         if (!formError && adultFirstName && adultLastName) {
-            console.log('run new kid action')
+            
             const editAdultData: Omit<AdultsType, 'firebase_uid' | 'profilePicURL' | 'Kids' | 'adult_kid' | 'emergency_contact'> = {
                 first_name: adultFirstName.trim(),
                 last_name: adultLastName.trim(),

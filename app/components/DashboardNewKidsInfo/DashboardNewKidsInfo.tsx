@@ -242,12 +242,17 @@ export default function DashboardNewKidsInfo({  currentUser, reRender }: {  curr
                 profile_pic: newKidProfilePic
             }
             try {
+                console.log(rawAddKidData)
                 const addKidResult = await AddKid(rawAddKidData)
                 console.log(addKidResult)
                 toggleNewKidForm();
-                reRender(previousValue => !previousValue)
+                setNewKidFirstName('')
+                setNewKidLastName('')
+                setNewKidBirthday('')
+                setNewKidFirstNameOnly(false)
+                // reRender(previousValue => !previousValue)
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
     }
