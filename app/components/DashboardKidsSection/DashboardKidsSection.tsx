@@ -7,34 +7,10 @@ import KidsCard from "../KidsCard/KidsCard";
 export default function DashboardKidsSection({ adultData }: { adultData: AdultsType }) {
     const [kids, setKids] = useState<KidsType[]>([])
 
-    // useEffect(() => {
-    //     const subscription = supabaseClient
-    //         .channel('public:Adult_Kid')
-    //         .on(
-    //             'postgres_changes',
-    //             {
-    //                 event:'*',
-    //                 schema: 'public',
-    //                 table:'Adult_Kid',
-    //                 filter:'adult_id=eq.adultData.id'
-    //             },
-    //             (payload) => {
-    //                 console.log('subscription payload: ', payload);
-
-    //             })
-    //         .subscribe();
-
-    //         return () => {
-    //             supabaseClient.removeChannel(subscription)
-
-    //         }
-    // },[])
-
-
     useEffect(() => {
         const getKidsData = async () => {
             const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
-                .from('Adult_Kid')
+                .from('adult_kid')
                 .select('*') // Select only the ID for efficiency
                 .eq('adult_id', adultData.id);
             if (kidsJoinDataError) {
@@ -56,14 +32,14 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
             }
         }
 
-        const subscription = supabaseClient
+        const kidSubscription = supabaseClient
             .channel('public')
             .on(
                 'postgres_changes',
                 {
                     event: '*',
                     schema: 'public',
-                    table: 'Adult_Kid',
+                    table: 'adult_kid',
                     filter: `adult_id=eq.${adultData.id}`
                 },
                 (payload) => {
@@ -76,7 +52,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
         getKidsData();
 
         return () => {
-            supabaseClient.removeChannel(subscription)
+            supabaseClient.removeChannel(kidSubscription)
 
         }
     }, [adultData.id])

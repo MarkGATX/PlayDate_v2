@@ -29,4 +29,5 @@ export type NotificationDetailsType = {
     }
     notification_type: NotificationEnums
     receiver: AdultsType
+    receiver_id:string
 }

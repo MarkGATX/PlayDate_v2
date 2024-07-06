@@ -7,10 +7,11 @@ import KidsCard from "../components/KidsCard/KidsCard";
 import { useGSAP } from "@gsap/react";
 import DashboardAdultInfo from "../components/DashboardAdultInfo/DashboardAdultInfo";
 import DashboardNewKidsInfo from "../components/DashboardNewKidsInfo/DashboardNewKidsInfo";
-import Notification from "../Notifications/Notification";
-import NotificationSuspense from "../Notifications/NotificationSuspense";
+import Notification from "../components/Notifications/Notification";
+import NotificationSuspense from "../components/Notifications/NotificationSuspense";
 import DashboardKidsSection from "../components/DashboardKidsSection/DashboardKidsSection";
 import DashboardKidsSectionSuspense from "../components/DashboardKidsSection/DashboardKidsSectionSuspense";
+
 
 export type kidsArray = {
     kidsRawData?: KidsType[]
@@ -51,42 +52,17 @@ export default function Dashboard() {
                 }
                 if (adultData) {
                     setCurrentUser(adultData[0])
-                    // const kidIds = adultData[0].Adult_Kid.map((akData: any) => akData.kid_id);
-                    // console.dir(kidIds)
-                    // const { data: kidsData, error: kidsError } = await supabaseClient
-                    //     .from('Kids')
-                    //     .select('*')
-                    //     .in('id', kidIds)
-                    // console.log(kidsData)
+
                     const { data: notificationData, error: notificationError } = await supabaseClient
                         .from('Notifications')
                         .select('*')
                         .eq('receiver_id', adultData[0].id)
-                    // if (notificationError) {
-                    //     throw notificationError
-                    // }
-                    // if (kidsError) {
-                    //     throw kidsError;
-                    // }
-                    // if (kidsData && !notificationData) {
-                    //     console.log('run kids into user')
-                    //     setCurrentUser({
-                    //         ...adultData[0],
-                    //         Kids: kidsData,
-                    //     });
-                    //     console.log(currentUser)
-                    // } else if (notificationData && !kidsData) {
-                    //     setCurrentUser({
-                    //         ...adultData[0],
-                    //         Notifications: notificationData,
-                    //     });
-                    // } else {
 
-                        setCurrentUser({
-                            ...adultData[0],
-                            Notifications: notificationData,
-                            // Kids: kidsData
-                        })
+
+                    setCurrentUser({
+                        ...adultData[0],
+                        Notifications: notificationData,
+                    })
                     // }
 
                 }
@@ -94,7 +70,30 @@ export default function Dashboard() {
                 console.log(error)
             }
         }
+
+        // const notificationSubscription = supabaseClient
+        //     .channel('public')
+        //     .on(
+        //         'postgres_changes',
+        //         {
+        //             event: '*',
+        //             schema: 'public',
+        //             table: 'Notifications',
+        //             filter: `receiver_id=eq.${currentUser?.id}`
+        //         },
+        //         (payload) => {
+        //             console.log('NOTIFY PAYLOAD: ', payload)
+        //             setCurrentUser(previousUser => ({previousUser, Notifications:payload.new}))
+
+        //         })
+        //     .subscribe();
+
         getCurrentUser();
+
+        // return () => {
+        //     supabaseClient.removeChannel(notificationSubscription)
+        // }
+
     }, [user, reRenderEffect])
 
     console.log(currentUser)
@@ -127,15 +126,19 @@ export default function Dashboard() {
                         }
                     </section>
 
+                    <Suspense fallback={<NotificationSuspense />}  >
+                        <Notification currentUser={currentUser} reRender={setReRenderEffect} />
+                    </Suspense>
 
 
-                    <section id='notificationSection' className='w-full p-4'>
+
+                    {/* <section id='notificationSection' className='w-full p-4'>
                         <h2 className='font-bold text-lg w-full'>Notifications:</h2>
                         {currentUser.Notifications && currentUser.Notifications.length > 0
                             ?
                             currentUser.Notifications.map((notification) => (
                                 <Suspense key={notification.id} fallback={<NotificationSuspense />}  >
-                                    <Notification key={notification.id} currentUser={currentUser} notification={notification} reRender={setReRenderEffect} />
+                                    <NotificationCopy key={notification.id} currentUser={currentUser}  reRender={setReRenderEffect} />
                                 </Suspense>
                             ))
 
@@ -143,7 +146,7 @@ export default function Dashboard() {
                             <p>No notifications</p>
                         }
 
-                    </section>
+                    </section> */}
                 </>
 
             }

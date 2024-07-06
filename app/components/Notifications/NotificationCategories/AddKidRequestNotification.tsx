@@ -8,6 +8,7 @@ export default function AddKidRequestNotification({ notification, reRender }: { 
     const [errorMessage, setErrorMessage] = useState<string>()
     const [requestStatus, setRequestStatus] = useState<string>()
     const { sender, kid, notification_type, receiver } = notification
+    // console.log(notification.receiver_id)
 
     const handleApproveAddRequest = async () => {
         setRequestStatus('loading')
@@ -44,7 +45,7 @@ export default function AddKidRequestNotification({ notification, reRender }: { 
         }
         //creating denial notification
         const newNotificationData = {
-            sender_id: receiver.id,
+            sender_id: notification.receiver.id,
             receiver_id: sender.id,
             kid_id: kid.id
         }

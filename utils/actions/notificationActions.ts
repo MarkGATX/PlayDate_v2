@@ -39,7 +39,7 @@ export async function approveAddKidRequest({ new_parent_id, sender_id, kid_id }:
             adult_id: new_parent_id
         }
         const { data: newRelationship, error: newRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
-            .from('Adult_Kid')
+            .from('adult_kid')
             .insert(newRelationshipData)
             .single()
         if (newRelationshipError) {

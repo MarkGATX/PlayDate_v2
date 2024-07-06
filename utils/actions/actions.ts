@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
 
     try {
-       const { data: newKidData, error: newKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
+        const { data: newKidData, error: newKidError }: { data: KidsType | null; error: PostgrestError | null } = await supabaseClient
             .from('Kids')
             .insert([rawAddKidData])
             .select('id')
@@ -27,7 +27,7 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
             }
             console.log(newRelationshipData)
             const { data: newRelationship, error: newRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
-                .from('Adult_Kid')
+                .from('adult_kid')
                 .insert([newRelationshipData])
                 .single()
             if (newRelationshipError) {
@@ -45,7 +45,7 @@ export async function EditKid(editedKidData: KidsType) {
     if (!editedKidData) {
         return; // Handle the case where form has no data
     }
-    try {        
+    try {
         const { data: updatedKidData, error: updatedKidError } = await supabaseClient
             .from('Kids')
             .update(editedKidData)
@@ -55,18 +55,18 @@ export async function EditKid(editedKidData: KidsType) {
             throw handleSupabaseError(updatedKidError)
         }
         console.log(updatedKidData)
-        return updatedKidData       
+        return updatedKidData
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure (optional)
     }
 }
 
-export async function EditAdult(editedAdultData: Omit<AdultsType,'firebase_uid' |'Adult_Kid' |'Kids' |'profilePicURL' |'emergency_contact'>) {
+export async function EditAdult(editedAdultData: Omit<AdultsType, 'firebase_uid' | 'adult_kid' | 'Kids' | 'profilePicURL' | 'emergency_contact'>) {
     if (!editedAdultData) {
         return; // Handle the case where form has no data
     }
-    try {        
+    try {
         const { data: updatedAdultData, error: updatedAdultError } = await supabaseClient
             .from('Adults')
             .update(editedAdultData)
@@ -76,7 +76,7 @@ export async function EditAdult(editedAdultData: Omit<AdultsType,'firebase_uid' 
             throw handleSupabaseError(updatedAdultError)
         }
         console.log(updatedAdultData)
-        return updatedAdultData       
+        return updatedAdultData
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure (optional)

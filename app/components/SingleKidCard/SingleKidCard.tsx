@@ -16,14 +16,14 @@ export default function SingleKidCard(kidId: string) {
     //         const { data, error } = await supabase
     //             .from('Adults')
     //             .select('*, Kid(*) AS kids') // Select all adult columns and nested kid data
-    //             .leftJoin('Adult_Kid', 'Adults.id', 'Adult_Kid.adult_id')
-    //             .innerJoin('Kids', 'Adult_Kid.kid_id', 'Kids.id')
+    //             .leftJoin('adult_kid', 'Adults.id', 'adult_kid.adult_id')
+    //             .innerJoin('Kids', 'adult_kid.kid_id', 'Kids.id')
     //             .eq('Adults.id', adultId); // Replace 'adultId' with the actual adult ID
 
     //             SELECT Adults.*, Kids.*
     //             FROM Adults 
-    //             LEFT JOIN Adult_Kid ON Adults.id = Adult_Kid.adult
-    //             INNER JOIN Kids ON Adult_Kid.kid = kid.id
+    //             LEFT JOIN adult_kid ON Adults.id = adult_kid.adult
+    //             INNER JOIN Kids ON adult_kid.kid = kid.id
     //             WHERE Adults.id = $1;
 
     //         // .from('Adults')
