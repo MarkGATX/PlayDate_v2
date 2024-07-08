@@ -49,12 +49,10 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                 })
             .subscribe()
 
-
         getKidsData();
 
         return () => {
             supabaseClient.removeChannel(kidSubscription)
-
         }
     }, [adultData.id])
 
