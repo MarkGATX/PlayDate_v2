@@ -2,7 +2,7 @@ import { KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import SubmitButton from "../SubmitButton/SubmitButton";
-import { EditKid } from "@/utils/actions/actions";
+import { EditKid, removeAdultKidRelationship } from "@/utils/actions/actions";
 import { useFormStatus } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -175,20 +175,9 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
         }
     }
 
-    // const handleEditKid = async () => {
-    //     setEditKidInfo(previousValue => !previousValue);
-
-    //     // Call EditKid server action
-    //     const response = await EditKid(formData); // Assuming you build formData
-
-    //     if (response.success) { // Check for success response from server action
-    //       console.log('Kid information updated successfully');
-    //       // Update editKidData state with the newly updated data (optional)
-    //     } else {
-    //       console.error('Error updating kid information:', response.error);
-    //       // Handle errors (e.g., display error message)
-    //     }
-    //   };
+    const handleRemoveKid = async() => {
+        removeAdultKidRelationship(currentUser, kid.id)
+    }
 
     const cancelKidEdits = async () => {
         setKidFirstName(kid.first_name)
@@ -380,7 +369,8 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                             </div>
                             <p className='text-xs'>{kidAge ? `${kidAge} years old` : null}</p>
                             <div className='block w-full text-xs'>
-                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleEditKid}>Edit Kid Info</button>
+                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton mr-2 active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleEditKid}>Edit Kid Info</button>
+                                <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleRemoveKid}>Remove Kid</button>
                             </div>
                         </div>
                     }

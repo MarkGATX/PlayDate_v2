@@ -19,7 +19,7 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
             throw handleSupabaseError(newKidError)
         }
         console.log('New Kid Added: ', newKidData, newKidError)
-        // add kid to adult_kid table to show parent relationship
+        // add kid to Adult_Kid table to show parent relationship
         if (newKidData) {
             const newRelationshipData: RelationshipType = {
                 relationship: 'parent',
@@ -29,7 +29,7 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
             }
             console.log(newRelationshipData)
             const { data: newRelationship, error: newRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
-                .from('adult_kid')
+                .from('Adult_Kid')
                 .insert([newRelationshipData])
                 .single()
             if (newRelationshipError) {
@@ -64,7 +64,7 @@ export async function EditKid(editedKidData: KidsType) {
     }
 }
 
-export async function EditAdult(editedAdultData: Omit<AdultsType, 'firebase_uid' | 'adult_kid' | 'Kids' | 'profilePicURL' | 'emergency_contact'>) {
+export async function EditAdult(editedAdultData: Omit<AdultsType, 'firebase_uid' | 'Adult_Kid' | 'Kids' | 'profilePicURL' | 'emergency_contact'>) {
     if (!editedAdultData) {
         return; // Handle the case where form has no data
     }
@@ -85,6 +85,27 @@ export async function EditAdult(editedAdultData: Omit<AdultsType, 'firebase_uid'
     }
 }
 
+export async function removeAdultKidRelationship(adult_id: string, kid_id: string) {
+    try {
+        const { data: deletedRelationship, error: deletedRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
+            .from('Adult_Kid')
+            .delete()
+            .eq('adult_id', adult_id)
+            .eq('kid_id', kid_id)
+            .single()
+        if (deletedRelationshipError) {
+            throw handleSupabaseError(deletedRelationshipError)
+        }
+        if (deletedRelationship) {
+            console.log('removed kid')
+            return deletedRelationship
+        }
+
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 function handleSupabaseError(error: PostgrestError): Error {
     const { message, details } = error;
     console.error("Error adding record:", message, details);
@@ -99,3 +120,4 @@ function handleSupabaseError(error: PostgrestError): Error {
             return new Error("An error occurred while adding the record.");
     }
 }
+

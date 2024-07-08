@@ -138,8 +138,8 @@ export default function DashboardAdultInfo({ user, reRender }: { user: AdultsTyp
         }
 
         if (!formError && adultFirstName && adultLastName) {
-            
-            const editAdultData: Omit<AdultsType, 'firebase_uid' | 'profilePicURL' | 'Kids' | 'adult_kid' | 'emergency_contact'> = {
+
+            const editAdultData: Omit<AdultsType, 'firebase_uid' | 'profilePicURL' | 'Kids' | 'Adult_Kid' | 'emergency_contact'> = {
                 first_name: adultFirstName.trim(),
                 last_name: adultLastName.trim(),
                 show_phone_number: adultShowPhoneNumber,

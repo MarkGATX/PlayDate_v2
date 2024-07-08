@@ -10,7 +10,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
     useEffect(() => {
         const getKidsData = async () => {
             const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
-                .from('adult_kid')
+                .from('Adult_Kid')
                 .select('*') // Select only the ID for efficiency
                 .eq('adult_id', adultData.id);
             if (kidsJoinDataError) {
@@ -39,7 +39,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                 {
                     event: '*',
                     schema: 'public',
-                    table: 'adult_kid',
+                    table: 'Adult_Kid',
                     filter: `adult_id=eq.${adultData.id}`
                 },
                 (payload) => {
@@ -47,7 +47,8 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                     getKidsData();
 
                 })
-            .subscribe();
+            .subscribe()
+
 
         getKidsData();
 
@@ -55,7 +56,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
             supabaseClient.removeChannel(kidSubscription)
 
         }
-    },[adultData.id])
+    }, [adultData.id])
 
 
     return (

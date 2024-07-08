@@ -19,7 +19,7 @@ export type AdultsType = {
     show_phone_number: boolean
     show_email: boolean
     firebase_uid: string
-    adult_kid?: AdultKidRelationshipType[]
+    Adult_Kid?: AdultKidRelationshipType[]
     Kids?: KidsType[]
     Notifications?: NotificationsType[]
 }
