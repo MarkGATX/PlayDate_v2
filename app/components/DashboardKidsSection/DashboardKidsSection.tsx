@@ -33,7 +33,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
         }
 
         const kidSubscription = supabaseClient
-            .channel('public')
+            .channel('supabase_realtime')
             .on(
                 'postgres_changes',
                 {

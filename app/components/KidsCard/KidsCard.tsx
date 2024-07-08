@@ -176,7 +176,8 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
     }
 
     const handleRemoveKid = async() => {
-        removeAdultKidRelationship(currentUser, kid.id)
+        const removeResult = await removeAdultKidRelationship(currentUser, kid.id)
+        console.log(removeResult)
     }
 
     const cancelKidEdits = async () => {

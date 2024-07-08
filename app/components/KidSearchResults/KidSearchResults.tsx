@@ -123,7 +123,6 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
                 <section id='kidSearchResultsCards' ref={kidSearchResultsCardsRef}>
 
                     <div id='kidCards' className='w-full flex gap-2 overflow-x-scroll'>
-                        {/* <Image src='/pics/test_playground.webp' fill={true} style={{ objectFit: 'cover' }} alt='background image of an empty playground' className='-z-10 opacity-20 sticky left-0'></Image> */}
                         {searchTerm && searchResults.length === 0
                             ?
                             <div className='p-2'>{`Sorry, we can't find that kid.`}</div>

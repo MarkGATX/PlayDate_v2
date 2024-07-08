@@ -117,7 +117,7 @@ function handleSupabaseError(error: PostgrestError): Error {
             return new Error("Please fill in all required fields.");
         default:
             // Handle other potential errors with generic or custom error messages
-            return new Error("An error occurred while adding the record.");
+            return new Error("An error occurred modifying the database.");
     }
 }
 

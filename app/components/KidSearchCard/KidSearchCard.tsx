@@ -1,20 +1,49 @@
 import { addKidRequestNotification } from "@/utils/actions/notificationActions";
+import supabaseClient from "@/utils/supabase/client";
 import { KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 
 export default function KidSearchCard({ kidData, searchType, currentUserId }: { kidData: KidsType, searchType: string, currentUserId: string }) {
     console.log(currentUserId)
+    const [notificationExists, setNotificationExists] = useState<boolean>(false)
 
-    const handleAddKidRequest = async() => {
+    // useEffect(() => {
+    //     const checkNotificationExists = async () => {
+    //         const { data, error } = await supabaseClient
+    //             .from('Notifications')
+    //             .select('*')
+    //             .eq('kid_id', kidData.id)
+    //             .eq('sender_id', currentUserId)
+    //             .eq('notification_type', 'Add kid request')
+    //         if (error) {
+    //             console.error('Error fetching notification:', error);
+    //             return;
+    //         }
+    //         if (data.length>0) {
+    //             console.log('Notification exists:', data);
+    //             setNotificationExists(true)
+    //         } else {
+    //             console.log('No existing notification found.');
+    //             setNotificationExists(false)
+    //         }
+    //     };
+    //     checkNotificationExists();
+    // }, [currentUserId])
+
+    const handleAddKidRequest = async () => {
         try {
             const addRequest = await addKidRequestNotification(currentUserId, kidData.primary_caregiver, kidData.id)
             console.log(addRequest)
+            if (addRequest) {
+                setNotificationExists(true)
+            }
         } catch (error) {
 
         }
     }
+
 
     return (
         <div id='kidSearchResultCard' className='h-48 border-2 rounded border-appBlue mx-2 mt-2 w-32 p-2 bg-appBG flex flex-col items-center justify-between'>
@@ -26,11 +55,14 @@ export default function KidSearchCard({ kidData, searchType, currentUserId }: { 
             </div>
             {searchType === 'addKidToParent'
                 ?
-                kidData.primary_caregiver === currentUserId //if current user is already primary, render nothing. else render card
+                kidData.primary_caregiver === currentUserId
                     ?
                     <p className='text-xs w-full text-center'>Primary Caregiver</p>
                     :
-                    <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={handleAddKidRequest}>Request add</button>
+                    // notificationExists ?
+                    //     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Request already sent</button>
+                    //     :
+                        <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' onClick={handleAddKidRequest}>Request add</button>
                 :
                 null
             }
