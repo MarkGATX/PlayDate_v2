@@ -85,7 +85,7 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
         return () => {
             supabaseClient.removeChannel(notificationSubscription)
         }
-    }, [currentUser.id]);
+    }, [currentUser]);
 
     return (
         <section id='notificationSection' className='w-full p-4'>

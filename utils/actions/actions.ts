@@ -43,6 +43,27 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
     }
 }
 
+export async function DeleteKid(kidId: string) {
+    if (!kidId) {
+        return; // Handle the case where form has no data
+    }
+    try {
+        const { data: deletedKidData, error: deletedKidError } = await supabaseClient
+            .from('Kids')
+            .delete()
+            .eq('id', kidId)
+            .select()
+        if (deletedKidError) {
+            throw handleSupabaseError(deletedKidError)
+        }
+        console.log(deletedKidData)
+        return deletedKidData
+    } catch (error) {
+        console.error("Unexpected error:", error); // Log unexpected errors
+        return undefined; // Indicate failure (optional)
+    }
+}
+
 export async function EditKid(editedKidData: KidsType) {
     if (!editedKidData) {
         return; // Handle the case where form has no data
