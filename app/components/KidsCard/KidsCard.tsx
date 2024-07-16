@@ -414,9 +414,9 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
             {openRemoveKidModal
                 ?
                 <dialog ref={removeKidModalRef} className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
-                    <div className="bg-appGold m-auto p-8 rounded-xl w-3/4">
+                    <div className="bg-appGold m-auto p-4 rounded-xl w-3/4">
                         <div className="flex flex-col items-center flex-wrap text-sm">
-                            <h3 className='font-bold text-lg'>Remove Kid</h3>
+
                             <p className='block text-center mb-4'>This will remove your access to <span className='font-bold'>{kidFirstName} {kidLastName}</span>. </p>
                             <p className='block text-center mb-4'>This does NOT delete the kid from the system.</p>
                             <p className='block text-center mb-4'> Deleting can ONLY be done by the Primary Caregiver</p>
@@ -436,9 +436,9 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                 ?
 
                 <dialog ref={deleteKidModalRef} className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
-                    <div className="bg-appGold rounded m-auto p-8">
+                    <div className="bg-appGold rounded-xl m-auto p-4 w-3/4">
                         <div className="flex flex-col items-center">
-                        <h3 className='font-bold text-lg'>Delete Kid</h3>
+
                             <p className='block text-center mb-4'>This will PREMANENTLY DELETE <span className='font-bold'>{kidFirstName} {kidLastName}</span> from the app. </p>
                             <p className='block text-center mb-4'>This CAN NOT be undone.</p>
                             <p className='block text-center mb-4'>Deleting can only be done by the Primary Caregiver</p>

@@ -41,10 +41,10 @@ export default function Weather() {
                 const weatherForecastHeight = weatherForecastText.current.offsetHeight
                 console.log(weatherForecastHeight)
                 gsap.to(weatherDetailsRef.current, {
-                    height: weatherForecastHeight * 2,
+                    height: weatherForecastHeight * 1.8,
                     autoAlpha: 1,
-                    ease:'power2.out',
-                    duration:.5
+                    ease:'power2.inOut',
+                    duration:.3
 
                 })
                 setShowDetails(previousValue => !previousValue)
@@ -54,7 +54,8 @@ export default function Weather() {
                 gsap.to(weatherDetailsRef.current, {
                     height: 0,
                     autoAlpha: 0,
-                    ease:'power2.out'
+                    ease:'power2.inOut',
+                    duration:.3
                 })
                 setShowDetails(previousValue => !previousValue)
             }

@@ -7,7 +7,7 @@ import { DataType } from "../types/placeTypeDefinitions";
 export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
     const baseUrl = 'https://places.googleapis.com/v1/places:searchNearby';
 
-    const data = {
+    const dataOptions = {
         includedPrimaryTypes: types,
         maxResultCount: 20,
         // rankPreference: 'DISTANCE',
@@ -35,7 +35,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
             'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType,places.photos'
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(dataOptions),
     };
 
     try {
@@ -44,7 +44,12 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             throw new Error(`Error fetching nearby locations: ${response.status}`);
         }
         const data: DataType = await response.json();
-        console.log(data)
+
+        if (!data ) {
+            console.error('No data received from API');
+            return;
+          }
+        console.log('map data: ', data)
         data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
         // shuffle results for random display
 
@@ -62,7 +67,7 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
         return data.places
 
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching nearby places:', error);
     }
 }
 
