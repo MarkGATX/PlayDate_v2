@@ -9,15 +9,76 @@ import { goodWeatherCodes } from "@/utils/map/activityTypes";
 import { goodWeatherActivity } from "@/utils/map/activityTypes";
 import { badWeatherActivity } from "@/utils/map/activityTypes";
 import PlaceCards from "../PlaceCards/PlaceCards";
+import { AuthContext } from "@/utils/firebase/AuthContext";
+import { AdultsType } from "@/utils/types/userTypeDefinitions";
+import supabaseClient from "@/utils/supabase/client";
 
 export default function MapContainer() {
     const [error, setError] = useState<string | null>(null);
+    const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [places, setPlaces] = useState<placesDataType[] | undefined>()
     const [currentPage, setCurrentPage] = useState<number>(1)
     const currentLocation = useContext(LocationContext)
     const currentWeather = useContext(WeatherContext)
+    const {user} = useContext(AuthContext)
 
     useEffect(() => {
+        
+            const getCurrentUser = async () => {
+                console.log('run get Current User from dash')
+                // getCachedUser()
+                try {
+                    const firebase_uid = user?.uid
+                    if (!firebase_uid) {
+                        return
+                    }
+                    const { data: adultData, error: adultError } = await supabaseClient
+                        .from('Adults')
+                        .select('*') // Select only the ID for efficiency
+                        .eq('firebase_uid', firebase_uid);
+                    if (adultError) {
+                        throw adultError;
+                    }
+                    if (adultData) {
+                        setCurrentUser(adultData[0])
+    
+                        const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
+                            .from('Adult_Kid')
+                            .select('kid_id')
+                            .eq('adult_id', adultData[0].id)
+    
+                        console.log('KIDS JOIN DATA IN MAP: ', kidsJoinData)
+                        if (kidsJoinDataError) {
+                            throw kidsJoinDataError;
+                        }
+                        if (kidsJoinData) {
+                            //map kidsJoinData into array to use .in method
+                            const kidIds = kidsJoinData.map(kidJoin => kidJoin.kid_id);                           
+                            const { data: kidsData, error: kidsDataError } = await supabaseClient
+                                .from('Kids')
+                                .select('first_name, last_name, id')
+                                .in('id', kidIds);
+                            if (kidsDataError) {
+                                throw kidsDataError;
+                            }
+                            if (kidsData) {
+                                console.log(kidsData)
+                                setCurrentUser({
+                                    ...adultData[0],
+                                    Kids: kidsData,
+                                })
+                            }
+                        }
+                        
+                        // }
+    
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        
+
         const getPlaces = async () => {
             try {
                 const activityTypes = goodWeatherCodes.includes(currentWeather.weatherData?.current_icon || 0)
@@ -53,8 +114,9 @@ export default function MapContainer() {
             }
         }
         getPlaces();
+        getCurrentUser();
 
-    }, [currentLocation, currentWeather])
+    }, [currentLocation, currentWeather, user])
 
     if (error) {
         return (
@@ -62,6 +124,7 @@ export default function MapContainer() {
         )
     }
 
+    console.dir(currentUser)
     return (
         (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API && currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}>
@@ -108,6 +171,8 @@ export default function MapContainer() {
                         {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => (
                             <PlaceCards place={place}
                                 key={place.id}
+                                kids={currentUser?.Kids}
+                                currentUserID={currentUser?.id}
                             />
                         ))
                         }

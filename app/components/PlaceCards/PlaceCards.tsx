@@ -1,20 +1,30 @@
 'use client'
+import { AuthContext } from "@/utils/firebase/AuthContext";
 import { placesDataType } from "@/utils/types/placeTypeDefinitions";
+import { AdultsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 type PlaceCardsProps = {
     place: placesDataType;
-
 };
 
-const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
+type KidsNameType = {
+    first_name: string;
+    last_name: string;
+    id: string
+}
+
+// const PlaceCards: React.FC<PlaceCardsProps> = ({ place, kids, currentUserID }: {place:placesDataType, kids?:KidsNameType, currentUserID:string}) => {
+export default function PlaceCards({ place, kids, currentUserID }: { place: placesDataType, kids?: KidsNameType[], currentUserID?: string }) {
     const [showMore, setShowMore] = useState<boolean>(false)
     const addressElement = document.getElementById(`${place.id}Address`);
     const summaryElement = document.getElementById(`${place.id}Summary`);
     const linkElement = document.getElementById(`${place.id}Link`);
-
+    const addressElementRef = useRef<HTMLDivElement>()
+    const summaryElementRef = useRef<HTMLDivElement>()
+    const linkElementRef = useRef<HTMLDivElement>()
 
     //set number of stars for ratings
     let halfStars: number = 0;
@@ -29,6 +39,8 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
         halfStars = 1
     }
     let emptyStars: number = 5 - (fullStars + halfStars)
+
+    //replace with useGSAP toi smooth out animations and opacity change. switch to refs but figure out if needs to be unique
 
     useEffect(() => {
         const placeCardDetails = document.getElementById(`${place.id}Details`) as HTMLDivElement;
@@ -87,11 +99,17 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
                         :
                         null
                     }
-                    <Link href={`/place/${place.id}`} id={`${place.id}Link`} className='flex justify-center'>
-
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More information...</button>
-
-                    </Link>
+                    <div id={`${place.id}Link`} className='flex flex-col items-center justify-center gap-4'>
+                        <Link href={`/place/${place.id}`}  className='flex justify-center'>
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More information...</button>
+                        </Link>
+                        {currentUserID
+                            ?
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Start a Playdate here...</button>
+                            :
+                            <p className='text-xs'>You must be logged in and have kids associated with your account in order to start a Playdate</p>
+                        }
+                    </div>
 
                 </section>
 
@@ -101,4 +119,4 @@ const PlaceCards: React.FC<PlaceCardsProps> = ({ place }) => {
     )
 }
 
-export default PlaceCards;
+// export default PlaceCards;
