@@ -6,20 +6,20 @@ import { PlaydateType } from "../types/playdateTypeDefinitions";
 import { AdultsType } from "../types/userTypeDefinitions";
 import supabaseClient from "../supabase/client";
 
-export async function AddPlaydate({ location, host, kid }: { location: string, host: string, kid?: string }) {
+export async function AddPlaydate({ location, host_id, kid_id }: { location: string, host_id: string, kid_id?: string }) {
     if (!location || location === '') {
         return
     }
-    if (!host || host === '') {
+    if (!host_id || host_id === '') {
         return
     }
-    if (!kid || kid === '') {
+    if (!kid_id || kid_id === '') {
         return
     }
     const rawPlaydateData = {
         location: location,
-        host_id: host,
-        kid_id: kid
+        host_id: host_id,
+        kid_id: kid_id
     }
 
     try {
@@ -32,6 +32,7 @@ export async function AddPlaydate({ location, host, kid }: { location: string, h
         if (newPlaydateError) {
             throw handleSupabaseError(newPlaydateError)
         }
+        return newPlaydateData
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure (optional)
