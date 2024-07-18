@@ -39,6 +39,38 @@ export async function AddPlaydate({ location, host_id, kid_id }: { location: str
     }
 }
 
+export async function fetchPlaceData(placeID: string) {
+    const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+    if (!mapsApiKey) {
+        throw new Error('Google Places API key is not set');
+    }
+
+    // Use the Place Details endpoint
+    const baseURL = `https://places.googleapis.com/v1/places/${placeID}`;
+    console.log(baseURL)
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': mapsApiKey,
+            'X-Goog-FieldMask': 'id,displayName,internationalPhoneNumber,formattedAddress,location,businessStatus,currentOpeningHours,goodForChildren,editorialSummary,rating,iconMaskBaseUri,iconBackgroundColor,primaryType,photos'
+        },
+    };
+    try {
+        const response = await fetch(baseURL, options);
+        if (!response.ok) {
+            throw new Error(`Error fetching playdate location data: ${response.status} - ${response.statusText}`); // Include status text for more info
+        }
+        const fetchedPlaceData = await response.json();
+        console.log(fetchedPlaceData);
+        return fetchedPlaceData;
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
 function handleSupabaseError(error: PostgrestError): Error {
     const { message, details } = error;
     console.error("Error adding record:", message, details);
