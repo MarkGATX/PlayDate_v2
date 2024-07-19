@@ -3,7 +3,7 @@
 import { placesDataType } from "@/utils/types/placeTypeDefinitions"
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { Swiper, SwiperSlide } from "swiper/react";
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -12,10 +12,21 @@ import 'swiper/css/navigation';
 import '@/utils/SwiperCustom/swiperCustom.scss'
 import { Pagination, EffectFade, Navigation } from 'swiper/modules';
 import Link from "next/link"
+import { AuthContext } from "@/utils/firebase/AuthContext"
+import supabaseClient from "@/utils/supabase/client"
+import { AdultsType } from "@/utils/types/userTypeDefinitions"
+import { AddPlaydate } from "@/utils/actions/playdateActions"
+import { Router } from "next/router"
+import { useRouter } from "next/navigation"
 
 export default function PlaceDetails({ params }: { params: { placeId: string } }) {
-
+    const [openSelectKid, setOpenSelectKid] = useState<boolean>(false)
+    const [selectedKid, setSelectedKid] = useState<string>('')
+    const [currentUser, setCurrentUser] = useState<AdultsType>()
     let [currentPlace, setCurrentPlace] = useState<placesDataType | undefined>(undefined)
+    const selectedKidForPlaydateRef = useRef<HTMLSelectElement>(null)
+    const { user } = useContext(AuthContext)
+    const router = useRouter();
     let halfStars: number = 0
     let fullStars: number = 0
     let decimal: number = 0
@@ -64,6 +75,93 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
         }
 
     }, [params.placeId])
+
+    useEffect(() => {
+        const getCurrentUser = async () => {
+            console.log('run get Current User from dash')
+            // getCachedUser()
+            try {
+                const firebase_uid = user?.uid
+                if (!firebase_uid) {
+                    return
+                }
+                const { data: adultData, error: adultError } = await supabaseClient
+                    .from('Adults')
+                    .select('*') // Select only the ID for efficiency
+                    .eq('firebase_uid', firebase_uid);
+                if (adultError) {
+                    throw adultError;
+                }
+                if (adultData) {
+                    setCurrentUser(adultData[0])
+
+                    const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
+                        .from('Adult_Kid')
+                        .select('kid_id')
+                        .eq('adult_id', adultData[0].id)
+
+                    console.log('KIDS JOIN DATA IN MAP: ', kidsJoinData)
+                    if (kidsJoinDataError) {
+                        throw kidsJoinDataError;
+                    }
+                    if (kidsJoinData) {
+                        //map kidsJoinData into array to use .in method
+                        const kidIds = kidsJoinData.map(kidJoin => kidJoin.kid_id);
+                        const { data: kidsData, error: kidsDataError } = await supabaseClient
+                            .from('Kids')
+                            .select('first_name, last_name, id')
+                            .in('id', kidIds);
+                        if (kidsDataError) {
+                            throw kidsDataError;
+                        }
+                        if (kidsData) {
+                            console.log(kidsData)
+                            setCurrentUser({
+                                ...adultData[0],
+                                Kids: kidsData,
+                            })
+                        }
+                    }
+
+                    // }
+
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getCurrentUser();
+    }, [user])
+
+    const handleStartPlaydate = async () => {
+        if (!currentUser?.Kids) {
+            return
+        }
+        if (!currentUser) {
+            return
+        }
+        console.log(selectedKid)
+        try {
+            const newPlaydateData = {
+                location: params.placeId,
+                host_id: currentUser.id,
+                //kid is either selected or the default if there's only one kid in the array
+                kid_id: selectedKidForPlaydateRef?.current?.value || currentUser.Kids[0].id
+            }
+            console.log(newPlaydateData)
+            const newPlaydate = await AddPlaydate(newPlaydateData)
+            if (newPlaydate) {
+                router.push(`/playdates/${newPlaydate.id}`)
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    }
+
+    const handlePickKidForPlaydate = async () => {
+        setOpenSelectKid(true)
+
+    }
 
     console.log(currentPlace)
 
@@ -166,12 +264,47 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                     </div>
                     <div id='placeDescription'>{currentPlace?.editorialSummary?.text}</div>
                     <div id='placeButtons' className='my-8 flex justify-around w-full'>
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Start a Playdate</button>
-                        <Link href={`/place/${currentPlace?.id}/CreateReview`}>
-                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
-                        </Link>
+                        {
+                            currentUser
+                                ?
+                                (() => {
+                                    switch (true) {
+                                        case (currentUser.id && currentUser.Kids && currentUser.Kids?.length === 1):
+                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleStartPlaydate}>Start a Playdate here...</button>;
+                                        case (currentUser.id && currentUser.Kids && currentUser.Kids?.length > 1):
+                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setOpenSelectKid(previousValue => !previousValue)}>{openSelectKid === true ? "Cancel playdate" : "Start a Playdate here..."}</button>;
+                                        default:
+                                            return <p className='text-xs'>You must be logged in and have kids associated with your account in order to start a Playdate</p>
+                                    }
+                                })()
+                                :
+                                null
+                        }
                     </div>
+                    {openSelectKid && currentUser?.Kids && currentUser?.Kids.length > 1
+                        ?
+                        <section id='startPlaydateSection' className='flex flex-col w-full items-center'>
+                            <p>Who is this playdate for?</p>
+                            <select value = '' ref={selectedKidForPlaydateRef} onChange={async (e) => {
+                                setSelectedKid(e.target.value);
+                                await handleStartPlaydate();
+                            }} className='mb-4' >
+                                <option value= '' disabled>Select which kid..</option>
+                                {currentUser.Kids.map((kid, index) => (
+                                    <option key={index} value={kid.id}>
+                                        {kid.first_name} {kid.last_name}
+                                    </option>
+                                ))}
+                            </select>
+                        </section>
+                        :
+                        null
+                    }
+                    {/* <Link href={`/place/${currentPlace?.id}/CreateReview`}>
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
+                        </Link> */}
                 </div>
+
             </main >
         </>
     )

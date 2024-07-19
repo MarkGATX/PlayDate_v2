@@ -14,3 +14,18 @@ type nameType = {
     first_name:string
     last_name:string
 }
+
+export type PlaydateAttendanceType = {
+    id:string
+    playdate_id:string
+    kid_id:string
+    attendace_status:AttendanceStatusType
+}
+
+export enum AttendanceStatusType {
+    invited = 'invited',
+    accepted = 'accepted',
+    rejected = 'rejected',
+    maybe = 'maybe'
+
+}

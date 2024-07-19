@@ -30,6 +30,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
     const addressElementRef = useRef<HTMLDivElement>()
     const summaryElementRef = useRef<HTMLDivElement>()
     const linkElementRef = useRef<HTMLDivElement>()
+    const selectedKidForPlaydateRef = useRef<HTMLSelectElement>(null)
 
     //set number of stars for ratings
     let halfStars: number = 0;
@@ -52,12 +53,13 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
         if (!currentUserID) {
             return
         }
+        console.log(selectedKid)
         try {
             const newPlaydateData = {
                 location: place.id,
                 host_id: currentUserID,
                 //kid is either selected or the default if there's only one kid in the array
-                kid_id: selectedKid || kids[0].id
+                kid_id: selectedKidForPlaydateRef?.current?.value || kids[0].id
             }
             console.log(newPlaydateData)
             const newPlaydate = await AddPlaydate(newPlaydateData)
@@ -153,12 +155,12 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                         }
                         {openSelectKid && kids && kids.length > 1
                             ?
-                            <section>
+                            <section >
                                 <p>Who is this playdate for?</p>
-                                <select value={selectedKid} onChange={async (e) => {setSelectedKid(e.target.value);
+                                <select ref={selectedKidForPlaydateRef} value='' onChange={async (e) => {setSelectedKid(e.target.value);
                                     await handleStartPlaydate();
                                 }} className='mb-4' >
-                                    <option value = '' disabled>Select which kid..</option>
+                                    <option value='' disabled>Select which kid..</option>
                                     {kids.map((kid, index) => (
                                         <option key={index} value={kid.id}>
                                             {kid.first_name} {kid.last_name}

@@ -32,7 +32,7 @@ export default function PlaydateDetails() {
                     // setPlaydateDay(playdateDateObject.toISOString().split('T')[0]) // "YYYY-MM-DD"
                     // setPlaydateTime(playdateDateObject.toTimeString().split(' ')[0].slice(0, 5)) // "HH:MM"
                     setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
-                    setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })) // "HH:MM"
+                    setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
                     console.dir(playdateData)
                     // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
                     const { Adults, Kids, ...remainingData } = playdateData[0];
@@ -112,8 +112,10 @@ export default function PlaydateDetails() {
                         </div>
                         <h2 className='text-lg font-bold w-full text-center px-4'>{playdateDay}, {playdateTime}</h2>
                         <p className='w-full px-4 text-center'><a href=''></a>{placeDetails.formattedAddress}</p>
-                        <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank">
-
+                        {/* This url only opens a map without directions. The live anchor opens a map with directions but based solely on lat and long, which may show a different location name */}
+                        {/* <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank"> */}                   
+                        <a href={`https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${placeDetails.location.latitude},${placeDetails.location.longitude}&travelmode=driving`} target="_blank">
+                        
                             <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Get Directions</button>
                         </a>
                     </section>
