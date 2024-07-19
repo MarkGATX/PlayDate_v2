@@ -96,6 +96,10 @@ export async function denyAddKidRequest({ receiver_id, sender_id, kid_id }: { re
     }
 }
 
+export async function inviteKidToPlaydateNotification(invitedKidId:string, playdateId:string) {
+
+}
+
 function handleSupabaseError(error: PostgrestError): Error {
     const { message, details } = error;
     console.error("Error adding notification:", message, details);

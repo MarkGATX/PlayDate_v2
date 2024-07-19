@@ -2,7 +2,7 @@
 
 import { PostgrestError } from "@supabase/supabase-js";
 import { locationType } from "../types/placeTypeDefinitions";
-import { PlaydateType } from "../types/playdateTypeDefinitions";
+import { InviteStatusEnum, PlaydateType } from "../types/playdateTypeDefinitions";
 import { AdultsType } from "../types/userTypeDefinitions";
 import supabaseClient from "../supabase/client";
 
@@ -69,6 +69,29 @@ export async function fetchPlaceData(placeID: string) {
         console.log(error)
     }
 
+}
+
+export async function inviteKidToPlaydate(kidtoInvite:string, playdate:PlaydateType) {
+    const inviteData = {
+        playdate_id:playdate.id,
+        kid_id:kidtoInvite,
+        invite_status:InviteStatusEnum.invited
+    }
+    try {
+        //add playdate to playdate table
+        const { data: newPlaydateInvite, error: newPlaydateInviteError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
+            .from('Playdate_Attendance')
+            .insert([inviteData])
+            .select('id')
+            .single()
+        if (newPlaydateInviteError) {
+            throw handleSupabaseError(newPlaydateInviteError)
+        }
+        return newPlaydateInvite
+    } catch (error) {
+        console.error("Unexpected error:", error); // Log unexpected errors
+        return undefined; // Indicate failure by returning an error condition(optional)
+    }
 }
 
 function handleSupabaseError(error: PostgrestError): Error {

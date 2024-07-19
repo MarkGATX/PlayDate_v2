@@ -5,9 +5,10 @@ import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import KidSearchCard from "../KidSearchCard/KidSearchCard";
 import { useGSAP } from "@gsap/react";
+import { PlaydateType } from "@/utils/types/playdateTypeDefinitions";
 
 
-export default function KidSearchResults({ searchType, searchTerm, currentUser }: { searchType: string, searchTerm: string, currentUser: AdultsType }) {
+export default function KidSearchResults({ searchType, searchTerm, currentUser, playdateInfo }: { searchType: string, searchTerm: string, currentUser: AdultsType, playdateInfo?:PlaydateType }) {
 
     const [searchResults, setSearchResults] = useState<KidsType[]>([]);
     const [leftButtonEnd, setLeftButtonEnd] = useState<boolean>(true)
@@ -135,7 +136,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser }
                                             ?
                                             null
                                             :
-                                            <KidSearchCard key={kid.id} searchType={searchType} currentUserId={currentUser.id} kidData={kid} />
+                                            <KidSearchCard key={kid.id} searchType={searchType} playdateInfo={playdateInfo} currentUserId={currentUser.id} kidData={kid} />
                                     )
                                 })
 

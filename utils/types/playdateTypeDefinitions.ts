@@ -19,10 +19,10 @@ export type PlaydateAttendanceType = {
     id:string
     playdate_id:string
     kid_id:string
-    attendace_status:AttendanceStatusType
+    invite_status:InviteStatusEnum
 }
 
-export enum AttendanceStatusType {
+export enum InviteStatusEnum {
     invited = 'invited',
     accepted = 'accepted',
     rejected = 'rejected',

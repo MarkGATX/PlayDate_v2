@@ -1,13 +1,17 @@
 'use client'
 
+import KidSearchResults from "@/app/components/KidSearchResults/KidSearchResults"
+import KidSearchResultsSuspense from "@/app/components/KidSearchResults/KidSearchResultsSuspense"
 import { fetchPlaceData } from "@/utils/actions/playdateActions"
+import { AuthContext } from "@/utils/firebase/AuthContext"
 import supabaseClient from "@/utils/supabase/client"
 import { placesDataType, placesDataTypeWithExpiry } from "@/utils/types/placeTypeDefinitions"
 import { PlaydateType } from "@/utils/types/playdateTypeDefinitions"
+import { AdultsType } from "@/utils/types/userTypeDefinitions"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
+import { Suspense, useContext, useEffect, useState } from "react"
 
 export default function PlaydateDetails() {
     const params = useParams<{ playdateID: string }>()
@@ -15,6 +19,9 @@ export default function PlaydateDetails() {
     const [placeDetails, setPlaceDetails] = useState<placesDataType>()
     const [playdateDay, setPlaydateDay] = useState<string>()
     const [playdateTime, setPlaydateTime] = useState<string>()
+    const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
+    const [currentUser, setCurrentUser] = useState<AdultsType>()
+    const {user} = useContext(AuthContext)
 
     useEffect(() => {
         const getPlaydateInfo = async () => {
@@ -76,6 +83,47 @@ export default function PlaydateDetails() {
         getPlaydateInfo()
     }, [params])
 
+    useEffect(() => {
+        const getCurrentUser = async () => {
+            console.log('run get Current User from dash')
+            // getCachedUser()
+            try {
+                const firebase_uid = user?.uid
+                if (!firebase_uid) {
+                    return
+                }
+                const { data: adultData, error: adultError } = await supabaseClient
+                    .from('Adults')
+                    .select('*') // Select only the ID for efficiency
+                    .eq('firebase_uid', firebase_uid);
+                if (adultError) {
+                    throw adultError;
+                }
+                if (adultData) {
+                    setCurrentUser(adultData[0])
+
+                    const { data: notificationData, error: notificationError } = await supabaseClient
+                        .from('Notifications')
+                        .select('*')
+                        .eq('receiver_id', adultData[0].id)
+
+
+                    setCurrentUser({
+                        ...adultData[0],
+                        Notifications: notificationData,
+                    })
+                    // }
+
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        getCurrentUser();
+
+    }, [user])
+
     console.log(playdateInfo)
     return (
         <main>
@@ -113,9 +161,9 @@ export default function PlaydateDetails() {
                         <h2 className='text-lg font-bold w-full text-center px-4'>{playdateDay}, {playdateTime}</h2>
                         <p className='w-full px-4 text-center'><a href=''></a>{placeDetails.formattedAddress}</p>
                         {/* This url only opens a map without directions. The live anchor opens a map with directions but based solely on lat and long, which may show a different location name */}
-                        {/* <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank"> */}                   
+                        {/* <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank"> */}
                         <a href={`https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${placeDetails.location.latitude},${placeDetails.location.longitude}&travelmode=driving`} target="_blank">
-                        
+
                             <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Get Directions</button>
                         </a>
                     </section>
@@ -130,6 +178,17 @@ export default function PlaydateDetails() {
 
                 </>
             }
+            {playdateInfo && placeDetails && currentUser?.id === playdateInfo.host_id
+                ?
+                <section id='inviteKidsSection' className='p-4'>
+                    <h3 className='font-bold'>Search for kids to invite...</h3>
+                    <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
+                    <Suspense fallback={<KidSearchResultsSuspense />}>
+                        <KidSearchResults searchType='inviteToPlaydate' currentUser={currentUser} searchTerm={kidSearchTerm} playdateInfo={playdateInfo}/>
+                    </Suspense>
+                </section>
+                :
+                null}
         </main>
     )
 }
