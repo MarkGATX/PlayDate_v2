@@ -28,7 +28,7 @@ export default function PlaydateDetails() {
             try {
                 const { data: playdateData, error: playdateDataError } = await supabaseClient
                     .from('Playdates')
-                    .select('*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)') // Select only the ID for efficiency
+                    .select('*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)') 
                     .eq('id', params.playdateID);
                 if (playdateDataError) {
 

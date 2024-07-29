@@ -54,19 +54,19 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                                 }
                                 kidData = kidRawData
                             }
-                            let invitedKidData
-                            if (notification.invited_kid_id) {
-                                const { data: invitedKidRawData, error: invitedKidRawDataError } = await supabaseClient
-                                    .from('Kids')
-                                    .select('id, first_name, last_name, profile_pic, primary_caregiver, first_name_only')
-                                    .eq('id', notification.invited_kid_id)
-                                    .single();
+                            // let invitedKidData
+                            // if (notification.invited_kid_id) {
+                            //     const { data: invitedKidRawData, error: invitedKidRawDataError } = await supabaseClient
+                            //         .from('Kids')
+                            //         .select('id, first_name, last_name, profile_pic, primary_caregiver, first_name_only')
+                            //         .eq('id', notification.invited_kid_id)
+                            //         .single();
 
-                                if (invitedKidRawDataError) {
-                                    throw invitedKidRawDataError;
-                                }
-                                invitedKidData = invitedKidRawData
-                            }
+                            //     if (invitedKidRawDataError) {
+                            //         throw invitedKidRawDataError;
+                            //     }
+                            //     invitedKidData = invitedKidRawData
+                            // }
                             let playdateData
                             if (notification.notification_type === NotificationEnums.inviteToPlaydate) {
                                 console.log('invite to playdate notificiation')
@@ -83,7 +83,7 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             }
                             console.log('playdateLocation: ', playdateData)
 
-                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time }; // Combine data into a single object
+                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time}; // Combine data into a single object
                         })
                     );
 
