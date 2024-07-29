@@ -32,4 +32,6 @@ export type NotificationDetailsType = {
     receiver: AdultsType
     receiver_id:string
     playdate_id?:string
+    playdate_location?:string
+    playdate_time:Date
 }

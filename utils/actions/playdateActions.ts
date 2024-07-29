@@ -93,7 +93,8 @@ export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimar
             const newInviteData = {
                 sender_id: playdate.host_id,
                 receiver_id: invitedKidsPrimary,
-                kid_id: kidtoInvite,
+                // kid_id:
+                invited_kid_id: kidtoInvite,
                 notification_type: NotificationEnums.inviteToPlaydate,
                 playdate_id: playdate.id
             }

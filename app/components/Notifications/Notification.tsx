@@ -3,11 +3,12 @@ import supabaseClient from "@/utils/supabase/client";
 import { NotificationDetailsType, NotificationsType } from "@/utils/types/notificationTypeDefinitions";
 import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
-import { useEffect, useReducer, useState } from "react";
+import { Suspense, useEffect, useReducer, useState } from "react";
 import AddKidRequestNotification from "./NotificationCategories/AddKidRequestNotification";
 import ApprovedAddKidRequestNotification from "./NotificationCategories/ApprovedAddKidRequest";
 import { NotificationEnums } from "@/utils/enums/notificationEnums";
 import PlaydateInvite from "./NotificationCategories/PlaydateInvite";
+import NotificationSuspense from "./NotificationSuspense";
 
 
 
@@ -50,20 +51,23 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             if (kidDataError) {
                                 throw kidDataError;
                             }
-                            // if (notification.notification_type === NotificationEnums.inviteToPlaydate) {
-                            //     const { data: playdateData, error: playdateDataError } = await supabaseClient
-                            //     .from('Playdates')
-                            //     .select('id')
-                            //     .eq('id', notification.sender_id)
-                            //     .single();
-                            
+                            let playdateData
+                            if (notification.notification_type === NotificationEnums.inviteToPlaydate) {
+                                console.log('invite to playdate notificiation')
+                                const { data: playdateLocationData, error: playdateDataError } = await supabaseClient
+                                .from('Playdates')
+                                .select('location, time')
+                                .eq('id', notification.playdate_id)
+                                .single();
+                              playdateData = playdateLocationData  
 
-                            // if (senderDataError) {
-                            //     throw senderDataError;
-                            // }
-                            // }
+                            if (playdateDataError) {
+                                throw playdateDataError;
+                            }
+                            }
+                            console.log('playdateLocation: ', playdateData)
 
-                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser }; // Combine data into a single object
+                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location:playdateData?.location, playdate_time:playdateData?.time }; // Combine data into a single object
                         })
                     );
 
@@ -118,19 +122,23 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             case NotificationEnums.addKidRequest:
                                 if (notification.kid.primary_caregiver === currentUser.id) {
                                     return (
-                                        <AddKidRequestNotification notification={notification} reRender={reRender} />
+                                        <AddKidRequestNotification notification={notification} key={notification.id} reRender={reRender} />
                                     )
                                 }
                                 break;
                             // case 'Approved add kid request':
                             case NotificationEnums.approveKidRequest:
                                 if (currentUser.id) {
-                                    return <ApprovedAddKidRequestNotification notification={notification} reRender={reRender} />;
+                                    return <ApprovedAddKidRequestNotification notification={notification} key={notification.id} reRender={reRender} />;
                                 }
                                 break;
                             case NotificationEnums.inviteToPlaydate:
                                 if (currentUser.id) {
-                                    return <PlaydateInvite index={index} notification={notification} />;
+                                    return (
+                                        <Suspense key={index} fallback={<NotificationSuspense />} >
+                                            <PlaydateInvite index={index} key={notification.id} notification={notification} />
+                                        </Suspense>
+                                    )
                                 }
                                 break;
                             default:
