@@ -26,8 +26,10 @@ export type NotificationDetailsType = {
         last_name:string
         profile_pic: string
         primary_caregiver:string
+        first_name_only:boolean
     }
     notification_type: NotificationEnums
     receiver: AdultsType
     receiver_id:string
+    playdate_id?:string
 }

@@ -6,6 +6,9 @@ import Image from "next/image";
 import { useEffect, useReducer, useState } from "react";
 import AddKidRequestNotification from "./NotificationCategories/AddKidRequestNotification";
 import ApprovedAddKidRequestNotification from "./NotificationCategories/ApprovedAddKidRequest";
+import { NotificationEnums } from "@/utils/enums/notificationEnums";
+import PlaydateInvite from "./NotificationCategories/PlaydateInvite";
+
 
 
 
@@ -40,13 +43,25 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
 
                             const { data: kidData, error: kidDataError } = await supabaseClient
                                 .from('Kids')
-                                .select('id, first_name, last_name, profile_pic, primary_caregiver')
+                                .select('id, first_name, last_name, profile_pic, primary_caregiver, first_name_only')
                                 .eq('id', notification.kid_id)
                                 .single();
 
                             if (kidDataError) {
                                 throw kidDataError;
                             }
+                            // if (notification.notification_type === NotificationEnums.inviteToPlaydate) {
+                            //     const { data: playdateData, error: playdateDataError } = await supabaseClient
+                            //     .from('Playdates')
+                            //     .select('id')
+                            //     .eq('id', notification.sender_id)
+                            //     .single();
+                            
+
+                            // if (senderDataError) {
+                            //     throw senderDataError;
+                            // }
+                            // }
 
                             return { ...notification, sender: senderData, kid: kidData, receiver: currentUser }; // Combine data into a single object
                         })
@@ -96,19 +111,26 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                 :
                 (notifications && notifications.length > 0)
                     ?
-                    notifications.map((notification) => {
+                    notifications.map((notification, index) => {
                         console.log(notification)
                         switch (notification.notification_type) {
-                            case 'Add kid request':
+                            // case 'Add kid request':
+                            case NotificationEnums.addKidRequest:
                                 if (notification.kid.primary_caregiver === currentUser.id) {
                                     return (
                                         <AddKidRequestNotification notification={notification} reRender={reRender} />
                                     )
                                 }
                                 break;
-                            case 'Approved add kid request':
+                            // case 'Approved add kid request':
+                            case NotificationEnums.approveKidRequest:
                                 if (currentUser.id) {
                                     return <ApprovedAddKidRequestNotification notification={notification} reRender={reRender} />;
+                                }
+                                break;
+                            case NotificationEnums.inviteToPlaydate:
+                                if (currentUser.id) {
+                                    return <PlaydateInvite index={index} notification={notification} />;
                                 }
                                 break;
                             default:
