@@ -52,7 +52,7 @@ export default function KidSearchCard({ kidData, searchType, currentUserId, play
             return
         }
         try {
-            const kidInvite = await inviteKidToPlaydate(kidData.id, playdateInfo)
+            const kidInvite = await inviteKidToPlaydate(kidData.id, kidData.primary_caregiver, playdateInfo)
             console.log('KID INVITE: ', kidInvite)
             if (kidInvite) {
                 setNotificationExists(true)

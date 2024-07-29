@@ -5,6 +5,8 @@ import { locationType } from "../types/placeTypeDefinitions";
 import { InviteStatusEnum, PlaydateType } from "../types/playdateTypeDefinitions";
 import { AdultsType } from "../types/userTypeDefinitions";
 import supabaseClient from "../supabase/client";
+import { NotificationsType } from "../types/notificationTypeDefinitions";
+import { NotificationEnums } from "../enums/notificationEnums";
 
 export async function AddPlaydate({ location, host_id, kid_id }: { location: string, host_id: string, kid_id?: string }) {
     if (!location || location === '') {
@@ -71,23 +73,40 @@ export async function fetchPlaceData(placeID: string) {
 
 }
 
-export async function inviteKidToPlaydate(kidtoInvite:string, playdate:PlaydateType) {
-    const inviteData = {
-        playdate_id:playdate.id,
-        kid_id:kidtoInvite,
-        invite_status:InviteStatusEnum.invited
+export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimary: string, playdate: PlaydateType) {
+    const inviteAttendanceData = {
+        playdate_id: playdate.id,
+        kid_id: kidtoInvite,
+        invite_status: InviteStatusEnum.invited
     }
     try {
         //add playdate to playdate table
-        const { data: newPlaydateInvite, error: newPlaydateInviteError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
+        const { data: newPlaydateInviteAttendance, error: newPlaydateInviteAttendanceError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
             .from('Playdate_Attendance')
-            .insert([inviteData])
+            .insert([inviteAttendanceData])
             .select('id')
             .single()
-        if (newPlaydateInviteError) {
-            throw handleSupabaseError(newPlaydateInviteError)
+        if (newPlaydateInviteAttendanceError) {
+            throw handleSupabaseError(newPlaydateInviteAttendanceError)
         }
-        return newPlaydateInvite
+        if (newPlaydateInviteAttendance) {
+            const newInviteData = {
+                sender_id: playdate.host_id,
+                receiver_id: invitedKidsPrimary,
+                kid_id: kidtoInvite,
+                notification_type: NotificationEnums.inviteToPlaydate,
+                playdate_id: playdate.id
+            }
+            const { data: newPlaydateInvite, error: newPlaydateInviteError }: { data: NotificationsType | null, error: PostgrestError | null } = await supabaseClient
+                .from('Notifications')
+                .insert(newInviteData)
+                .single()
+                if(newPlaydateInviteError) {
+                    throw handleSupabaseError(newPlaydateInviteError)
+                }
+                return newPlaydateInvite
+        }
+        return newPlaydateInviteAttendance
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure by returning an error condition(optional)
