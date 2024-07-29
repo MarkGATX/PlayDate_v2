@@ -30,7 +30,7 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         getPlaydatePlaceInfo();
         console.log(playdatePlaceDetails)
 
-    }, [notification, playdatePlaceDetails])
+    }, [notification])
 
     const handleShowMoreInfo = async () => {
         setShowMoreDetails(true)
