@@ -8,19 +8,25 @@ import supabaseClient from "../supabase/client";
 import { NotificationsType } from "../types/notificationTypeDefinitions";
 import { NotificationEnums } from "../enums/notificationEnums";
 
-export async function acceptPlaydateInvite(playdate_id: string, kid_id: string) {
+export async function acceptPlaydateInvite(playdate_id: string, kid_id: string): Promise<any> {
+    console.log(playdate_id)
+    console.log(kid_id)
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
-            .update({ status: InviteStatusEnum.accepted }) //update status column
+            .update({ invite_status: InviteStatusEnum.accepted }) //update status column
             .eq('playdate_id', playdate_id)
             .eq('kid_id', kid_id)
+            .select()
         if (updatedInviteError) {
+    
             throw updatedInviteError
         }
+        console.log(updatedInviteData)
         return updatedInviteData
     } catch (error) {
-        console.log(error)
+        console.error(error)
+        return null
     }
 }
 
@@ -134,9 +140,10 @@ export async function maybePlaydateInvite(playdate_id: string, kid_id: string) {
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
-            .update({ status: InviteStatusEnum.maybe }) //update status column
+            .update({ invite_status: InviteStatusEnum.maybe }) //update status column
             .eq('playdate_id', playdate_id)
             .eq('kid_id', kid_id)
+            .select()
         if (updatedInviteError) {
             throw updatedInviteError
         }
@@ -150,9 +157,10 @@ export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) 
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
-            .update({ status: InviteStatusEnum.rejected }) //update status column
+            .update({ invite_status: InviteStatusEnum.rejected }) //update status column
             .eq('playdate_id', playdate_id)
             .eq('kid_id', kid_id)
+            .select()
         if (updatedInviteError) {
             throw updatedInviteError
         }

@@ -45,9 +45,11 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         }
         try {
             const result = await acceptPlaydateInvite(notification.playdate_id, notification.kid.id)
+            console.log(result)
             if (result) {
             deleteNotification(notification.id)
             } else {
+                console.log(result)
                 console.error('Failed to update playdate status')
             }
         } catch(error) {
