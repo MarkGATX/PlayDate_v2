@@ -47,7 +47,8 @@ export default function PlaydateDetails() {
                         ...remainingData,
                         kid_name: {
                             first_name: Kids.first_name,
-                            last_name: Kids.last_name
+                            last_name: Kids.last_name,
+                            
                         },
                         host_name: {
                             first_name: Adults.first_name,

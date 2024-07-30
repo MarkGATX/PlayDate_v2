@@ -8,20 +8,20 @@ import supabaseClient from "../supabase/client";
 import { NotificationsType } from "../types/notificationTypeDefinitions";
 import { NotificationEnums } from "../enums/notificationEnums";
 
-export async function AddPlaydate({ location, host_id, kid_id }: { location: string, host_id: string, kid_id?: string }) {
+export async function AddPlaydate({ location, host_id, host_kid_id }: { location: string, host_id: string, host_kid_id?: string }) {
     if (!location || location === '') {
         return
     }
     if (!host_id || host_id === '') {
         return
     }
-    if (!kid_id || kid_id === '') {
+    if (!host_kid_id || host_kid_id === '') {
         return
     }
     const rawPlaydateData = {
         location: location,
         host_id: host_id,
-        kid_id: kid_id
+        host_kid_id: host_kid_id
     }
 
     try {
@@ -76,6 +76,7 @@ export async function fetchPlaceData(placeID: string) {
 export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimary: string, playdate: PlaydateType) {
     const inviteAttendanceData = {
         playdate_id: playdate.id,
+        host_kid_id:playdate.kid_id,
         kid_id: kidtoInvite,
         invite_status: InviteStatusEnum.invited
     }

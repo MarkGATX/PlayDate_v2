@@ -36,6 +36,8 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         setShowMoreDetails(true)
     }
 
+    console.log(notification)
+
     return (
         <>
             <section id={`singleNotificationContainer${notification.id}${index}`} className='bg-inputBG rounded-lg p-2 flex flex-col gap-4'>
@@ -44,7 +46,7 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                         <Image src={notification.sender.profilePicURL || '/pics/generic_profile_pic.webp'} alt="parent's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
                     </div>
                     <div id={`notificationMessageContainer${notification.id}${index}`} className='text-sm w-2/3 text-center'>
-                        <span className='font-bold'>{notification.sender.first_name} {notification.sender.last_name}</span> invites you to a playdate with <span className='font-bold'>{notification.kid.first_name} {notification.kid.first_name_only ? null : notification.kid.last_name}</span>
+                        <span className='font-bold'>{notification.sender.first_name} {notification.sender.last_name}</span> invites <span className='font-bold'>{notification.kid.first_name} {notification.kid.first_name_only ? null : notification.kid.last_name}</span> to a playdate with 
                     </div>
                     <div id={`senderProfilePicContainer${notification.id}${index}`} className='w-9 h-9 flex justify-center relative'>
                         <Image src={notification.kid.profile_pic || '/pics/generic_profile_pic.webp'} alt="sender's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
