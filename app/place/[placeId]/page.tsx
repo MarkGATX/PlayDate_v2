@@ -146,7 +146,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 location: params.placeId,
                 host_id: currentUser.id,
                 //kid is either selected or the default if there's only one kid in the array
-                kid_id: selectedKidForPlaydateRef?.current?.value || currentUser.Kids[0].id
+                host_kid_id: selectedKidForPlaydateRef?.current?.value || currentUser.Kids[0].id
             }
             console.log(newPlaydateData)
             const newPlaydate = await AddPlaydate(newPlaydateData)

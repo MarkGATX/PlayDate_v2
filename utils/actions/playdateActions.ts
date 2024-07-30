@@ -76,12 +76,12 @@ export async function fetchPlaceData(placeID: string) {
 export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimary: string, playdate: PlaydateType) {
     const inviteAttendanceData = {
         playdate_id: playdate.id,
-        host_kid_id:playdate.kid_id,
+        // host_kid_id:playdate.kid_id,
         kid_id: kidtoInvite,
         invite_status: InviteStatusEnum.invited
     }
     try {
-        //add playdate to playdate table
+        //add playdate invitation recipient to playdate attendace table
         const { data: newPlaydateInviteAttendance, error: newPlaydateInviteAttendanceError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
             .from('Playdate_Attendance')
             .insert([inviteAttendanceData])

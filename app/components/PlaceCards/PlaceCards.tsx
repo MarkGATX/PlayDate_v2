@@ -59,7 +59,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                 location: place.id,
                 host_id: currentUserID,
                 //kid is either selected or the default if there's only one kid in the array
-                kid_id: selectedKidForPlaydateRef?.current?.value || kids[0].id
+                host_kid_id: selectedKidForPlaydateRef?.current?.value || kids[0].id
             }
             console.log(newPlaydateData)
             const newPlaydate = await AddPlaydate(newPlaydateData)
