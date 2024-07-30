@@ -26,7 +26,6 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                     .from('Notifications')
                     .select('*')
                     .eq('receiver_id', currentUser.id);
-
                 if (notificationData && notificationData.length > 0) {
                     console.log(notificationData)
                     const updatedNotifications = await Promise.all(
@@ -37,7 +36,6 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                                 .select('id, first_name, last_name, profilePicURL')
                                 .eq('id', notification.sender_id)
                                 .single();
-
                             if (senderDataError) {
                                 throw senderDataError;
                             }
@@ -48,7 +46,6 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                                     .select('id, first_name, last_name, profile_pic, primary_caregiver, first_name_only')
                                     .eq('id', notification.kid_id)
                                     .single();
-
                                 if (kidRawDataError) {
                                     throw kidRawDataError;
                                 }
@@ -70,20 +67,20 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             let playdateData
                             if (notification.notification_type === NotificationEnums.inviteToPlaydate) {
                                 console.log('invite to playdate notificiation')
-                                const { data: playdateLocationData, error: playdateDataError } = await supabaseClient
+                                const { data: playdateDetailsData, error: playdateDetailsDataError } = await supabaseClient
                                     .from('Playdates')
-                                    .select('location, time')
+                                    .select('location, time, Kids(id, first_name, last_name, first_name_only, profile_pic)')
                                     .eq('id', notification.playdate_id)
                                     .single();
-                                playdateData = playdateLocationData
+                                playdateData = playdateDetailsData
 
-                                if (playdateDataError) {
-                                    throw playdateDataError;
+                                if (playdateDetailsDataError) {
+                                    throw playdateDetailsDataError;
                                 }
                             }
-                            console.log('playdateLocation: ', playdateData)
+                            console.log('playdateDetails: ', playdateData)
 
-                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time}; // Combine data into a single object
+                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time, host_kid:playdateData?.Kids }; // Combine data into a single object
                         })
                     );
 
@@ -123,7 +120,7 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
     }, [currentUser]);
 
     return (
-        <section id='notificationSection' className='w-full p-4'>
+        <section id='notificationSection' className='w-full p-4 flex flex-col gap-2'>
             <h2 className='font-bold text-lg w-full'>Notifications:</h2>
             {isLoadingNotifications
                 ?

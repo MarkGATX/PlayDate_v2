@@ -8,6 +8,22 @@ import supabaseClient from "../supabase/client";
 import { NotificationsType } from "../types/notificationTypeDefinitions";
 import { NotificationEnums } from "../enums/notificationEnums";
 
+export async function acceptPlaydateInvite(playdate_id: string, kid_id: string) {
+    try {
+        const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
+            .from('Playdate_Attendance')
+            .update({ status: InviteStatusEnum.accepted }) //update status column
+            .eq('playdate_id', playdate_id)
+            .eq('kid_id', kid_id)
+        if (updatedInviteError) {
+            throw updatedInviteError
+        }
+        return updatedInviteData
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 export async function AddPlaydate({ location, host_id, host_kid_id }: { location: string, host_id: string, host_kid_id?: string }) {
     if (!location || location === '') {
         return
@@ -94,7 +110,7 @@ export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimar
             const newInviteData = {
                 sender_id: playdate.host_id,
                 receiver_id: invitedKidsPrimary,
-               kid_id: kidtoInvite,
+                kid_id: kidtoInvite,
                 notification_type: NotificationEnums.inviteToPlaydate,
                 playdate_id: playdate.id
             }
@@ -102,15 +118,47 @@ export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimar
                 .from('Notifications')
                 .insert(newInviteData)
                 .single()
-                if(newPlaydateInviteError) {
-                    throw handleSupabaseError(newPlaydateInviteError)
-                }
-                return newPlaydateInvite
+            if (newPlaydateInviteError) {
+                throw handleSupabaseError(newPlaydateInviteError)
+            }
+            return newPlaydateInvite
         }
         return newPlaydateInviteAttendance
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
         return undefined; // Indicate failure by returning an error condition(optional)
+    }
+}
+
+export async function maybePlaydateInvite(playdate_id: string, kid_id: string) {
+    try {
+        const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
+            .from('Playdate_Attendance')
+            .update({ status: InviteStatusEnum.maybe }) //update status column
+            .eq('playdate_id', playdate_id)
+            .eq('kid_id', kid_id)
+        if (updatedInviteError) {
+            throw updatedInviteError
+        }
+        return updatedInviteData
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) {
+    try {
+        const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
+            .from('Playdate_Attendance')
+            .update({ status: InviteStatusEnum.rejected }) //update status column
+            .eq('playdate_id', playdate_id)
+            .eq('kid_id', kid_id)
+        if (updatedInviteError) {
+            throw updatedInviteError
+        }
+        return updatedInviteData
+    } catch (error) {
+        console.log(error)
     }
 }
 

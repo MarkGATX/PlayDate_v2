@@ -34,13 +34,12 @@ export type NotificationDetailsType = {
     playdate_id?:string
     playdate_location?:string
     playdate_time:Date
-    // invited_kid:
-    // {
-    //     id: string
-    //     first_name:string
-    //     last_name:string
-    //     profile_pic: string
-    //     primary_caregiver:string
-    //     first_name_only:boolean
-    // }
+    host_kid:
+    {
+        id: string
+        first_name:string
+        last_name:string
+        profile_pic: string
+        first_name_only:boolean
+    }
 }

@@ -1,4 +1,5 @@
-import { fetchPlaceData } from "@/utils/actions/playdateActions";
+import { deleteNotification } from "@/utils/actions/notificationActions";
+import { acceptPlaydateInvite, fetchPlaceData, maybePlaydateInvite, rejectPlaydateInvite } from "@/utils/actions/playdateActions";
 import supabaseClient from "@/utils/supabase/client";
 import { NotificationDetailsType } from "@/utils/types/notificationTypeDefinitions";
 import { placesDataType } from "@/utils/types/placeTypeDefinitions";
@@ -27,6 +28,8 @@ export default function PlaydateInvite({ notification, index }: { notification: 
             console.log(fetchPlaceDetails)
             setPlaydatePlaceDetails(fetchPlaceDetails)
         }
+
+
         getPlaydatePlaceInfo();
         console.log(playdatePlaceDetails)
 
@@ -36,20 +39,67 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         setShowMoreDetails(true)
     }
 
+    const handleAcceptPlaydateInvite = async() => {
+        if (!notification.playdate_id) {
+            return
+        }
+        try {
+            const result = await acceptPlaydateInvite(notification.playdate_id, notification.kid.id)
+            if (result) {
+            deleteNotification(notification.id)
+            } else {
+                console.error('Failed to update playdate status')
+            }
+        } catch(error) {
+            console.log(error)
+        }
+
+    }
+    const handleRejectPlaydateInvite = async() => {
+        if (!notification.playdate_id) {
+            return
+        }
+        try {
+            const result = await rejectPlaydateInvite(notification.playdate_id, notification.kid.id)
+            if (result) {
+            deleteNotification(notification.id)
+            } else {
+                console.error('Failed to update playdate status')
+            }
+        } catch(error) {
+            console.log(error)
+        }
+    }
+    const handleMaybePlaydateInvite = async() => {
+        if (!notification.playdate_id) {
+            return
+        }
+        try {
+            const result = await maybePlaydateInvite(notification.playdate_id, notification.kid.id)
+            if (result) {
+            deleteNotification(notification.id)
+            } else {
+                console.error('Failed to update playdate status')
+            }
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
     console.log(notification)
 
     return (
         <>
             <section id={`singleNotificationContainer${notification.id}${index}`} className='bg-inputBG rounded-lg p-2 flex flex-col gap-4'>
                 <div className='w-full flex gap-w justify-between'>
-                    <div id={`parentProfilePicContainer${notification.sender.id}${index}`} className='w-9 h-9 flex justify-center relative'>
-                        <Image src={notification.sender.profilePicURL || '/pics/generic_profile_pic.webp'} alt="parent's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
+                    <div id={`parentProfilePicContainer${notification.kid.profile_pic}${index}`} className='w-9 h-9 flex justify-center relative'>
+                        <Image src={notification.kid.profile_pic || '/pics/generic_profile_pic.webp'} alt="invited kid's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
                     </div>
                     <div id={`notificationMessageContainer${notification.id}${index}`} className='text-sm w-2/3 text-center'>
-                        <span className='font-bold'>{notification.sender.first_name} {notification.sender.last_name}</span> invites <span className='font-bold'>{notification.kid.first_name} {notification.kid.first_name_only ? null : notification.kid.last_name}</span> to a playdate with 
+                        <span className='font-bold'>{notification.sender.first_name} {notification.sender.last_name}</span> invites <span className='font-bold'>{notification.kid.first_name} {notification.kid.first_name_only ? null : notification.kid.last_name}</span> to a playdate with <span className='font-bold'>{notification.host_kid.first_name} {notification.host_kid.first_name_only ? null : notification.host_kid.last_name}</span>
                     </div>
                     <div id={`senderProfilePicContainer${notification.id}${index}`} className='w-9 h-9 flex justify-center relative'>
-                        <Image src={notification.kid.profile_pic || '/pics/generic_profile_pic.webp'} alt="sender's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
+                        <Image src={notification.host_kid.profile_pic || '/pics/generic_profile_pic.webp'} alt="host kid's profile pic" fill={true} className='rounded-full' style={{ objectFit: 'cover' }}></Image>
                     </div>
                 </div>
                 <hr className='border-1 border-appBlue' />
@@ -68,11 +118,12 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                         null
                     }
                 </div>
-                <div id={`requestResponseButtons${notification.id}${index}`} className="w-full flex justify-around gap-4">
-                    <button className='px-1 w-28 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleShowMoreInfo}>More Info...</button>
-                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Yes</button>
-                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >No</button>
-                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Maybe</button>
+                <div id={`requestResponseButtons${notification.id}${index}`} className="w-full flex justify-around gap-2 flex-wrap">
+                    <Link href={`/playdates/${notification.playdate_id}`}  className='w-full flex justify-center'> <button className='px-1 w-28 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More Info...</button>
+                    </Link>
+                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleAcceptPlaydateInvite} >Yes</button>
+                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleRejectPlaydateInvite}>No</button>
+                    <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleMaybePlaydateInvite}>Maybe</button>
                 </div>
 
                 {/* {errorMessage

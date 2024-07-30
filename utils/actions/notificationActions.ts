@@ -96,8 +96,29 @@ export async function denyAddKidRequest({ receiver_id, sender_id, kid_id }: { re
     }
 }
 
-export async function inviteKidToPlaydateNotification(invitedKidId:string, playdateId:string) {
+export async function inviteKidToPlaydateNotification(invitedKidId: string, playdateId: string) {
 
+}
+
+export async function updatePlaydateStatusNotification({ receiver_id, sender_id, kid_id, playdate_id }: { receiver_id: string, sender_id: string, kid_id: string, playdate_id: string }) {
+    const notificationData: Omit<NotificationsType, 'id'> = {
+        sender_id: sender_id,
+        receiver_id: receiver_id,
+        kid_id: kid_id,
+        notification_type: NotificationEnums.updatePlaydateStatus
+    }
+    try {
+        const { data, error } = await supabaseClient
+            .from('Notifications')
+            .insert(notificationData)
+            .select()
+        if (error) {
+            throw handleSupabaseError(error)
+        }
+        return data
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 function handleSupabaseError(error: PostgrestError): Error {
