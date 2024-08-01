@@ -29,3 +29,16 @@ export enum InviteStatusEnum {
     maybe = 'maybe'
 
 }
+
+export type InviteStatusType = {
+    invite_status:InviteStatusEnum
+    Kids:InvitedKidType
+}
+
+export type InvitedKidType = {
+    id:string
+    last_name:string
+    first_name:string
+    first_name_only:boolean
+    profile_pic:string
+}

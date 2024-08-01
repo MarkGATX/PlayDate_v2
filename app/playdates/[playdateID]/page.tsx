@@ -2,6 +2,7 @@
 
 import KidSearchResults from "@/app/components/KidSearchResults/KidSearchResults"
 import KidSearchResultsSuspense from "@/app/components/KidSearchResults/KidSearchResultsSuspense"
+import PlaydateAttendanceTabs from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabs"
 import { fetchPlaceData } from "@/utils/actions/playdateActions"
 import { AuthContext } from "@/utils/firebase/AuthContext"
 import supabaseClient from "@/utils/supabase/client"
@@ -21,14 +22,17 @@ export default function PlaydateDetails() {
     const [playdateTime, setPlaydateTime] = useState<string>()
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [currentUser, setCurrentUser] = useState<AdultsType>()
-    const {user} = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
+    console.log(params)
+    const playdateID: string = params.playdateID
+
 
     useEffect(() => {
         const getPlaydateInfo = async () => {
             try {
                 const { data: playdateData, error: playdateDataError } = await supabaseClient
                     .from('Playdates')
-                    .select('*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)') 
+                    .select('*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)')
                     .eq('id', params.playdateID);
                 if (playdateDataError) {
 
@@ -48,7 +52,7 @@ export default function PlaydateDetails() {
                         kid_name: {
                             first_name: Kids.first_name,
                             last_name: Kids.last_name,
-                            
+
                         },
                         host_name: {
                             first_name: Adults.first_name,
@@ -179,13 +183,20 @@ export default function PlaydateDetails() {
 
                 </>
             }
+            {!playdateID
+                ?
+                null 
+                :
+                <PlaydateAttendanceTabs playdate={playdateID} />
+            }
+
             {playdateInfo && placeDetails && currentUser?.id === playdateInfo.host_id
                 ?
                 <section id='inviteKidsSection' className='p-4'>
                     <h3 className='font-bold'>Search for kids to invite...</h3>
                     <input type='text' value={kidSearchTerm} placeholder={`Kid's name`} className='border-2 rounded-lg px-2 bg-inputBG  ' onChange={(event) => { setKidSearchTerm(event.target.value) }}></input>
                     <Suspense fallback={<KidSearchResultsSuspense />}>
-                        <KidSearchResults searchType='inviteToPlaydate' currentUser={currentUser} searchTerm={kidSearchTerm} playdateInfo={playdateInfo}/>
+                        <KidSearchResults searchType='inviteToPlaydate' currentUser={currentUser} searchTerm={kidSearchTerm} playdateInfo={playdateInfo} />
                     </Suspense>
                 </section>
                 :
