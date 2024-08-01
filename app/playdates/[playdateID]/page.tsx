@@ -3,6 +3,7 @@
 import KidSearchResults from "@/app/components/KidSearchResults/KidSearchResults"
 import KidSearchResultsSuspense from "@/app/components/KidSearchResults/KidSearchResultsSuspense"
 import PlaydateAttendanceTabs from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabs"
+import PlaydateAttendanceTabsSuspense from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabsSuspense"
 import { fetchPlaceData } from "@/utils/actions/playdateActions"
 import { AuthContext } from "@/utils/firebase/AuthContext"
 import supabaseClient from "@/utils/supabase/client"
@@ -143,8 +144,9 @@ export default function PlaydateDetails() {
                 </>
                 :
                 <>
-                    <div id='playdateHeader' className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
-                        <h1 className='font-bold text-xl'>Loading your playdate...</h1>
+                    <div id='playdateHeader' className='w-full bg-appBlue text-appBG p-4 flex flex-col items-center gap-0 justify-center'>
+                        <h1 className='font-bold text-xl'>Loading your playdate</h1>
+                        <h1>Sit tight...</h1>
                     </div>
 
                 </>
@@ -177,6 +179,12 @@ export default function PlaydateDetails() {
                 </>
                 :
                 <>
+                    <section id='playdateLocationInfo' className='w-full flex flex-col items-center'>
+                        <div id='playdateLocationImageContainer' className='w-full relative h-72'>
+                        </div>
+                    </section>
+                    <h2 className='text-lg font-bold w-full text-center px-4'></h2>
+                    <p className='w-full px-4 text-center'><a href=''></a></p>
                     <div className='w-full p-4 flex justify-center'>
                         <h1 className=''>Loading your location details...</h1>
                     </div>
@@ -185,9 +193,12 @@ export default function PlaydateDetails() {
             }
             {!playdateID
                 ?
-                null 
+                null
                 :
-                <PlaydateAttendanceTabs playdate={playdateID} />
+                <Suspense fallback={<p>Loading attendance...</p>} >
+                    {/* <Suspense fallback={<PlaydateAttendanceTabsSuspense />} ></Suspense> */}
+                    <PlaydateAttendanceTabs playdate={playdateID} />
+                </Suspense>
             }
 
             {playdateInfo && placeDetails && currentUser?.id === playdateInfo.host_id
