@@ -94,7 +94,7 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
     return (
 
         <>
-            <section id='kidsSection' className='w-full flex flex-col gap-4 mb-4'>
+            <section id='kidsSection' className='w-full flex flex-col gap-2 mb-4'>
                 <div className="flex justify-start align-center w-full items-center bg-appBlue text-appBG px-4">
                     <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={handleShowKids}>
                         <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700 ${showKids ? '-rotate-180' : 'rotate-0'} `}></Image>
@@ -103,8 +103,6 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
 
                 </div>
                 <div ref={kidsDashboardRef} className='flex flex-col gap-2 px-4 h-0 opacity-0 overflow-y-hidden'>
-
-                    <h2 className='font-bold text-lg w-full'>Kids:</h2>
                     {kids && kids?.length > 0
                         ?
                         kids.map((kid) => (

@@ -15,8 +15,6 @@ export default function PlaydateInvite({ notification, index }: { notification: 
 
     useEffect(() => {
         let playdateDateObject = new Date(notification.playdate_time)
-        // setPlaydateDay(playdateDateObject.toISOString().split('T')[0]) // "YYYY-MM-DD"
-        // setPlaydateTime(playdateDateObject.toTimeString().split(' ')[0].slice(0, 5)) // "HH:MM"
         setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
         setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
 
@@ -33,7 +31,7 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         getPlaydatePlaceInfo();
         console.log(playdatePlaceDetails)
 
-    }, [notification])
+    }, [notification, playdatePlaceDetails])
 
     const handleShowMoreInfo = async () => {
         setShowMoreDetails(true)

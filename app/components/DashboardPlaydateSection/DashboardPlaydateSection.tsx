@@ -104,7 +104,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                 );
             case ('invited'):
                 return (
-                    <div className='absolute left-2 top-0 opacity-75 font-bold text-blue-300 -rotate-12 text-lg ' style={{ textShadow: `2px 2px 4px var(--appBlue)` }}>Haven't Decided</div>
+                    <div className='absolute left-2 top-0 opacity-75 font-bold text-blue-300 -rotate-12 text-lg ' style={{ textShadow: `2px 2px 4px var(--appBlue)` }}>{`Haven't Decided`}</div>
                 );
         }
     }
