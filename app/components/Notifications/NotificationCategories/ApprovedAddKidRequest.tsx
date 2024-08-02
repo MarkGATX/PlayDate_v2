@@ -1,7 +1,7 @@
 import { deleteNotification } from "@/utils/actions/notificationActions";
 import { NotificationDetailsType } from "@/utils/types/notificationTypeDefinitions";
 
-export default function ApprovedAddKidRequestNotification({ notification, reRender }: { notification: NotificationDetailsType, reRender: React.Dispatch<React.SetStateAction<boolean>>  }) {
+export default function ApprovedAddKidRequestNotification({ notification}: { notification: NotificationDetailsType}) {
     const { sender, kid, notification_type, receiver, id } = notification
 
     const handleDeleteNotification = async() => {

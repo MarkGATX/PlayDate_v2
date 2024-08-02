@@ -3,20 +3,24 @@ import supabaseClient from "@/utils/supabase/client";
 import { NotificationDetailsType, NotificationsType } from "@/utils/types/notificationTypeDefinitions";
 import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
-import { Suspense, useEffect, useReducer, useState } from "react";
+import { Suspense, useEffect, useReducer, useRef, useState } from "react";
 import AddKidRequestNotification from "./NotificationCategories/AddKidRequestNotification";
 import ApprovedAddKidRequestNotification from "./NotificationCategories/ApprovedAddKidRequest";
 import { NotificationEnums } from "@/utils/enums/notificationEnums";
 import PlaydateInvite from "./NotificationCategories/PlaydateInvite";
 import NotificationSuspense from "./NotificationSuspense";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
 
 
 
 
-export default function Notification({ currentUser, reRender }: { currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function Notification({ currentUser }: { currentUser: AdultsType }) {
     const [notifications, setNotifications] = useState<NotificationDetailsType[]>([])
     const [isLoadingNotifications, setIsLoadingNotifications] = useState<boolean>(true);
-
+    const [showNotifications, setShowNotifications] = useState<boolean>(false)
+    const notificationsAreaRef = useRef<HTMLDivElement | null>(null)
+    const { contextSafe } = useGSAP();
 
     useEffect(() => {
         const getCurrentNotifications = async () => {
@@ -80,7 +84,7 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             }
                             console.log('playdateDetails: ', playdateData)
 
-                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time, host_kid:playdateData?.Kids }; // Combine data into a single object
+                            return { ...notification, sender: senderData, kid: kidData, receiver: currentUser, playdate_location: playdateData?.location, playdate_time: playdateData?.time, host_kid: playdateData?.Kids }; // Combine data into a single object
                         })
                     );
 
@@ -119,9 +123,47 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
         }
     }, [currentUser]);
 
-    return (
-        <section id='notificationSection' className='w-full p-4 flex flex-col gap-2'>
-            <h2 className='font-bold text-lg w-full'>Notifications:</h2>
+    const handleShowNotifications = async () => {
+
+        if (notificationsAreaRef.current) {
+            console.log('Element display style:', getComputedStyle(notificationsAreaRef.current).display);
+            console.log('Element visibility style:', getComputedStyle(notificationsAreaRef.current).visibility);
+            console.log('Element offsetHeight:', notificationsAreaRef.current.offsetHeight);
+            if (!showNotifications) {
+
+                gsap.to(notificationsAreaRef.current, {
+
+                    height: 'auto',
+                    autoAlpha: 1,
+                    ease: 'power2.inOut',
+                    duration: .3,
+                })
+                setShowNotifications(previousValue => !previousValue)
+            }
+            else {
+                gsap.to(notificationsAreaRef.current, {
+                    height: 0,
+                    autoAlpha: 0,
+                    ease: 'power2.inOut',
+                    duration: .3
+                })
+                setShowNotifications(previousValue => !previousValue)
+            }
+        }
+    }
+
+
+
+return (
+    <section id='notificationSection' className='w-full flex flex-col gap-2'>
+        <div className="flex justify-start align-center w-full items-center bg-appBlue text-appBG px-4">
+            <div className='bg-appGold p-2 rounded-md cursor-pointer hover:scale-125 transform ease-in-out duration-300' onClick={handleShowNotifications}>
+                <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700 ${showNotifications ? '-rotate-180' : 'rotate-0'} `}></Image>
+            </div>
+            <h2 className='p-4 text-left font-bold '>Notifications</h2>
+
+        </div>
+        <div ref={notificationsAreaRef} className='flex flex-col gap-2 px-4 h-0 opacity-0 overflow-y-hidden'>
             {isLoadingNotifications
                 ?
                 <div>Loading notifications...</div>
@@ -135,14 +177,14 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                             case NotificationEnums.addKidRequest:
                                 if (notification.kid.primary_caregiver === currentUser.id) {
                                     return (
-                                        <AddKidRequestNotification notification={notification} key={notification.id} reRender={reRender} />
+                                        <AddKidRequestNotification notification={notification} key={notification.id} />
                                     )
                                 }
                                 break;
                             // case 'Approved add kid request':
                             case NotificationEnums.approveKidRequest:
                                 if (currentUser.id) {
-                                    return <ApprovedAddKidRequestNotification notification={notification} key={notification.id} reRender={reRender} />;
+                                    return <ApprovedAddKidRequestNotification notification={notification} key={notification.id} />;
                                 }
                                 break;
                             case NotificationEnums.inviteToPlaydate:
@@ -161,7 +203,8 @@ export default function Notification({ currentUser, reRender }: { currentUser: A
                     :
                     <p>No notifications</p>
             }
+        </div>
 
-        </section>
-    )
+    </section>
+)
 }

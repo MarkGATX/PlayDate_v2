@@ -189,3 +189,5 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
 
     )
 }
+
+//try wrapping with suspense instead of ternary for loading attendance data

@@ -41,8 +41,6 @@ export default function PlaydateDetails() {
                 }
                 if (playdateData) {
                     let playdateDateObject = new Date(playdateData[0].time)
-                    // setPlaydateDay(playdateDateObject.toISOString().split('T')[0]) // "YYYY-MM-DD"
-                    // setPlaydateTime(playdateDateObject.toTimeString().split(' ')[0].slice(0, 5)) // "HH:MM"
                     setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
                     setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
                     console.dir(playdateData)
@@ -68,15 +66,23 @@ export default function PlaydateDetails() {
                     const localStoragePlaces = localStorage.getItem('placesData');
                     const placesData: placesDataTypeWithExpiry = localStoragePlaces ? JSON.parse(localStoragePlaces) : [];
                     console.log(placesData)
+                    //if places has any data, check to see if stored locally other wise fetch
                     if (placesData?.places?.length > 0) {
                         const selectedPlace = placesData.places.find(
                             (place: placesDataType) => place.id === playdateData[0].location
                         );
                         console.log(!selectedPlace);
+                        //if place is in local storage, set details, else fetch details
                         if (selectedPlace) {
                             setPlaceDetails(selectedPlace)
+                        } else  {
+                            
+                            const fetchPlaceDetails = await fetchPlaceData(playdateData[0].location)
+                            console.log(fetchPlaceDetails)
+                            setPlaceDetails(fetchPlaceDetails)
                         }
                     } else if (placesData?.places?.length === 0 || !placesData?.places?.length) {
+                        console.log('FETCH')
                         const fetchPlaceDetails = await fetchPlaceData(playdateData[0].location)
                         console.log(fetchPlaceDetails)
                         setPlaceDetails(fetchPlaceDetails)
@@ -131,6 +137,7 @@ export default function PlaydateDetails() {
     }, [user])
 
     console.log(playdateInfo)
+    console.log(placeDetails)
     return (
         <main>
 

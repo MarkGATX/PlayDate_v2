@@ -19,7 +19,7 @@ export type newKidFormErrorType = {
     profilePicError?: string
 }
 
-export default function DashboardNewKidsInfo({ currentUser, reRender }: { currentUser: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function DashboardNewKidsInfo({ currentUser}: { currentUser: AdultsType }) {
     const { pending } = useFormStatus()
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [newKidSectionOpen, setNewKidSectionOpen] = useState<boolean>(false)
@@ -222,7 +222,7 @@ export default function DashboardNewKidsInfo({ currentUser, reRender }: { curren
             }
         }
         if (!newKidProfilePic) {
-            setNewKidProfilePic(`/pics/generic_profile_pic.webp`)
+            setNewKidProfilePic('/pics/generic_profile_pic.webp')
         }
         if (!currentUser) {
             console.log('return from current user false: ', currentUser)

@@ -39,9 +39,8 @@ export default function Weather() {
             if (!showDetails) {
                 
                 const weatherForecastHeight = weatherForecastText.current.offsetHeight
-                console.log(weatherForecastHeight)
                 gsap.to(weatherDetailsRef.current, {
-                    height: weatherForecastHeight * 1.8,
+                    height: weatherForecastHeight * 1.8,                   
                     autoAlpha: 1,
                     ease:'power2.inOut',
                     duration:.3
@@ -104,7 +103,7 @@ export default function Weather() {
                                         }
                                     </section>
                                     {/* need to use GSAP to animate open and close to exact height of element. Refs are set just need to implement. using h-20 now for smooth animation but doesn't work for large text areas */}
-                                    <section id='weather_details' ref={weatherDetailsRef} className={`w-100 text-xs overflow-y-hidden transition-all ease-in-out duration-700 h-0 opacity-0`}
+                                    <section id='weather_details' ref={weatherDetailsRef} className={`w-100 text-xs overflow-y-hidden transition-all ease-in-out duration-700 h-0 opacity-0 mb-4`}
                                     >
                                         <div ref={weatherForecastText}>
                                             {currentWeather.forecast}

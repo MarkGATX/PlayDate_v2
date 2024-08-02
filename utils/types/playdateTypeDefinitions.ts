@@ -1,3 +1,5 @@
+import { KidsType } from "./userTypeDefinitions"
+
 export type PlaydateType = {
     id:string
     type?: string
@@ -41,4 +43,21 @@ export type InvitedKidType = {
     first_name:string
     first_name_only:boolean
     profile_pic:string
+}
+
+export type PlaydateDashboardListType = {
+    Kids:KidsType
+    Playdates: {
+        time:Date
+        host_id:string
+        location:string
+        host_notes:String
+        host_kid_id:string
+    }
+    created_at:Date
+    id:string
+    invite_status:InviteStatusEnum
+    kid_id:string
+    playdate_id:string
+
 }

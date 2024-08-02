@@ -19,7 +19,7 @@ export async function acceptPlaydateInvite(playdate_id: string, kid_id: string):
             .eq('kid_id', kid_id)
             .select()
         if (updatedInviteError) {
-    
+
             throw updatedInviteError
         }
         console.log(updatedInviteData)
@@ -55,6 +55,24 @@ export async function AddPlaydate({ location, host_id, host_kid_id }: { location
             .single()
         if (newPlaydateError) {
             throw handleSupabaseError(newPlaydateError)
+        }
+        //add host kid to attendance table
+        if (newPlaydateData) {
+            const inviteAttendanceData = {
+                playdate_id: newPlaydateData.id,
+                kid_id: host_kid_id,
+                invite_status: InviteStatusEnum.accepted
+            }
+
+            //add playdate invitation recipient to playdate attendace table
+            const { data: newPlaydateInviteAttendance, error: newPlaydateInviteAttendanceError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
+                .from('Playdate_Attendance')
+                .insert([inviteAttendanceData])
+                .select('id')
+                .single()
+            if (newPlaydateInviteAttendanceError) {
+                throw handleSupabaseError(newPlaydateInviteAttendanceError)
+            }
         }
         return newPlaydateData
     } catch (error) {

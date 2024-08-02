@@ -4,7 +4,7 @@ import { NotificationDetailsType, NotificationsType } from "@/utils/types/notifi
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export default function AddKidRequestNotification({ notification, reRender }: { notification: NotificationDetailsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function AddKidRequestNotification({ notification}: { notification: NotificationDetailsType }) {
     const [errorMessage, setErrorMessage] = useState<string>()
     const [requestStatus, setRequestStatus] = useState<string>()
     const { sender, kid, notification_type, receiver } = notification
@@ -28,7 +28,7 @@ export default function AddKidRequestNotification({ notification, reRender }: { 
             await deleteNotification(notification.id)
             setRequestStatus('success')
             //reRender dash
-            reRender(previousValue => !previousValue)
+            // reRender(previousValue => !previousValue)
         } catch (error) {
             console.error(error)
             setRequestStatus('error')
@@ -54,7 +54,7 @@ export default function AddKidRequestNotification({ notification, reRender }: { 
             await deleteNotification(notification.id)
             setRequestStatus('success')
             //reRender dash
-            reRender(previousValue => !previousValue)
+            // reRender(previousValue => !previousValue)
         } catch (error) {
             console.error(error)
             setRequestStatus('error')

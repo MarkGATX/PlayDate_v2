@@ -14,7 +14,7 @@ export type editAdultFormErrorType = {
 }
 
 
-export default function DashboardAdultInfo({ user, reRender }: { user: AdultsType, reRender: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function DashboardAdultInfo({ user}: { user: AdultsType,}) {
 
     const [editAdultFormError, setEditAdultFormError] = useState<editAdultFormErrorType | null>(null)
     const [editAdultInfo, setEditAdultInfo] = useState<boolean>(false)
@@ -154,7 +154,7 @@ export default function DashboardAdultInfo({ user, reRender }: { user: AdultsTyp
                 const editAdultResult = await EditAdult(editAdultData)
                 console.log(editAdultResult)
                 setEditAdultInfo(false)
-                reRender(previousValue => !previousValue)
+                // reRender(previousValue => !previousValue)
                 // toggleNewKidForm();
                 // setReRenderEffect(previousValue => !previousValue)
             } catch (error) {

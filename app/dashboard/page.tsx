@@ -11,6 +11,7 @@ import Notification from "../components/Notifications/Notification";
 import NotificationSuspense from "../components/Notifications/NotificationSuspense";
 import DashboardKidsSection from "../components/DashboardKidsSection/DashboardKidsSection";
 import DashboardKidsSectionSuspense from "../components/DashboardKidsSection/DashboardKidsSectionSuspense";
+import DashboardPlaydateSection from "../components/DashboardPlaydateSection/DashboardPlaydateSection";
 
 
 export type kidsArray = {
@@ -25,7 +26,7 @@ export type newKidFormErrorType = {
 }
 
 export default function Dashboard() {
-    const [reRenderEffect, setReRenderEffect] = useState<boolean>(false)
+   
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [firebaseUid, setFirebaseUid] = useState<string | undefined>()
     const { user } = useContext(AuthContext)
@@ -71,30 +72,11 @@ export default function Dashboard() {
             }
         }
 
-        // const notificationSubscription = supabaseClient
-        //     .channel('public')
-        //     .on(
-        //         'postgres_changes',
-        //         {
-        //             event: '*',
-        //             schema: 'public',
-        //             table: 'Notifications',
-        //             filter: `receiver_id=eq.${currentUser?.id}`
-        //         },
-        //         (payload) => {
-        //             console.log('NOTIFY PAYLOAD: ', payload)
-        //             setCurrentUser(previousUser => ({previousUser, Notifications:payload.new}))
 
-        //         })
-        //     .subscribe();
 
         getCurrentUser();
 
-        // return () => {
-        //     supabaseClient.removeChannel(notificationSubscription)
-        // }
-
-    }, [user, reRenderEffect])
+    }, [user])
 
     console.log(currentUser)
 
@@ -110,43 +92,16 @@ export default function Dashboard() {
                 </>
                 :
                 <>
-                    <DashboardAdultInfo user={currentUser} reRender={setReRenderEffect} />
-                    <section id='kidsSection' className='w-full p-4 flex flex-col gap-4'>
+                    <DashboardAdultInfo user={currentUser}  />
+                    <DashboardPlaydateSection adultData={currentUser} />
                         <Suspense fallback={<DashboardKidsSectionSuspense />}>
                             <DashboardKidsSection adultData={currentUser} />
                         </Suspense>
-
-                        {/* Add kids forms */}
-                        {currentUser?.id
-                            ?
-                            <DashboardNewKidsInfo currentUser={currentUser} reRender={setReRenderEffect} />
-                            :
-                            <div> You have to be logged in to do this</div>
-
-                        }
-                    </section>
-
+                      
                     <Suspense fallback={<NotificationSuspense />}  >
-                        <Notification currentUser={currentUser} reRender={setReRenderEffect} />
+                        <Notification currentUser={currentUser}  />
                     </Suspense>
 
-
-
-                    {/* <section id='notificationSection' className='w-full p-4'>
-                        <h2 className='font-bold text-lg w-full'>Notifications:</h2>
-                        {currentUser.Notifications && currentUser.Notifications.length > 0
-                            ?
-                            currentUser.Notifications.map((notification) => (
-                                <Suspense key={notification.id} fallback={<NotificationSuspense />}  >
-                                    <NotificationCopy key={notification.id} currentUser={currentUser}  reRender={setReRenderEffect} />
-                                </Suspense>
-                            ))
-
-                            :
-                            <p>No notifications</p>
-                        }
-
-                    </section> */}
                 </>
 
             }
