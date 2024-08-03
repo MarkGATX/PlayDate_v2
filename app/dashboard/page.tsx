@@ -26,7 +26,7 @@ export type newKidFormErrorType = {
 }
 
 export default function Dashboard() {
-   
+
     const [isAuthorized, setIsAuthorized] = useState(false);
     const [firebaseUid, setFirebaseUid] = useState<string | undefined>()
     const { user } = useContext(AuthContext)
@@ -82,29 +82,31 @@ export default function Dashboard() {
 
     return (
         <main>
-            <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
-                <h1 className='font-bold text-xl'>Dashboard</h1>
-            </div>
-            {!currentUser
-                ?
-                <>
-                    <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
-                </>
-                :
-                <>
-                    <DashboardAdultInfo user={currentUser}  />
-                    <DashboardPlaydateSection adultData={currentUser} />
+            <Suspense fallback={<div className='w-full bg-appBlue text-appBG p-4 flex justify-center'><h1 className='font-bold text-xl'>Loading your data...</h1></div>}>
+                <div className='w-full bg-appBlue text-appBG p-4 flex justify-center'>
+                    <h1 className='font-bold text-xl'>Dashboard</h1>
+                </div>
+                {!currentUser
+                    ?
+                    <>
+                        <div className='w-full  p-4 '>You need to be logged in to see this page.</div>
+                    </>
+                    :
+                    <>
+                        <DashboardAdultInfo user={currentUser} />
+                        <DashboardPlaydateSection adultData={currentUser} />
                         <Suspense fallback={<DashboardKidsSectionSuspense />}>
                             <DashboardKidsSection adultData={currentUser} />
                         </Suspense>
-                      
-                    <Suspense fallback={<NotificationSuspense />}  >
-                        <Notification currentUser={currentUser}  />
-                    </Suspense>
 
-                </>
+                        <Suspense fallback={<NotificationSuspense />}  >
+                            <Notification currentUser={currentUser} />
+                        </Suspense>
 
-            }
+                    </>
+
+                }
+            </Suspense>
         </main >
     )
 }

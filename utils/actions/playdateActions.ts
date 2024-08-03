@@ -113,6 +113,35 @@ export async function fetchPlaceData(placeID: string) {
 
 }
 
+export async function getKidsPlaydateData (adultId:string)  {
+    let playdates
+    const { data: kidsDataForPlaydate, error: kidsDataForPlaydateError } = await supabaseClient
+        .from('Adult_Kid')
+        .select('*')
+        .eq('adult_id', adultId);
+    if (kidsDataForPlaydateError) {
+        throw kidsDataForPlaydateError;
+    }
+    if (kidsDataForPlaydate) {
+        const updatedKids = await Promise.all(
+            kidsDataForPlaydate.map(async (kid) => {
+                const { data: playdatesForKid, error: playdatesForKidError } = await supabaseClient
+                    .from('Playdate_Attendance')
+                    .select('*, Playdates(location, host_id, time, host_notes, host_kid_id), Kids(first_name, last_name, first_name_only, profile_pic)')
+                    .eq('kid_id', kid.kid_id);
+                if (playdatesForKidError) {
+                    throw playdatesForKidError;
+                }
+
+                // return { ...kid, playdates: playdatesForKid.sort((a, b) => a.Playdates.time - b.Playdates.time)  };
+                return { ...kid, playdates: playdatesForKid };
+            })
+        );
+        playdates = updatedKids.flatMap((kid) => kid.playdates);
+    }
+    return playdates
+}
+
 export async function inviteKidToPlaydate(kidtoInvite: string, invitedKidsPrimary: string, playdate: PlaydateType) {
     const inviteAttendanceData = {
         playdate_id: playdate.id,
