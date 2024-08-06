@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { PlaydateType } from "@/utils/types/playdateTypeDefinitions";
 
 
-export default function KidSearchResults({ searchType, searchTerm, currentUser, playdateInfo }: { searchType: string, searchTerm: string, currentUser: AdultsType, playdateInfo?:PlaydateType }) {
+export default function KidSearchResults({ searchType, searchTerm, currentUser, playdateInfo }: { searchType: string, searchTerm: string, currentUser: AdultsType, playdateInfo?: PlaydateType }) {
 
     const [searchResults, setSearchResults] = useState<KidsType[]>([]);
     const [leftButtonEnd, setLeftButtonEnd] = useState<boolean>(true)
@@ -18,61 +18,56 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
     const scrollerButtonDivRef = useRef<HTMLDivElement>(null)
     const scrollRightButtonRef = useRef<SVGSVGElement>(null)
     const scrollLeftButtonRef = useRef<SVGSVGElement>(null)
+    const kidCardsScrollRef = useRef<HTMLDivElement | null>(null)
 
     const { contextSafe } = useGSAP();
 
-    // let scrollInterval:any;
+    const handleScrollLeft = contextSafe(() => {
+        const scroll = kidCardsScrollRef.current
+        if (scroll) {
+            gsap.to(scroll,
+                { scrollLeft: scroll.scrollLeft - 100 }
+            )
+        }
+    })
 
-    // const handleScrollLeft = () =>  {
-    //     if(kidSearchResultsCardsRef.current) {
-    //     const scroll = kidSearchResultsCardsRef.current;
-    //     scroll.scrollLeft += 100
-    //     console.log(scroll.scrollLeft)
-    //     }
-    //     // scrollInterval = setInterval(() => {
-    //         // gsap.to(scroll, { scrollLeft: '+=100' })
-    //     // }, 10);
-    //     // scrollInterval()
-    // }
-
-    // const handleScrollRight = contextSafe(() => {
-    //     const scroll = kidSearchResultsCardsRef.current
-    //     console.log(scroll?.scrollLeft)
-    //     // scrollInterval = setInterval(() => {
-    //         gsap.to(scroll, { scrollLeft: '-=100' })
-    //     // }, 10);
-    //     // scrollInterval();
-
-    // });
-
-    // const handlePointerUp = contextSafe(() => {
-    //     if (kidSearchResultsCardsRef.current) {
-    //         const scroll = kidSearchResultsCardsRef.current
-
-    //         if (scroll.scrollLeft === 0) {
-    //             setLeftButtonEnd(true)
-    //             setRightButtonEnd(false)
-    //         }
-    //         if (scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 1) {
-    //             setRightButtonEnd(true)
-    //             setLeftButtonEnd(false)
-    //         }
-    //         if (scroll.scrollLeft !== 0 && scroll.scrollLeft + scroll.clientWidth < scroll.scrollWidth - 1) {
-    //             setLeftButtonEnd(false);
-    //             setRightButtonEnd(false)
-    //         }
-
-    //         // clearInterval(scrollInterval);
-    //     }
-    // })
+    const handleScrollRight = contextSafe(() => {
+        
+        const scroll = kidCardsScrollRef.current
+        if (scroll) {
+            console.log('scroll right: ', scroll.scrollLeft)
+            gsap.to(scroll,
+                { scrollLeft: scroll.scrollLeft + 200 }
+            )
+        }
+    })
 
 
+    const handlePointerUp = contextSafe(() => {
+        if (kidSearchResultsCardsRef.current) {
+            const scroll = kidSearchResultsCardsRef.current
+
+            if (scroll.scrollLeft === 0) {
+                setLeftButtonEnd(true)
+                setRightButtonEnd(false)
+            }
+            if (scroll.scrollLeft + scroll.clientWidth >= scroll.scrollWidth - 1) {
+                setRightButtonEnd(true)
+                setLeftButtonEnd(false)
+            }
+            if (scroll.scrollLeft !== 0 && scroll.scrollLeft + scroll.clientWidth < scroll.scrollWidth - 1) {
+                setLeftButtonEnd(false);
+                setRightButtonEnd(false)
+            }
+
+        }
+    })
 
     //memoize function outside of useEffect to break re-render loops on searhResults dependency
     // const memoizedKidSearchResults = useMemo(() => async () => {
     useEffect(() => {
-        const fetchKidSearchResults = async() => {
-        const kidResultArray =  await searchForKids({ searchTerm })
+        const fetchKidSearchResults = async () => {
+            const kidResultArray = await searchForKids({ searchTerm })
             if (searchTerm && kidResultArray && kidResultArray.length > 0) {
                 console.log('show results')
                 setSearchResults(previousValue => kidResultArray);
@@ -80,7 +75,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
                     {
                         autoAlpha: 1,
                         maxHeight: '350px',
-                        height: '350px',
+                        height: 'auto',
                         duration: .5,
                         ease: 'power1.inOut',
                     }
@@ -92,7 +87,7 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
                     {
                         autoAlpha: 1,
                         maxHeight: '350px',
-                        height: '350px',
+                        height: 'auto',
                         duration: .5,
                         ease: 'power1.inOut',
                     }
@@ -114,16 +109,14 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
         fetchKidSearchResults();
     }, [searchTerm])
 
-    // useEffect(() => {
-    //     memoizedKidSearchResults()
-    // }, [searchTerm])
+    console.log('SEARCH RESULTS: ', searchResults)
 
     return (
         <>
-            <section id='kidSearchResultsContainer' ref={kidSearchResultsRef} className={`max-h-0 h-0 opacity-0 relative w-full overflow-hidden my-2 border-2 border-appBlue rounded-lg py-1 flex gap-4 flex-col bg-inputBG`}>
+            <section id='kidSearchResultsContainer' ref={kidSearchResultsRef} className={`max-h-0 h-0 opacity-0 relative w-full overflow-hidden my-2 border-2 border-appBlue rounded-lg py-1 flex gap-4 flex-col bg-inputBG scrollbar-hide`} >
                 <section id='kidSearchResultsCards' ref={kidSearchResultsCardsRef}>
 
-                    <div id='kidCards' className='w-full flex gap-2 overflow-x-scroll'>
+                    <div id='kidCards' ref={kidCardsScrollRef} className='flex gap-2 overflow-x-scroll' style={{msOverflowStyle:'none', scrollbarWidth:'none'}}>
                         {searchTerm && searchResults.length === 0
                             ?
                             <div className='p-2'>{`Sorry, we can't find that kid.`}</div>
@@ -159,32 +152,32 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
                 :
                 null
             } */}
+                    {
+                        searchResults.length > 1
+                            ?
+                            <div id='scrollButtons' ref={scrollerButtonDivRef} className='w-full flex justify-around my-4'>
+                                <svg ref={scrollRightButtonRef} onPointerDown={handleScrollLeft} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} className='' width='48' height='48' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 48 48" >
+                                    <g>
+                                        <circle cx="24" cy="24" r="21.5" />
+                                    </g>
+                                    <polyline points="32.8,13.2 11.4,24 32.8,34.8 " />
+                                </svg>
+                                <svg ref={scrollLeftButtonRef} onPointerDown={handleScrollRight} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} className='' width='48' height='48' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                    viewBox="0 0 48 48" >
+                                    <g>
+                                        <circle cx="24" cy="24" r="21.5" />
+                                    </g>
+                                    <polyline points="14.6,13.2 36,24 14.6,34.8 " />
+                                </svg>
 
+                            </div>
+                            :
+                            null
+                    }
 
                 </section >
-                {/* {
-                    searchResults.length > 1
-                        ?
-                        <div id='scrollButtons' ref={scrollerButtonDivRef} className='w-full flex justify-around'>
-                            <svg ref={scrollRightButtonRef} onPointerDown={handleScrollLeft} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} className='' width='36' height='36' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-                                viewBox="0 0 48 48" >
-                                <g>
-                                    <circle cx="24" cy="24" r="21.5" />
-                                </g>
-                                <polyline points="32.8,13.2 11.4,24 32.8,34.8 " />
-                            </svg>
-                            <svg ref={scrollLeftButtonRef} onPointerDown={handleScrollRight} onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp} className='' width='36' height='36' version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
-                                viewBox="0 0 48 48" >
-                                <g>
-                                    <circle cx="24" cy="24" r="21.5" />
-                                </g>
-                                <polyline points="14.6,13.2 36,24 14.6,34.8 " />
-                            </svg>
 
-                        </div>
-                        :
-                        null
-                } */}
             </section>
         </>
     )

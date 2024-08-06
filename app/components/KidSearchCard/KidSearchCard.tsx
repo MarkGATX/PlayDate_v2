@@ -11,29 +11,6 @@ export default function KidSearchCard({ kidData, searchType, currentUserId, play
     console.log(currentUserId)
     const [notificationExists, setNotificationExists] = useState<boolean>(false)
 
-    // useEffect(() => {
-    //     const checkNotificationExists = async () => {
-    //         const { data, error } = await supabaseClient
-    //             .from('Notifications')
-    //             .select('*')
-    //             .eq('kid_id', kidData.id)
-    //             .eq('sender_id', currentUserId)
-    //             .eq('notification_type', 'Add kid request')
-    //         if (error) {
-    //             console.error('Error fetching notification:', error);
-    //             return;
-    //         }
-    //         if (data.length>0) {
-    //             console.log('Notification exists:', data);
-    //             setNotificationExists(true)
-    //         } else {
-    //             console.log('No existing notification found.');
-    //             setNotificationExists(false)
-    //         }
-    //     };
-    //     checkNotificationExists();
-    // }, [currentUserId])
-
     const handleAddKidRequest = async () => {
         try {
             const addRequest = await addKidRequestNotification(currentUserId, kidData.primary_caregiver, kidData.id)
@@ -42,7 +19,7 @@ export default function KidSearchCard({ kidData, searchType, currentUserId, play
                 setNotificationExists(true)
             }
         } catch (error) {
-
+            console.error(error)
         }
     }
 
@@ -64,7 +41,7 @@ export default function KidSearchCard({ kidData, searchType, currentUserId, play
 
 
     return (
-        <div id='kidSearchResultCard' className='h-48 border-2 rounded border-appBlue mx-2 mt-2 w-32 p-2 bg-appBG flex flex-col items-center justify-between'>
+        <div id='kidSearchResultCard' className='h-48 shrink-0 border-2 rounded border-appBlue mx-2 mt-2 w-32 p-2 bg-appBG flex flex-col items-center justify-between'>
             <div className='flex justify-center flex-col items-center gap-2'>
                 <div id='kidProfilePic' className='relative w-16 h-16 max-h-20 rounded-full border-appBlue border-2 bg-appBG overflow-hidden '>
                     <Image src='/pics/generic_profile_pic.webp' alt='profile picture' className='' fill={true} style={{ objectFit: 'cover' }}></Image>
