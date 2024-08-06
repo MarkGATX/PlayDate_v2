@@ -5,7 +5,7 @@ import { NotificationDetailsType } from "@/utils/types/notificationTypeDefinitio
 import { placesDataType } from "@/utils/types/placeTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function PlaydateInvite({ notification, index }: { notification: NotificationDetailsType, index: number }) {
     const [playdatePlaceDetails, setPlaydatePlaceDetails] = useState<placesDataType>()
@@ -13,31 +13,47 @@ export default function PlaydateInvite({ notification, index }: { notification: 
     const [playdateDay, setPlaydateDay] = useState<string>()
     const [playdateTime, setPlaydateTime] = useState<string>()
 
-    useEffect(() => {
+    const getPlaydatePlaceInfo = useCallback(async () => {
         let playdateDateObject = new Date(notification.playdate_time)
         setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
         setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
-
-        const getPlaydatePlaceInfo = async () => {
+      
             if (!notification.playdate_location) {
                 return
             }
             const fetchPlaceDetails = await fetchPlaceData(notification.playdate_location)
             console.log(fetchPlaceDetails)
-            setPlaydatePlaceDetails(fetchPlaceDetails)
-        }
+            setPlaydatePlaceDetails(fetchPlaceDetails);       
+    }, [notification.playdate_location, notification.playdate_time]);
+
+    useEffect(() => {
+        // let playdateDateObject = new Date(notification.playdate_time)
+        // setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
+        // setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
+
+        // const getPlaydatePlaceInfo = async () => {
+        //     if (!notification.playdate_location) {
+        //         return
+        //     }
+        //     const fetchPlaceDetails = await fetchPlaceData(notification.playdate_location)
+        //     console.log(fetchPlaceDetails)
+        //     setPlaydatePlaceDetails(fetchPlaceDetails)
+        // }
 
 
-        getPlaydatePlaceInfo();
-        console.log(playdatePlaceDetails)
+        // getPlaydatePlaceInfo();
+        // console.log(playdatePlaceDetails)
 
-    }, [notification, playdatePlaceDetails])
+        //memoized function to stop rerenders on getPlaydateplaceInfo
+        getPlaydatePlaceInfo()
+
+    }, [notification, getPlaydatePlaceInfo])
 
     const handleShowMoreInfo = async () => {
         setShowMoreDetails(true)
     }
 
-    const handleAcceptPlaydateInvite = async() => {
+    const handleAcceptPlaydateInvite = async () => {
         if (!notification.playdate_id) {
             return
         }
@@ -45,43 +61,43 @@ export default function PlaydateInvite({ notification, index }: { notification: 
             const result = await acceptPlaydateInvite(notification.playdate_id, notification.kid.id)
             console.log(result)
             if (result) {
-            deleteNotification(notification.id)
+                deleteNotification(notification.id)
             } else {
                 console.log(result)
                 console.error('Failed to update playdate status')
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
 
     }
-    const handleRejectPlaydateInvite = async() => {
+    const handleRejectPlaydateInvite = async () => {
         if (!notification.playdate_id) {
             return
         }
         try {
             const result = await rejectPlaydateInvite(notification.playdate_id, notification.kid.id)
             if (result) {
-            deleteNotification(notification.id)
+                deleteNotification(notification.id)
             } else {
                 console.error('Failed to update playdate status')
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
     }
-    const handleMaybePlaydateInvite = async() => {
+    const handleMaybePlaydateInvite = async () => {
         if (!notification.playdate_id) {
             return
         }
         try {
             const result = await maybePlaydateInvite(notification.playdate_id, notification.kid.id)
             if (result) {
-            deleteNotification(notification.id)
+                deleteNotification(notification.id)
             } else {
                 console.error('Failed to update playdate status')
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error)
         }
     }
@@ -119,7 +135,7 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                     }
                 </div>
                 <div id={`requestResponseButtons${notification.id}${index}`} className="w-full flex justify-around gap-2 flex-wrap">
-                    <Link href={`/playdates/${notification.playdate_id}`}  className='w-full flex justify-center'> <button className='px-1 w-28 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More Info...</button>
+                    <Link href={`/playdates/${notification.playdate_id}`} className='w-full flex justify-center'> <button className='px-1 w-28 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >More Info...</button>
                     </Link>
                     <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleAcceptPlaydateInvite} >Yes</button>
                     <button className='px-1 w-20 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleRejectPlaydateInvite}>No</button>

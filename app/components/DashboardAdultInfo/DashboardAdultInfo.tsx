@@ -154,9 +154,6 @@ export default function DashboardAdultInfo({ user}: { user: AdultsType,}) {
                 const editAdultResult = await EditAdult(editAdultData)
                 console.log(editAdultResult)
                 setEditAdultInfo(false)
-                // reRender(previousValue => !previousValue)
-                // toggleNewKidForm();
-                // setReRenderEffect(previousValue => !previousValue)
             } catch (error) {
 
                 console.log(error)

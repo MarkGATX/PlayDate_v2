@@ -81,6 +81,18 @@ export async function AddPlaydate({ location, host_id, host_kid_id }: { location
     }
 }
 
+export async function deletePlaydate(playdateId: string) {
+    try {
+        const { data: deletedPlaydateData, error: deletedPlaydateDataError }: { data: PlaydateType | null; error: PostgrestError | null } = await supabaseClient
+                .from('Playdates')
+                .delete()
+                .eq('id', playdateId)
+                .single()
+    } catch(error) {
+        console.error(error)
+    }
+}
+
 export async function fetchPlaceData(placeID: string) {
     const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
     if (!mapsApiKey) {
@@ -132,8 +144,6 @@ export async function getKidsPlaydateData (adultId:string)  {
                 if (playdatesForKidError) {
                     throw playdatesForKidError;
                 }
-
-                // return { ...kid, playdates: playdatesForKid.sort((a, b) => a.Playdates.time - b.Playdates.time)  };
                 return { ...kid, playdates: playdatesForKid };
             })
         );
@@ -201,6 +211,7 @@ export async function maybePlaydateInvite(playdate_id: string, kid_id: string) {
 }
 
 export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) {
+    console.log('reject server function')
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
@@ -211,6 +222,7 @@ export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) 
         if (updatedInviteError) {
             throw updatedInviteError
         }
+        console.log(updatedInviteData)
         return updatedInviteData
     } catch (error) {
         console.log(error)

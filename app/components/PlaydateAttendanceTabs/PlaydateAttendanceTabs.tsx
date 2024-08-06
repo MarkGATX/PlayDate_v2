@@ -59,6 +59,28 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
         }
 
         getPlaydateAttendanceData()
+
+        const attendanceSubscription = supabaseClient
+            .channel('supabase_realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'Playdate_Attendance',
+                    filter: `playdate_id=eq.${playdate}`
+                },
+                (payload) => {
+                    console.log('GET ATTENDANCE PAYLOAD: ', payload)
+                    getPlaydateAttendanceData();
+
+                })
+            .subscribe()
+
+        return () => {
+            supabaseClient.removeChannel(attendanceSubscription)
+        }
+      
     }, [playdate])
 
     const handleClick = async (value: string) => {

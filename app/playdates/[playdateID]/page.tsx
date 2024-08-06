@@ -92,7 +92,10 @@ export default function PlaydateDetails() {
                 console.log(error)
             }
         }
+
         getPlaydateInfo()
+
+        
     }, [params])
 
     useEffect(() => {
