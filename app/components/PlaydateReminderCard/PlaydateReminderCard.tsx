@@ -3,11 +3,12 @@ import { acceptPlaydateInvite, deletePlaydate, maybePlaydateInvite, rejectPlayda
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-export default function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboardListType, index: number }) {
+// export default function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboardListType, index: number }) {
+function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboardListType, index: number }) {
     console.log(playdate)
     const [showStatusChange, setShowStatusChange] = useState<boolean>(false)
     const playdateChangeStatusRef = useRef<HTMLDivElement | null>(null)
@@ -15,9 +16,8 @@ export default function PlaydateReminderCard({ playdate, index }: { playdate: Pl
     const { contextSafe } = useGSAP()
 
     const handleShowplaydates = contextSafe(() => {
-        console.log(playdateChangeStatusRef.current?.offsetHeight)
         if (playdateChangeStatusRef.current) {
-            const changeButtonsHeight = playdateChangeStatusRef.current.offsetHeight
+            // const changeButtonsHeight = playdateChangeStatusRef.current.offsetHeight
             if (!showStatusChange) {
                 gsap.to(playdateChangeStatusRef.current, {
                     height: 'auto',
@@ -145,3 +145,4 @@ export default function PlaydateReminderCard({ playdate, index }: { playdate: Pl
             </div >
     )
 }
+ export default memo(PlaydateReminderCard)

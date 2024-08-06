@@ -107,6 +107,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
 
         return () => {
             supabaseClient.removeChannel(playdatesSubscription)
+            supabaseClient.removeChannel(deletedPlaydatesSubscription)
         }
 
     }, [adultData])
@@ -153,7 +154,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                                 playdates.map((playdate, index) => {
                                     
                                     return (
-                                        <PlaydateReminderCard key={`${playdate.playdate_id}${playdate.kid_id}${index}`} playdate={playdate} index={index} />
+                                        <PlaydateReminderCard key={`${playdate.playdate_id}${playdate.kid_id}`} playdate={playdate} index={index} />
                                     )
                                 })
                             }
