@@ -80,7 +80,7 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
         return () => {
             supabaseClient.removeChannel(attendanceSubscription)
         }
-      
+
     }, [playdate])
 
     const handleClick = async (value: string) => {
@@ -89,7 +89,7 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
 
     console.dir(yesResponse)
     console.dir(noResponse)
-    console.dir(maybeResponse)
+    console.dir(maybeResponse.length > 0)
     console.dir(invitedResponse)
 
 
@@ -99,21 +99,58 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
 
             <section id='playdateAttendanceTabs' className='flex flex-col gap-2 items-start rounded-lg justify-start p-4 border-2 border-appBlue m-2'>
                 < h3 className='font-bold' > Responses:</h3 >
-                <div id='tabs' className='flex justify-between w-full gap-1'>
-                    <div className={`w-1/5 flex justify-center items-center rounded-xl text-sm text-center cursor-pointer ${selectedTab === 'yes' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-inputBG border-1'}`} onClick={() => handleClick('yes')}>
-                        <p>Yes</p>
+                <div id='tabs' className='flex justify-between w-full gap-2'>
+                    <div className={`w-1/4 relative flex justify-center items-center rounded-xl text-xs text-center cursor-pointer ${selectedTab === 'yes' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-1'}`} onClick={() => handleClick('yes')}>
+                        {yesResponse.length > 0
+                            ?
+                            <>
+                                <p>Yes</p>
+                                <div className={`absolute -right-2 -top-2 rounded-full w-auto min-w-4 inline-block ${selectedTab === 'yes' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`}>{yesResponse.length}</div>
+                            </>
+                            :
+                            <p>Yes</p>
+                        }
                     </div>
-                    <div className={`w-1/5 flex justify-center items-center rounded-xl text-sm text-center cursor-pointer ${selectedTab === 'no' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBlue border-1 '}`} onClick={() => handleClick('no')}>
-                        <p>No</p>
+
+                    <div className={`w-1/4 flex relative justify-center items-center rounded-xl text-xs text-center cursor-pointer ${selectedTab === 'no' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-1 '}`} onClick={() => handleClick('no')}>
+                        {noResponse.length > 0
+                            ?
+                            <>
+                                <p>No</p>
+                                <div className={`absolute -right-2 -top-2 rounded-full w-auto min-w-4 inline-block ${selectedTab === 'no' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`}>{noResponse.length}</div>
+                            </>
+                            :
+                            <p>No</p>
+                        }
                     </div>
-                    <div className={`w-1/5 flex justify-center items-center rounded-xl text-sm text-center cursor-pointer ${selectedTab === 'maybe' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBlue border-1'}`} onClick={() => handleClick('maybe')}>
-                        <p>Maybe</p>
+                    <div className={`w-1/4 relative flex justify-center items-center rounded-xl text-xs text-center cursor-pointer ${selectedTab === 'maybe' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`} onClick={() => handleClick('maybe')}>
+                        {maybeResponse.length > 0
+                            ?
+                            <>
+                            {console.log('Rendering Maybe with count')}
+                                <p>Maybe</p>
+                                <div className={`absolute -right-2 -top-2 rounded-full w-auto min-w-4 inline-block ${selectedTab === 'maybe' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`}>{maybeResponse.length}</div>
+                            </>
+                            :
+                            <>
+                            {console.log('Rendering Maybe with count')}
+                            <p>Maybe</p>
+                            </>
+                        }
                     </div>
-                    <div className={`w-1/5 flex justify-center items-center rounded-xl text-sm text-center cursor-pointer ${selectedTab === 'invited' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBlue border-1'}`} onClick={() => handleClick('invited')}>
-                        <p>Invited</p>
+                    <div className={`w-1/4 relative flex justify-center items-center rounded-xl text-xs text-center cursor-pointer ${selectedTab === 'invited' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBlue border-1'}`} onClick={() => handleClick('invited')}>
+                        {invitedResponse.length > 0
+                            ?
+                            <>
+                                <p>Invited</p>
+                                <div className={`absolute -right-2 -top-2 rounded-full w-auto min-w-4 inline-block ${selectedTab === 'invited' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`}>{invitedResponse.length}</div>
+                            </>
+                            :
+                            <p>Invited</p>
+                        }
                     </div>
                 </div>
-                <div id='attendanceLists' className='h-48 w-full'>
+                <div id='attendanceLists' className='h-auto max-h-44 overflow-y-auto w-full'>
                     {(() => {
                         switch (selectedTab) {
                             case ('yes'):
