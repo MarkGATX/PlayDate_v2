@@ -6,7 +6,7 @@ export default function ApprovedAddKidRequestNotification({ notification}: { not
 
     const handleDeleteNotification = async() => {
         deleteNotification(id)
-        // reRender(previousValue => !previousValue)
+
     }
 
     return (

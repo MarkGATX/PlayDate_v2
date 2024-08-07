@@ -15,6 +15,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { Suspense, useContext, useEffect, useRef, useState } from "react"
 import { DateTime } from "luxon"
+import { sendPlaydateUpdates } from "@/utils/actions/notificationActions"
 
 export default function PlaydateDetails() {
     const params = useParams<{ playdateID: string }>()
@@ -185,6 +186,13 @@ export default function PlaydateDetails() {
                     throw updatedDateDataError
                 }
                 console.log('updated Date: ', updatedDateData)
+                // Ensure playdateInfo and host_id are defined before calling sendPlaydateUpdates
+                if (playdateInfo && playdateInfo.host_id) {
+                    // Send update notification to all parents associated with kids
+                    sendPlaydateUpdates(playdateID, playdateInfo.host_id);
+                } else {
+                    console.error('playdateInfo or host_id is undefined');
+                }
                 //set date to display as new date
                 setUnformattedPlaydateDate(DateTime.fromISO(updatedDateData[0].time))
                 //close date edit elements

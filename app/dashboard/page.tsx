@@ -94,14 +94,15 @@ export default function Dashboard() {
                     :
                     <>
                         <DashboardAdultInfo user={currentUser} />
+                        <Suspense fallback={<NotificationSuspense />}  >
+                            <Notification currentUser={currentUser} />
+                        </Suspense>
                         <DashboardPlaydateSection adultData={currentUser} />
                         <Suspense fallback={<DashboardKidsSectionSuspense />}>
                             <DashboardKidsSection adultData={currentUser} />
                         </Suspense>
 
-                        <Suspense fallback={<NotificationSuspense />}  >
-                            <Notification currentUser={currentUser} />
-                        </Suspense>
+                        
 
                     </>
 

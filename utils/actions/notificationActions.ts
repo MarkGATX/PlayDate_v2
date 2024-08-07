@@ -121,6 +121,57 @@ export async function updatePlaydateStatusNotification({ receiver_id, sender_id,
     }
 }
 
+export async function sendPlaydateUpdates(playdate_id:string, playdate_host:string) {
+    try {
+        const {data:playdateInviteData, error:playdateInviteDataError} = await supabaseClient
+        .from('Playdate_Attendance')
+        .select('kid_id')
+        .eq('playdate_id', playdate_id)
+        if( playdateInviteDataError) {
+            throw handleSupabaseError(playdateInviteDataError)
+        }
+       
+        const kidsWithParents = await Promise.all(playdateInviteData.map(async (kid) => {
+            const {data:kidsParentData, error: kidsParentDataError} = await supabaseClient
+            .from('Adult_Kid')
+            .select('adult_id')
+            .eq('kid_id', kid.kid_id)
+
+            if (kidsParentDataError) {
+                handleSupabaseError(kidsParentDataError)
+            }
+
+            return {
+                kid_id: kid.kid_id,
+                parents:kidsParentData || []
+            }
+        }
+        )
+    );
+    console.log(kidsWithParents)
+    for (const kid of kidsWithParents) {
+        if (kid.parents.length === 0 ) {
+            break;
+        }
+        kid.parents.map(async (parent) => {
+            const notificationData: Omit<NotificationsType, 'id'> = {
+                sender_id: playdate_host,
+                receiver_id: parent.adult_id,
+                kid_id: kid.kid_id,
+                notification_type: NotificationEnums.changePlaydateTime,
+                playdate_id:playdate_id
+            }
+            const {data:newParentNotification, error:newParentNotificationError} = await supabaseClient
+            .from('Notifications')
+            .insert(notificationData)
+        })
+    }
+    // return kidsWithParents
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 function handleSupabaseError(error: PostgrestError): Error {
     const { message, details } = error;
     console.error("Error adding notification:", message, details);
