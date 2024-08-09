@@ -31,10 +31,8 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
                     .select('*')
                     .eq('receiver_id', currentUser.id);
                 if (notificationData && notificationData.length > 0) {
-                    console.log(notificationData)
                     const updatedNotifications = await Promise.all(
                         notificationData.map(async (notification) => {
-                            console.log('getinfo')
                             const { data: senderData, error: senderDataError } = await supabaseClient
                                 .from('Adults')
                                 .select('id, first_name, last_name, profilePicURL')
@@ -58,7 +56,7 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
 
                             let playdateData
                             if (notification.notification_type === NotificationEnums.inviteToPlaydate || NotificationEnums.changePlaydateTime) {
-                                console.log('invite to playdate notificiation')
+                                //get additional playdate information if related to playdates.
                                 const { data: playdateDetailsData, error: playdateDetailsDataError } = await supabaseClient
                                     .from('Playdates')
                                     .select('location, time, Kids(id, first_name, last_name, first_name_only, profile_pic)')
@@ -70,7 +68,6 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
                                     throw playdateDetailsDataError;
                                 }
                             }
-                            console.log('playdateDetails: ', playdateData)
 
                             return {
                                 ...notification,
@@ -107,7 +104,7 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
                     filter: `receiver_id=eq.${currentUser?.id}`
                 },
                 (payload) => {
-                    console.log('NOTIFY PAYLOAD: ', payload)
+                    //refetch notifications
                     getCurrentNotifications();
 
                 })
@@ -123,13 +120,8 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
     const handleShowNotifications = async () => {
 
         if (notificationsAreaRef.current) {
-            console.log('Element display style:', getComputedStyle(notificationsAreaRef.current).display);
-            console.log('Element visibility style:', getComputedStyle(notificationsAreaRef.current).visibility);
-            console.log('Element offsetHeight:', notificationsAreaRef.current.offsetHeight);
             if (!showNotifications) {
-
                 gsap.to(notificationsAreaRef.current, {
-
                     height: 'auto',
                     autoAlpha: 1,
                     ease: 'power2.inOut',
@@ -148,8 +140,6 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
             }
         }
     }
-
-    console.log(notifications)
 
     return (
         <section id='notificationSection' className='w-full flex flex-col gap-2 mb-4'>
@@ -174,9 +164,7 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
                     (notifications && notifications.length > 0)
                         ?
                         notifications.map((notification, index) => {
-                            console.log(notification)
                             switch (notification.notification_type) {
-                                // case 'Add kid request':
                                 case NotificationEnums.addKidRequest:
                                     if (notification.kid.primary_caregiver === currentUser.id) {
                                         return (
@@ -184,7 +172,6 @@ export default function Notification({ currentUser }: { currentUser: AdultsType 
                                         )
                                     }
                                     break;
-                                // case 'Approved add kid request':
                                 case NotificationEnums.approveKidRequest:
                                     if (currentUser.id) {
                                         return <ApprovedAddKidRequestNotification notification={notification} key={notification.id} />;

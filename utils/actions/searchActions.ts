@@ -34,11 +34,8 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
             }
             return kidSearchData
         }
-
-
     } catch (error) {
-        console.log('error in fetching kids in search: ', error)
-
+        console.error('error in fetching kids in search: ', error)
     }
 
 }

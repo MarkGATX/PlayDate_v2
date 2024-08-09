@@ -12,7 +12,6 @@ export default function KidSearchResults({ searchType, searchTerm }: { searchTyp
         const kidSearchResults = async () => {
             const kidResultArray = await searchForKids({ searchTerm })
             if (kidResultArray && kidResultArray.length > 0) {
-                console.log('show results')
                 setSearchResults(kidResultArray);
                 gsap.to(kidSearchResultsRef.current,
                     {
@@ -22,7 +21,6 @@ export default function KidSearchResults({ searchType, searchTerm }: { searchTyp
                         ease: 'power1.inOut',
                     }
                 )
-                console.log(kidResultArray)
             } else {
                 // Handle the case where data is not available (e.g., set an empty array or loading state)
                 setSearchResults([]); // Set an empty array or display a loading message

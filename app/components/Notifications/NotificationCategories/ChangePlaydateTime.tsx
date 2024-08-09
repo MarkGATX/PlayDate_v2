@@ -22,7 +22,6 @@ export default function ChangePlaydateTime({ notification, index }: { notificati
     // Parse and format the playdate_time
     const newDate = DateTime.fromISO(playdateTimeISO).toLocaleString(DateTime.DATETIME_MED);
 
-    console.log(notification)
     return (
         <section  className='bg-inputBG rounded-lg p-2 text-sm flex justify-between'>
             <div className='w-5/6'>

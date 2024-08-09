@@ -14,6 +14,7 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
 
     useEffect(() => {
         const getPlaydateAttendanceData = async () => {
+            //using returns to override what supabase expects to receive. They expect an array here but sending an object, so overriding to expect an object
             const { data: playdateAttendanceData, error: playdateAttendanceDataError } = await supabaseClient
                 .from('Playdate_Attendance')
                 .select('invite_status, Kids(id,first_name, last_name, profile_pic, first_name_only)')
@@ -23,8 +24,6 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
             if (playdateAttendanceData) {
                 setAttendanceData(playdateAttendanceData)
             }
-
-            console.log(playdateAttendanceData)
             if (playdateAttendanceData && playdateAttendanceData.length > 0) {
                 let rawYesData: InviteStatusType[] = []
                 let rawNoData: InviteStatusType[] = []
@@ -71,7 +70,6 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
                     filter: `playdate_id=eq.${playdate}`
                 },
                 (payload) => {
-                    console.log('GET ATTENDANCE PAYLOAD: ', payload)
                     getPlaydateAttendanceData();
 
                 })
@@ -127,13 +125,11 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
                         {maybeResponse.length > 0
                             ?
                             <>
-                            {console.log('Rendering Maybe with count')}
                                 <p>Maybe</p>
                                 <div className={`absolute -right-2 -top-2 rounded-full w-auto min-w-4 inline-block ${selectedTab === 'maybe' ? 'bg-appGold border-appBlue border-2' : 'bg-inputBG border-appBG border-2'}`}>{maybeResponse.length}</div>
                             </>
                             :
                             <>
-                            {console.log('Rendering Maybe with count')}
                             <p>Maybe</p>
                             </>
                         }

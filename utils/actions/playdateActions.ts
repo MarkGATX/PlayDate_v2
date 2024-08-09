@@ -9,8 +9,7 @@ import { NotificationsType } from "../types/notificationTypeDefinitions";
 import { NotificationEnums } from "../enums/notificationEnums";
 
 export async function acceptPlaydateInvite(playdate_id: string, kid_id: string): Promise<any> {
-    console.log(playdate_id)
-    console.log(kid_id)
+
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
@@ -22,7 +21,6 @@ export async function acceptPlaydateInvite(playdate_id: string, kid_id: string):
 
             throw updatedInviteError
         }
-        console.log(updatedInviteData)
         return updatedInviteData
     } catch (error) {
         console.error(error)
@@ -101,7 +99,6 @@ export async function fetchPlaceData(placeID: string) {
 
     // Use the Place Details endpoint
     const baseURL = `https://places.googleapis.com/v1/places/${placeID}`;
-    console.log(baseURL)
 
     const options = {
         method: 'GET',
@@ -117,10 +114,9 @@ export async function fetchPlaceData(placeID: string) {
             throw new Error(`Error fetching playdate location data: ${response.status} - ${response.statusText}`); // Include status text for more info
         }
         const fetchedPlaceData = await response.json();
-        console.log(fetchedPlaceData);
         return fetchedPlaceData;
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 
 }
@@ -206,12 +202,11 @@ export async function maybePlaydateInvite(playdate_id: string, kid_id: string) {
         }
         return updatedInviteData
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
 export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) {
-    console.log('reject server function')
     try {
         const { data: updatedInviteData, error: updatedInviteError } = await supabaseClient
             .from('Playdate_Attendance')
@@ -222,10 +217,9 @@ export async function rejectPlaydateInvite(playdate_id: string, kid_id: string) 
         if (updatedInviteError) {
             throw updatedInviteError
         }
-        console.log(updatedInviteData)
         return updatedInviteData
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 

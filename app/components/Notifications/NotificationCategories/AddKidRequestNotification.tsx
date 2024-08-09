@@ -8,7 +8,6 @@ export default function AddKidRequestNotification({ notification}: { notificatio
     const [errorMessage, setErrorMessage] = useState<string>()
     const [requestStatus, setRequestStatus] = useState<string>()
     const { sender, kid, notification_type, receiver } = notification
-    // console.log(notification.receiver_id)
 
     const handleApproveAddRequest = async () => {
         setRequestStatus('loading')

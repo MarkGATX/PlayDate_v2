@@ -25,7 +25,7 @@ export default function UpdatePlaydateStatus(notification: NotificationDetailsTy
                     setPlaydateStatus(playdateStatusData[0])
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
@@ -36,8 +36,6 @@ export default function UpdatePlaydateStatus(notification: NotificationDetailsTy
         deleteNotification(id)
 
     }
-
-    console.log(playdateStatus)
 
     return (
         <section id='singleNotificationContainer' className='bg-inputBG rounded-lg p-2 text-sm flex justify-between'>

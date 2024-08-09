@@ -152,11 +152,10 @@ export default function DashboardAdultInfo({ user}: { user: AdultsType,}) {
 
             try {
                 const editAdultResult = await EditAdult(editAdultData)
-                console.log(editAdultResult)
                 setEditAdultInfo(false)
             } catch (error) {
 
-                console.log(error)
+                console.error(error)
             }
         }
     }

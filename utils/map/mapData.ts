@@ -8,13 +8,9 @@ export async function getActivitiesFromWeather(latitude: number, longitude: numb
     const maxLatitude: number = latitude + .5;
     const minLongitude: number = longitude - .5;
     const maxLongitude: number = longitude + .5;
-    console.log(weatherCode)
-    if (weatherCode) {
-        console.log(goodWeatherCodes.includes(weatherCode))
-    }
 
+  
     if (weatherCode) {
-        console.log('run')
         if (goodWeatherCodes.includes(weatherCode)) {
             //get unique random numbers
             let goodWeatherIndexArray: number[] = [];
@@ -33,9 +29,7 @@ export async function getActivitiesFromWeather(latitude: number, longitude: numb
                 let fetchUrl = `https://api.mapbox.com/geocoding/v5/mapbox.places/${goodWeatherSearches[activityIndex]}.json?bbox=${minLongitude},${minLatitude},${maxLongitude},${maxLatitude}&type=poi&proximity=${longitude},${latitude}&access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}`;
                 // let fetchUrl = `https://api.mapbox.com/search/searchbox/v1/category/${goodWeatherSearches[activityIndex]}?access_token=${process.env.NEXT_PUBLIC_MAPBOX_API}&proximity=${longitude},${latitude}`;
                 activityFetchUrls.push(fetchUrl);
-                console.log(fetchUrl)
             }
-            console.log(activityFetchUrls)
             return activityFetchUrls
         } else {
             //get unique random numbers

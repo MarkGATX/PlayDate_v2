@@ -7,7 +7,6 @@ const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
 export async function fetchPlaceDetails(placeId: string) {
     const baseUrl = `https://places.googleapis.com/v1/places/${placeId}`;
-    console.log(baseUrl)
 
     if (!mapsApiKey) {
         throw new Error('Google Places API key is not set');
@@ -23,14 +22,11 @@ export async function fetchPlaceDetails(placeId: string) {
     };
 
     try {
-        console.log(baseUrl)
         const response = await fetch(baseUrl, options);
-        console.log(response)
         if (!response.ok) {
             throw new Error(`Error fetching location: ${response.status}`);
         }
         const data: placesDataType = await response.json();
-        console.log(data)
         return data
 
     } catch (error) {

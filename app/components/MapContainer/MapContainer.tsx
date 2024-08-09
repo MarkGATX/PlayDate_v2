@@ -25,7 +25,6 @@ export default function MapContainer() {
     useEffect(() => {
         
             const getCurrentUser = async () => {
-                console.log('run get Current User from dash')
                 // getCachedUser()
                 try {
                     const firebase_uid = user?.uid
@@ -41,13 +40,13 @@ export default function MapContainer() {
                     }
                     if (adultData) {
                         setCurrentUser(adultData[0])
-    
+                        // get kids associated with adult
+                        //COMBINE INTO ONE QUERY, SELECT('KID_ID, KIDS(FIRST_NAME, LAST_NAME, ID)')
                         const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
                             .from('Adult_Kid')
                             .select('kid_id')
                             .eq('adult_id', adultData[0].id)
-    
-                        console.log('KIDS JOIN DATA IN MAP: ', kidsJoinData)
+
                         if (kidsJoinDataError) {
                             throw kidsJoinDataError;
                         }
@@ -62,7 +61,7 @@ export default function MapContainer() {
                                 throw kidsDataError;
                             }
                             if (kidsData) {
-                                console.log(kidsData)
+
                                 setCurrentUser({
                                     ...adultData[0],
                                     Kids: kidsData,
@@ -74,7 +73,7 @@ export default function MapContainer() {
     
                     }
                 } catch (error) {
-                    console.log(error)
+                    console.error(error)
                 }
             }
         
@@ -90,23 +89,20 @@ export default function MapContainer() {
                 if (storedPlacesData) {
                     // Get the data from local storage
                     placesData = JSON.parse(storedPlacesData);
-                    console.log(placesData.expiryDate, Date.now(), placesData.expiryDate > Date.now())
+                    //check expiry date to make sure data is still relevant. refetch if expired
                     if (placesData.expiryDate > Date.now()) {
-                        console.log(placesData)
-                        console.log('local storage places', placesData)
                         setPlaces(placesData.places)
                     } else {
                         localStorage.removeItem('placesData')
+                        // Store the places in local storage. handled in fetchNearbyPlaces
                         placesData = await fetchNearbyPlaces(activityTypes, currentLocation.latitude, currentLocation.longitude);
-                        // Store the places in local storage
-                        console.log('fetched places', placesData)
+                        
                         setPlaces(placesData)
                     }
                 } else {
                     //get the data from Google Places
                     placesData = await fetchNearbyPlaces(activityTypes, currentLocation.latitude, currentLocation.longitude);
-                    // Store the places in local storage
-                    console.log('fetched places', placesData)
+                    // Store the places in local storage, handled in fetchNearbyPlaces
                     setPlaces(placesData)
                 }
             } catch (error: any) {
@@ -124,7 +120,6 @@ export default function MapContainer() {
         )
     }
 
-    console.dir(currentUser)
     return (
         (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API && currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}>

@@ -10,34 +10,33 @@ export default function CreateReview({ params }: { params: { placeId: string } }
     const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
+        //check for current place in local storage. set if true, fetch and set if false
+        //
         const fetchedPlaceDetails = async () => {
             try {
                 const placeDetails = await fetchPlaceDetails(params.placeId)
-                console.log(placeDetails)
                 if (placeDetails) {
-                    console.log('place details true: ', placeDetails)
+
                     setCurrentPlace(placeDetails)
                     setLoading(false)
                 } else {
-                    console.log('place details undefined')
+                    //place details undefined
                     setCurrentPlace(undefined)
                     setLoading(false)
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
         const checkForLocalStorage = async () => {
+            //REFORMAT TO TAKE INTO ACCOUNT LOCAL STORAGE WITHOUT CURRENT PLACE ID
             const storedPlaces: placesDataTypeWithExpiry = await JSON.parse(localStorage.getItem('placesData') || '[]')
-            console.log('places from storage: ', storedPlaces)
-
             if (storedPlaces && storedPlaces.places.length > 0) {
-                console.log('places good')
+                //set current place to place in local storage that matches current param. Need to handle case when not there
                 setCurrentPlace(storedPlaces.places.find(place => place.id === params.placeId))
                 setLoading(false)
             } else {
-                console.log('fetch details')
                 fetchedPlaceDetails();
             }
         }

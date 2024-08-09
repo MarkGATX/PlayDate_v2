@@ -22,29 +22,10 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                 return
             }
             const fetchPlaceDetails = await fetchPlaceData(notification.playdate_location)
-            console.log(fetchPlaceDetails)
             setPlaydatePlaceDetails(fetchPlaceDetails);       
     }, [notification.playdate_location, notification.playdate_time]);
 
     useEffect(() => {
-        // let playdateDateObject = new Date(notification.playdate_time)
-        // setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
-        // setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
-
-        // const getPlaydatePlaceInfo = async () => {
-        //     if (!notification.playdate_location) {
-        //         return
-        //     }
-        //     const fetchPlaceDetails = await fetchPlaceData(notification.playdate_location)
-        //     console.log(fetchPlaceDetails)
-        //     setPlaydatePlaceDetails(fetchPlaceDetails)
-        // }
-
-
-        // getPlaydatePlaceInfo();
-        // console.log(playdatePlaceDetails)
-
-        //memoized function to stop rerenders on getPlaydateplaceInfo
         getPlaydatePlaceInfo()
 
     }, [notification, getPlaydatePlaceInfo])
@@ -59,15 +40,13 @@ export default function PlaydateInvite({ notification, index }: { notification: 
         }
         try {
             const result = await acceptPlaydateInvite(notification.playdate_id, notification.kid.id)
-            console.log(result)
             if (result) {
                 deleteNotification(notification.id)
             } else {
-                console.log(result)
                 console.error('Failed to update playdate status')
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
 
     }
@@ -83,7 +62,7 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                 console.error('Failed to update playdate status')
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
     const handleMaybePlaydateInvite = async () => {
@@ -98,11 +77,9 @@ export default function PlaydateInvite({ notification, index }: { notification: 
                 console.error('Failed to update playdate status')
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
-
-    console.log(notification)
 
     return (
         <>

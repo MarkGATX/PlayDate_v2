@@ -31,11 +31,9 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
         }
     })
 
-    const handleScrollRight = contextSafe(() => {
-        
+    const handleScrollRight = contextSafe(() => {       
         const scroll = kidCardsScrollRef.current
         if (scroll) {
-            console.log('scroll right: ', scroll.scrollLeft)
             gsap.to(scroll,
                 { scrollLeft: scroll.scrollLeft + 200 }
             )
@@ -69,7 +67,6 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
         const fetchKidSearchResults = async () => {
             const kidResultArray = await searchForKids({ searchTerm })
             if (searchTerm && kidResultArray && kidResultArray.length > 0) {
-                console.log('show results')
                 setSearchResults(previousValue => kidResultArray);
                 gsap.to(kidSearchResultsRef.current,
                     {
@@ -80,7 +77,6 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
                         ease: 'power1.inOut',
                     }
                 )
-                console.log(kidResultArray)
             } else if (searchTerm && kidResultArray && kidResultArray.length === 0) {
                 setSearchResults(previousValue => kidResultArray);
                 gsap.to(kidSearchResultsRef.current,
@@ -108,8 +104,6 @@ export default function KidSearchResults({ searchType, searchTerm, currentUser, 
         }
         fetchKidSearchResults();
     }, [searchTerm])
-
-    console.log('SEARCH RESULTS: ', searchResults)
 
     return (
         <>

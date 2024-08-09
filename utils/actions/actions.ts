@@ -18,16 +18,13 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
         if (newKidError) {
             throw handleSupabaseError(newKidError)
         }
-        console.log('New Kid Added: ', newKidData, newKidError)
         // add kid to Adult_Kid table to show parent relationship
         if (newKidData) {
             const newRelationshipData: RelationshipType = {
                 relationship: 'parent',
                 kid_id: newKidData.id,
                 adult_id: rawAddKidData.primary_caregiver
-                // adult_id: formData.get('primary_caregiver') as string
             }
-            console.log(newRelationshipData)
             const { data: newRelationship, error: newRelationshipError }: { data: RelationshipType | null; error: PostgrestError | null } = await supabaseClient
                 .from('Adult_Kid')
                 .insert([newRelationshipData])
@@ -39,7 +36,6 @@ export async function AddKid(rawAddKidData: Omit<KidsType, 'id'>) {
         }
     } catch (error) {
         console.error("Unexpected error:", error); // Log unexpected errors
-        return undefined; // Indicate failure (optional)
     }
 }
 
@@ -56,11 +52,9 @@ export async function DeleteKid(kidId: string) {
         if (deletedKidError) {
             throw handleSupabaseError(deletedKidError)
         }
-        console.log(deletedKidData)
         return deletedKidData
     } catch (error) {
-        console.error("Unexpected error:", error); // Log unexpected errors
-        return undefined; // Indicate failure (optional)
+        console.error("Unexpected error:", error); 
     }
 }
 
@@ -77,11 +71,10 @@ export async function EditKid(editedKidData: KidsType) {
         if (updatedKidError) {
             throw handleSupabaseError(updatedKidError)
         }
-        console.log(updatedKidData)
         return updatedKidData
     } catch (error) {
-        console.error("Unexpected error:", error); // Log unexpected errors
-        return undefined; // Indicate failure (optional)
+        console.error("Unexpected error:", error); 
+        return undefined; 
     }
 }
 
@@ -98,11 +91,10 @@ export async function EditAdult(editedAdultData: Omit<AdultsType, 'firebase_uid'
         if (updatedAdultError) {
             throw handleSupabaseError(updatedAdultError)
         }
-        console.log(updatedAdultData)
         return updatedAdultData
     } catch (error) {
-        console.error("Unexpected error:", error); // Log unexpected errors
-        return undefined; // Indicate failure (optional)
+        console.error("Unexpected error:", error); 
+        return undefined; 
     }
 }
 
@@ -118,10 +110,8 @@ export async function removeAdultKidRelationship(adult_id: string, kid_id: strin
             throw handleSupabaseError(deletedRelationshipError)
         }
         if (deletedRelationship) {
-            console.log('removed kid')
             return deletedRelationship
         }
-
     } catch (error) {
         console.error(error)
     }

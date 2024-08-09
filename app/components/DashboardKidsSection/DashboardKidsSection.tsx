@@ -33,7 +33,6 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                 }
                 if (kidsData) {
                     setKids(kidsData);
-                    console.log(kidsData)
                 }
             }
         }
@@ -49,7 +48,6 @@ export default function DashboardKidsSection({ adultData }: { adultData: AdultsT
                     filter: `adult_id=eq.${adultData.id}`
                 },
                 (payload) => {
-                    console.log('GET NEW KIDS PAYLOAD: ', payload)
                     getKidsData();
 
                 })

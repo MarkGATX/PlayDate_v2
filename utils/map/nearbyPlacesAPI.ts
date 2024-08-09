@@ -49,10 +49,9 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
             console.error('No data received from API');
             return;
           }
-        console.log('map data: ', data)
         data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
-        // shuffle results for random display
 
+        // shuffle results for random display
         for (let i = data.places.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
@@ -65,7 +64,6 @@ export async function fetchNearbyPlaces(types: string[], latitude: number, longi
         // const mapPageToken = data.pageToken;
         localStorage.setItem('placesData', JSON.stringify(dataWithExpiry))
         return data.places
-
     } catch (error) {
         console.error('Error fetching nearby places:', error);
     }

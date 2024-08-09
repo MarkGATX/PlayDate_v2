@@ -8,13 +8,11 @@ import { useContext, useEffect, useState } from "react";
 
 
 export default function KidSearchCard({ kidData, searchType, currentUserId, playdateInfo,  }: { kidData: KidsType, searchType: string, currentUserId: string, playdateInfo?:PlaydateType }) {
-    console.log(currentUserId)
     const [notificationExists, setNotificationExists] = useState<boolean>(false)
 
     const handleAddKidRequest = async () => {
         try {
             const addRequest = await addKidRequestNotification(currentUserId, kidData.primary_caregiver, kidData.id)
-            console.log(addRequest)
             if (addRequest) {
                 setNotificationExists(true)
             }
@@ -25,17 +23,17 @@ export default function KidSearchCard({ kidData, searchType, currentUserId, play
 
     const handleInviteKid = async () => {
         if (!playdateInfo) {
+            //no playdate Info
             console.log('no playdate info')
             return
         }
         try {
             const kidInvite = await inviteKidToPlaydate(kidData.id, kidData.primary_caregiver, playdateInfo)
-            console.log('KID INVITE: ', kidInvite)
             if (kidInvite) {
                 setNotificationExists(true)
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 

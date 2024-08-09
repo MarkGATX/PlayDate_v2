@@ -48,29 +48,25 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
     }
 
     useEffect(() => {
+        //check local storage to see if place already exists. if so, set state with that place. otherwise fetch the place details first and then set the place
         const places: placesDataType[] = JSON.parse(localStorage.getItem('placesData') || '[]')
         const fetchedPlaceDetails = async () => {
             try {
                 const placeDetails = await fetchPlaceDetails(params.placeId)
-                console.log(placeDetails)
                 if (placeDetails) {
-                    console.log('place details true: ', placeDetails)
                     const formattedPlaceDetails = JSON.stringify(placeDetails)
-                    console.log(formattedPlaceDetails)
                     setCurrentPlace(placeDetails)
                 } else {
-                    console.log('place details undefined')
                     setCurrentPlace(undefined)
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
         if (places.length > 0) {
-            console.log('places good')
+
             setCurrentPlace(places.find(place => place.id === params.placeId))
         } else {
-            console.log('fetch details')
             fetchedPlaceDetails();
         }
 
@@ -78,7 +74,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
 
     useEffect(() => {
         const getCurrentUser = async () => {
-            console.log('run get Current User from dash')
             // getCachedUser()
             try {
                 const firebase_uid = user?.uid
@@ -87,20 +82,18 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*') // Select only the ID for efficiency
+                    .select('*') 
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
                 }
                 if (adultData) {
                     setCurrentUser(adultData[0])
-
+                    // COMBINE INTO ONE QUERY
                     const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
                         .from('Adult_Kid')
                         .select('kid_id')
                         .eq('adult_id', adultData[0].id)
-
-                    console.log('KIDS JOIN DATA IN MAP: ', kidsJoinData)
                     if (kidsJoinDataError) {
                         throw kidsJoinDataError;
                     }
@@ -115,7 +108,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                             throw kidsDataError;
                         }
                         if (kidsData) {
-                            console.log(kidsData)
                             setCurrentUser({
                                 ...adultData[0],
                                 Kids: kidsData,
@@ -127,7 +119,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
 
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
         getCurrentUser();
@@ -140,7 +132,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
         if (!currentUser) {
             return
         }
-        console.log(selectedKid)
         try {
             const newPlaydateData = {
                 location: params.placeId,
@@ -148,7 +139,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 //kid is either selected or the default if there's only one kid in the array
                 host_kid_id: selectedKidForPlaydateRef?.current?.value || currentUser.Kids[0].id
             }
-            console.log(newPlaydateData)
             const newPlaydate = await AddPlaydate(newPlaydateData)
             if (newPlaydate) {
                 router.push(`/playdates/${newPlaydate.id}`)
@@ -162,8 +152,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
         setOpenSelectKid(true)
 
     }
-
-    console.log(currentPlace)
 
     return (
         <>

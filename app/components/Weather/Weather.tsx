@@ -15,7 +15,6 @@ export default function Weather() {
     const locationData = useContext(LocationContext);
     const currentWeather = useContext(WeatherContext).weatherData
     const weatherError = useContext(WeatherContext).error
-    console.log('weather context: ', currentWeather)
     let weatherDetailsHeight: number = 0;
 
     useEffect(() => {
@@ -49,7 +48,6 @@ export default function Weather() {
                 setShowDetails(previousValue => !previousValue)
             }
             else {
-                // console.log(weatherForecastHeight)
                 gsap.to(weatherDetailsRef.current, {
                     height: 0,
                     autoAlpha: 0,
@@ -61,7 +59,6 @@ export default function Weather() {
         }
     })
 
-    console.log(currentWeather)
     return (
         <>
             <section id='weatherConditions' className='relative w-full flex flex-wrap justify-between items-center'>

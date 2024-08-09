@@ -21,7 +21,7 @@ export async function addKidRequestNotification(sender_id: string, receiver_id: 
         }
         return data
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -55,7 +55,7 @@ export async function approveAddKidRequest({ new_parent_id, sender_id, kid_id }:
         }
         return data
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -71,7 +71,7 @@ export async function deleteNotification(notification_id: string) {
         }
         return data
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
@@ -92,7 +92,23 @@ export async function denyAddKidRequest({ receiver_id, sender_id, kid_id }: { re
         }
         return data
     } catch (error) {
-        console.log(error)
+        console.error(error)
+    }
+}
+
+export async function getNotificationNumber(adult_id: string) {
+    try {
+        const { data: notificationData, error: notificationError } = await supabaseClient
+            .from('Notifications')
+            .select('*')
+            .eq('receiver_id', adult_id);
+        if (notificationData && notificationData.length > 0) {
+            return notificationData.length
+        } else {
+            return 0
+        }
+    } catch (error) {
+        console.error(error)
     }
 }
 
@@ -117,25 +133,25 @@ export async function updatePlaydateStatusNotification({ receiver_id, sender_id,
         }
         return data
     } catch (error) {
-        console.log(error)
+        console.error(error)
     }
 }
 
-export async function sendPlaydateUpdates(playdate_id:string, playdate_host:string) {
+export async function sendPlaydateUpdates(playdate_id: string, playdate_host: string) {
     try {
-        const {data:playdateInviteData, error:playdateInviteDataError} = await supabaseClient
-        .from('Playdate_Attendance')
-        .select('kid_id')
-        .eq('playdate_id', playdate_id)
-        if( playdateInviteDataError) {
+        const { data: playdateInviteData, error: playdateInviteDataError } = await supabaseClient
+            .from('Playdate_Attendance')
+            .select('kid_id')
+            .eq('playdate_id', playdate_id)
+        if (playdateInviteDataError) {
             throw handleSupabaseError(playdateInviteDataError)
         }
-       
+
         const kidsWithParents = await Promise.all(playdateInviteData.map(async (kid) => {
-            const {data:kidsParentData, error: kidsParentDataError} = await supabaseClient
-            .from('Adult_Kid')
-            .select('adult_id')
-            .eq('kid_id', kid.kid_id)
+            const { data: kidsParentData, error: kidsParentDataError } = await supabaseClient
+                .from('Adult_Kid')
+                .select('adult_id')
+                .eq('kid_id', kid.kid_id)
 
             if (kidsParentDataError) {
                 handleSupabaseError(kidsParentDataError)
@@ -143,30 +159,29 @@ export async function sendPlaydateUpdates(playdate_id:string, playdate_host:stri
 
             return {
                 kid_id: kid.kid_id,
-                parents:kidsParentData || []
+                parents: kidsParentData || []
             }
         }
         )
-    );
-    console.log(kidsWithParents)
-    for (const kid of kidsWithParents) {
-        if (kid.parents.length === 0 ) {
-            break;
-        }
-        kid.parents.map(async (parent) => {
-            const notificationData: Omit<NotificationsType, 'id'> = {
-                sender_id: playdate_host,
-                receiver_id: parent.adult_id,
-                kid_id: kid.kid_id,
-                notification_type: NotificationEnums.changePlaydateTime,
-                playdate_id:playdate_id
+        );
+
+        for (const kid of kidsWithParents) {
+            if (kid.parents.length === 0) {
+                break;
             }
-            const {data:newParentNotification, error:newParentNotificationError} = await supabaseClient
-            .from('Notifications')
-            .insert(notificationData)
-        })
-    }
-    // return kidsWithParents
+            kid.parents.map(async (parent) => {
+                const notificationData: Omit<NotificationsType, 'id'> = {
+                    sender_id: playdate_host,
+                    receiver_id: parent.adult_id,
+                    kid_id: kid.kid_id,
+                    notification_type: NotificationEnums.changePlaydateTime,
+                    playdate_id: playdate_id
+                }
+                const { data: newParentNotification, error: newParentNotificationError } = await supabaseClient
+                    .from('Notifications')
+                    .insert(notificationData)
+            })
+        }
     } catch (error) {
         console.error(error)
     }

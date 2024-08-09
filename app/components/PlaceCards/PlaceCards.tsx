@@ -53,7 +53,6 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
         if (!currentUserID) {
             return
         }
-        console.log(selectedKid)
         try {
             const newPlaydateData = {
                 location: place.id,
@@ -61,7 +60,6 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                 //kid is either selected or the default if there's only one kid in the array
                 host_kid_id: selectedKidForPlaydateRef?.current?.value || kids[0].id
             }
-            console.log(newPlaydateData)
             const newPlaydate = await AddPlaydate(newPlaydateData)
             if(newPlaydate) {
                 router.push(`/playdates/${newPlaydate.id}`)

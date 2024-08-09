@@ -36,7 +36,6 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
                 throw new Error('NWS Server error');
             }
             const NWSforecastData = await NWSForecast.json();
-            console.log(NWSforecastData)
             //set rain chance based on current period and high and low forecast temp based on the first two periods returned. Might be a better way but this is quick
             if (NWSforecastData.properties.periods[0].temperature > NWSforecastData.properties.periods[1].temperature) {
                 forecastData.low_temp = NWSforecastData.properties.periods[1].temperature
@@ -55,7 +54,6 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
                 throw new Error(`Error fetching current weather from utility! status: ${currentOpenWeatherResponse.status}`)
             }
             const currentOpenWeatherData = await currentOpenWeatherResponse.json();
-            console.log(currentOpenWeatherData)
             forecastData.current_icon = currentOpenWeatherData.weather[0].id
             forecastData.current_id = currentOpenWeatherData.weather[0].icon
             forecastData.current_temp = currentOpenWeatherData.main.temp.toFixed(0)
@@ -67,7 +65,7 @@ export async function getCurrentNWSWeather(lat: number, long: number) {
             }
             await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for 2 seconds before the next retry
             retries--;
-            console.log(error)
+            console.error(error)
         }
     }
 }

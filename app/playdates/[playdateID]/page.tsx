@@ -32,7 +32,6 @@ export default function PlaydateDetails() {
     const [editDateError, setEditDateError] = useState<string>()
 
     const { user } = useContext(AuthContext)
-    console.log(params)
     const playdateID: string = params.playdateID
 
 
@@ -48,18 +47,10 @@ export default function PlaydateDetails() {
                     throw playdateDataError;
                 }
                 if (playdateData) {
-                    console.log(playdateData[0].time)
                     let luxonDate = DateTime.fromISO(playdateData[0].time)
-                    console.log(luxonDate.toLocaleString(DateTime.DATETIME_MED))
-                    console.log(luxonDate.toISO())
-                    let playdateDateObject = new Date(playdateData[0].time)
+
                     setUnformattedPlaydateDate(luxonDate)
 
-                    // setPlaydateInputDay(playdateDateObject.toISOString().split('T')[0]);
-                    // setPlaydateInputTime(playdateDateObject.toISOString().split('T')[1]);
-                    // setPlaydateDay(playdateDateObject.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })) // "YYYY-MM-DD"
-                    // setPlaydateTime(playdateDateObject.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) // "HH:MM"
-                    // console.dir(playdateData)
                     // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
                     const { Adults, Kids, ...remainingData } = playdateData[0];
                     const newPlaydateData = {
@@ -81,42 +72,34 @@ export default function PlaydateDetails() {
                     // check for location in local storage first
                     const localStoragePlaces = localStorage.getItem('placesData');
                     const placesData: placesDataTypeWithExpiry = localStoragePlaces ? JSON.parse(localStoragePlaces) : [];
-                    console.log(placesData)
                     //if places has any data, check to see if stored locally other wise fetch
                     if (placesData?.places?.length > 0) {
                         const selectedPlace = placesData.places.find(
                             (place: placesDataType) => place.id === playdateData[0].location
                         );
-                        console.log(!selectedPlace);
                         //if place is in local storage, set details, else fetch details
                         if (selectedPlace) {
                             setPlaceDetails(selectedPlace)
                         } else {
-
                             const fetchPlaceDetails = await fetchPlaceData(playdateData[0].location)
-                            console.log(fetchPlaceDetails)
                             setPlaceDetails(fetchPlaceDetails)
                         }
                     } else if (placesData?.places?.length === 0 || !placesData?.places?.length) {
-                        console.log('FETCH')
                         const fetchPlaceDetails = await fetchPlaceData(playdateData[0].location)
-                        console.log(fetchPlaceDetails)
                         setPlaceDetails(fetchPlaceDetails)
                     }
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
         getPlaydateInfo()
 
-
     }, [params])
 
     useEffect(() => {
         const getCurrentUser = async () => {
-            console.log('run get Current User from dash')
             // getCachedUser()
             try {
                 const firebase_uid = user?.uid
@@ -125,7 +108,7 @@ export default function PlaydateDetails() {
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*') // Select only the ID for efficiency
+                    .select('*') 
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
@@ -137,17 +120,13 @@ export default function PlaydateDetails() {
                         .from('Notifications')
                         .select('*')
                         .eq('receiver_id', adultData[0].id)
-
-
                     setCurrentUser({
                         ...adultData[0],
                         Notifications: notificationData,
                     })
-                    // }
-
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
 
@@ -172,11 +151,10 @@ export default function PlaydateDetails() {
             const currentDate = DateTime.now();
 
             if (inputDate < currentDate) {
-                console.log("The date is before the current date.");
+                //date is before current date
                 setEditDateError('Playdates can not be in the past')
                 return
             } else {
-                console.log("The date is not before the current date.");
                 const { data: updatedDateData, error: updatedDateDataError } = await supabaseClient
                     .from('Playdates')
                     .update({ time: inputDate })
@@ -185,7 +163,6 @@ export default function PlaydateDetails() {
                 if (updatedDateDataError) {
                     throw updatedDateDataError
                 }
-                console.log('updated Date: ', updatedDateData)
                 // Ensure playdateInfo and host_id are defined before calling sendPlaydateUpdates
                 if (playdateInfo && playdateInfo.host_id) {
                     // Send update notification to all parents associated with kids
@@ -203,10 +180,7 @@ export default function PlaydateDetails() {
         }
 
     }
-    // const luxonDate = unformattedPlaydateDate ? DateTime.fromJSDate(unformattedPlaydateDate) : DateTime.now();
 
-    // console.log(luxonDate)
-    console.log(newPlaydateDate)
     return (
         <main>
 

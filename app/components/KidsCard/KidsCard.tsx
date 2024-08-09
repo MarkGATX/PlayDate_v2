@@ -52,8 +52,6 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
     const saveKidEdits = async (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault()
         const minDate = new Date(2000, 0, 1)
-
-        console.log(kidBirthday)
         const editedKidData: KidsType = {
 
             id: kid.id,
@@ -64,7 +62,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
             primary_caregiver: kid.primary_caregiver,
             profile_pic: kidProfilePic
         }
-        console.log(editedKidData)
+
         if (kidBirthday) {
             const parsedKidEditedBirthday = new Date(kidBirthday)
             const today = new Date()
@@ -167,7 +165,6 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
             const updateResponse = await EditKid(editedKidData)
             if (updateResponse) {
                 setEditKidInfo(previousValue => !previousValue)
-                console.log(updateResponse)
 
             } else {
                 console.log('something else')
@@ -175,7 +172,7 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
                 setEditKidInfo(previousValue => !previousValue)
             }
         } catch (error) {
-            console.log(error)
+            console.error(error)
         }
     }
 
@@ -210,82 +207,6 @@ export default function KidsCard({ kid, currentUser }: { kid: KidsType, currentU
         setKidTooOld(false)
         setKidProfilePic(kid.profile_pic)
     }
-
-    // useEffect(() => {
-    //     if (editKidInfo) {
-    //         console.log('editing')
-    //         gsap.from(editFormRef.current, {
-    //             duration: 2,
-    //             ease: 'power3.inOut',
-    //             opacity: 1,
-    //             // className: 'hidden', // Remove hidden class after animation
-    //         });
-    //         gsap.to(readOnlyKidContentRef.current, {
-    //             duration: 2,
-    //             ease: 'power1.out',
-    //             opacity: 0,
-    //             // onComplete: () => readOnlyKidContentRef.current.classList.add('hidden'), // Hide visually after animation
-    //         });
-    //     } else {
-    //         gsap.to(editFormRef.current, {
-    //             duration: 2,
-    //             ease: 'power1.out',
-    //             opacity: 0,
-    //             // className: 'hidden', // Add hidden class before animation
-    //         });
-    //         gsap.from(readOnlyKidContentRef.current, {
-    //             duration: 2,
-    //             ease: 'power3.inOut',
-    //             opacity: 1,
-    //             // onComplete: () => readOnlyKidContentRef.current.classList.remove('hidden'), // Show visually after animation
-    //         });
-    //     }
-
-    // }, [editKidInfo]);
-
-    // useGSAP(() => {
-    //     if (editKidInfo) {
-    //         console.log('editing')
-    //         gsap.from(editFormRef.current, {
-    //             translateX:'0px',
-    //             duration: 2,
-    //             ease: 'power3.inOut',
-    //             // opacity: 1,
-    //             // display: 'block', // Remove hidden class after animation
-    //             // autoAlpha:1
-    //         });
-    //         gsap.to(readOnlyKidContentRef.current, {
-    //             duration: 2,
-    //             translateX:'200%',
-    //             ease: 'power1.out',
-    //             // autoAlpha:0
-    //             // opacity: 0,
-    //             // display:'none'
-    //             // onComplete: () => readOnlyKidContentRef.current.classList.add('hidden'), // Hide visually after animation
-    //         });
-    //     } 
-    //     if (!editKidInfo) {
-    //         gsap.to(editFormRef.current, {
-    //             duration: 2,
-    //             ease: 'power1.out',
-    //             translateX: '200%',
-    //             // opacity: 0,
-    //             // display: 'none', // Add hidden class before animation
-    //             // autoAlpha:0
-    //         });
-    //         gsap.from(readOnlyKidContentRef.current, {
-    //             duration: 2,
-    //             ease: 'power3.inOut',
-    //             // autoAlpha:1,
-    //             translateX: '0px'
-    //             // opacity: 1,
-    //             // display:'block'
-    //             // onComplete: () => readOnlyKidContentRef.current.classList.remove('hidden'), // Show visually after animation
-    //         });
-    //     }
-
-    // }, [editKidInfo]);
-
 
     return (
         <>

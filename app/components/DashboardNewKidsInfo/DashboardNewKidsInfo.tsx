@@ -59,7 +59,6 @@ export default function DashboardNewKidsInfo({ currentUser}: { currentUser: Adul
     })
 
     const toggleNewKidForm = contextSafe(() => {
-        console.log(newKidSectionRef)
         if (newKidSectionRef.current) {
             const newKidSection = newKidSectionRef.current
             if (newKidSectionOpen) {
@@ -91,7 +90,6 @@ export default function DashboardNewKidsInfo({ currentUser}: { currentUser: Adul
                     duration: 0.3,
                     ease: 'power1.inOut',
                     onComplete: () => {
-                        console.log('animation complete')
                         // Scroll to top after animation completes
                         newKidSection.scrollIntoView({ behavior: "smooth" });
                     }
@@ -225,12 +223,11 @@ export default function DashboardNewKidsInfo({ currentUser}: { currentUser: Adul
             setNewKidProfilePic('/pics/generic_profile_pic.webp')
         }
         if (!currentUser) {
-            console.log('return from current user false: ', currentUser)
             return
         }
         // build data and create new kid after double checking that fields are valid
         if (!formError && currentUser && newKidFirstName && newKidLastName && newKidBirthday && newKidProfilePic) {
-            console.log('run new kid action')
+            //run new kid action
             const rawAddKidData = {
                 first_name: newKidFirstName.trim(),
                 last_name: newKidLastName.trim(),
@@ -240,12 +237,8 @@ export default function DashboardNewKidsInfo({ currentUser}: { currentUser: Adul
                 profile_pic: newKidProfilePic
             }
             try {
-                console.log(rawAddKidData)
                 const addKidResult = await AddKid(rawAddKidData)
-                console.log(addKidResult)
                 toggleNewKidForm();
-
-                // reRender(previousValue => !previousValue)
             } catch (error) {
                 console.error(error)
             }

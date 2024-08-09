@@ -37,7 +37,6 @@ export default function Dashboard() {
 
     useEffect(() => {
         const getCurrentUser = async () => {
-            console.log('run get Current User from dash')
             // getCachedUser()
             try {
                 const firebase_uid = user?.uid
@@ -46,7 +45,7 @@ export default function Dashboard() {
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*') // Select only the ID for efficiency
+                    .select('*') 
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
@@ -68,17 +67,13 @@ export default function Dashboard() {
 
                 }
             } catch (error) {
-                console.log(error)
+                console.error(error)
             }
         }
-
-
 
         getCurrentUser();
 
     }, [user])
-
-    console.log(currentUser)
 
     return (
         <main>

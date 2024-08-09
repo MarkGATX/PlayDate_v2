@@ -18,10 +18,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
 
     const { contextSafe } = useGSAP()
 
-    console.log(adultData)
-
     const handleShowplaydates = contextSafe(() => {
-        console.log(upcomingPlaydatesRef.current?.offsetHeight)
         if (upcomingPlaydatesRef.current) {
             if (!showPlaydates) {
                 gsap.to(upcomingPlaydatesRef.current, {
@@ -31,6 +28,8 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                     duration: .3,
                 })
                 setShowPlaydates(previousValue => !previousValue)
+                //trying to get element to scroll into view when opened. currently seems to be re-rendering parent and causing visual jump
+                // upcomingPlaydatesRef.current.scrollIntoView({ behavior: "smooth" });
             }
             else {
                 gsap.to(upcomingPlaydatesRef.current, {
@@ -75,12 +74,9 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                     table: 'Playdate_Attendance',
                     //convert array to csv for 'in' filter to work
                     filter: `kid_id=in.(${kidIds?.join(',')})`
-
                 },
                 (payload) => {
-                    console.log('playdate PAYLOAD: ', payload)
                     fetchPlaydates();
-
                 })
             .subscribe();
 
@@ -97,13 +93,9 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
 
                 },
                 (payload) => {
-                    console.log('playdate PAYLOAD: ', payload)
                     fetchPlaydates();
-
                 })
             .subscribe();
-
-        console.log(playdatesSubscription)
 
         return () => {
             supabaseClient.removeChannel(playdatesSubscription)
@@ -111,8 +103,6 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
         }
 
     }, [adultData])
-
-    console.log(kidIds)
 
     useEffect(() => {
         const fetchKidsIds = async () => {
@@ -124,7 +114,6 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                 if (kidsIdDataError) {
                     throw kidsIdDataError;
                 }
-                console.log(kidsIdData)
                 //map the resulting array of objects into an array of ids
                 const kidsIds = kidsIdData.map((kid: { kid_id: string }) => kid.kid_id)
                 setKidIds(kidsIds)
@@ -146,7 +135,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
                     </div>
                     <h2 className='p-4 text-left font-bold '>Upcoming Playdates</h2>
                 </div>
-                <div id='upcomingPlaydates' ref={upcomingPlaydatesRef} className='flex flex-col gap-2 px-4 h-0 opacity-0 overflow-y-hidden'>
+                <div id='upcomingPlaydates' ref={upcomingPlaydatesRef} className='flex flex-col gap-2 px-4 h-0 opacity-0 overflow-y-hidden pt-2'>
                     {playdates
                         ?
                         <>

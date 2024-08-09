@@ -7,9 +7,9 @@ import { memo, useCallback, useRef, useState } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
+// momoizing component to attempt to reduce re-renders and visual jumps
 // export default function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboardListType, index: number }) {
 function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboardListType, index: number }) {
-    console.log(playdate)
     const [showStatusChange, setShowStatusChange] = useState<boolean>(false)
     const playdateChangeStatusRef = useRef<HTMLDivElement | null>(null)
 
@@ -41,9 +41,7 @@ function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboard
 
     const handleChangeToAccept = async () => {
         try {
-            // console.log('changed to accept: ', playdate.id, kid_id)
             const change = await acceptPlaydateInvite(playdate.playdate_id, playdate.kid_id)
-            // setShowStatusChange(previousValue => !previousValue)
             handleShowplaydates();
 
         } catch (error) {
@@ -52,11 +50,8 @@ function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboard
     }
 
     const handleChangeToReject = async () => {
-        console.log(playdate.id, playdate.kid_id)
         try {
-            // console.log('changed to reject: ', playdate_id, kid_id)
             const change = await rejectPlaydateInvite(playdate.playdate_id, playdate.kid_id)
-            // setShowStatusChange(previousValue => !previousValue)
             handleShowplaydates();
         } catch (error) {
             console.error(error)
@@ -66,9 +61,7 @@ function PlaydateReminderCard({ playdate, index }: { playdate: PlaydateDashboard
 
     const handleChangeToMaybe = async () => {
         try {
-            // console.log('changed to maybe')
             const change = await maybePlaydateInvite(playdate.playdate_id, playdate.kid_id)
-            // setShowStatusChange(previousValue => !previousValue)
             handleShowplaydates();
         } catch (error) {
             console.error(error)
