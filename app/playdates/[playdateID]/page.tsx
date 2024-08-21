@@ -16,13 +16,14 @@ import { useParams } from "next/navigation"
 import { Suspense, useContext, useEffect, useRef, useState } from "react"
 import { DateTime } from "luxon"
 import { sendPlaydateUpdates } from "@/utils/actions/notificationActions"
+import QuillEditor from "@/app/components/QuillEeditor/QuillEditor"
+import { Delta } from "quill/core"
+
 
 export default function PlaydateDetails() {
     const params = useParams<{ playdateID: string }>()
     const [playdateInfo, setPlaydateInfo] = useState<PlaydateType>()
     const [placeDetails, setPlaceDetails] = useState<placesDataType>()
-    const [playdateDay, setPlaydateDay] = useState<string>()
-    const [playdateTime, setPlaydateTime] = useState<string>()
     const [kidSearchTerm, setKidSearchTerm] = useState<string>('')
     const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [openEditDate, setOpenEditDate] = useState<boolean>(false)
@@ -30,6 +31,7 @@ export default function PlaydateDetails() {
     const [newPlaydateDate, setNewPlaydateDate] = useState<string>()
     const newDateInputRef = useRef<HTMLInputElement | null>(null)
     const [editDateError, setEditDateError] = useState<string>()
+    const [openNoteEditor, setOpenNoteEditor] = useState<boolean>(false)
 
     const { user } = useContext(AuthContext)
     const playdateID: string = params.playdateID
@@ -108,7 +110,7 @@ export default function PlaydateDetails() {
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*') 
+                    .select('*')
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
@@ -226,8 +228,6 @@ export default function PlaydateDetails() {
                                     :
                                     null
                                 }
-                                {/* <input type='time' value={unformattedPlaydateDate?.toISOString().split('T')[1].split(':').slice(0, 2).join(':')}></input> */}
-                                {/* <input type='time' value={unformattedPlaydateDate?.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}></input> */}
                                 <button className='px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => { handleUpdateDateAndTime() }}>Save New Time</button>
                             </div>
                             :
@@ -240,10 +240,29 @@ export default function PlaydateDetails() {
 
                             </>
                         }
+                        {/* {openNoteEditor
+                            ? */}
 
+                                <QuillEditor content={playdateInfo.host_notes} playdateID={playdateInfo.id} setOpenNoteEditor={setOpenNoteEditor} openNoteEditor={openNoteEditor}/>
+                                
+                            {/* :
+                            playdateInfo.host_notes
+                                ?                               
+                                <div> */}
+                                    {/* {convertDeltaToHTML(playdateInfo.host_notes)} */}
+                                {/* </div>
+                                :
+                                null
+                        } */}
                         {playdateInfo && placeDetails && currentUser?.id === playdateInfo.host_id
                             ?
-                            <button className='px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenEditDate(previousValue => !previousValue))}>{openEditDate ? 'Cancel Edit date and time' : 'Edit Date and Time'}</button>
+                            <>
+
+                                <div id='editButtonContainer' className='flex justify-between w-5/6'>
+                                    <button className='min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Edit Note'}</button>
+                                    <button className='min-w-40  px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenEditDate(previousValue => !previousValue))}>{openEditDate ? 'Cancel Edit date and time' : 'Edit Date and Time'}</button>
+                                </div>
+                            </>
                             :
                             null
                         }

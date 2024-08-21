@@ -85,10 +85,7 @@ export default function PlaydateAttendanceTabs({ playdate }: { playdate: string 
         setSelectedTab(value)
     }
 
-    console.dir(yesResponse)
-    console.dir(noResponse)
-    console.dir(maybeResponse.length > 0)
-    console.dir(invitedResponse)
+
 
 
     return (

@@ -1,3 +1,4 @@
+import { Delta } from "quill/core"
 import { KidsType } from "./userTypeDefinitions"
 
 export type PlaydateType = {
@@ -10,6 +11,7 @@ export type PlaydateType = {
     kid_id:string
     kid_name:nameType
     kid_first_name_only:boolean
+    host_notes?: Delta
 }
 
 type nameType = {
