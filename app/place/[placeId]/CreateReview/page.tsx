@@ -52,7 +52,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
             });
             setQuill(quillInstance);
         }
-    }, []);
+    }, [quill]);
 
 
     useEffect(() => {
