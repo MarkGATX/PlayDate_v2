@@ -44,6 +44,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
     })
 
     useEffect(() => {
+        console.log('test')
         const fetchPlaydates = async () => {
             try {
                 const playdates = await getKidsPlaydateData(adultData.id);
@@ -102,7 +103,7 @@ export default function DashboardPlaydateSection({ adultData }: { adultData: Adu
             supabaseClient.removeChannel(deletedPlaydatesSubscription)
         }
 
-    }, [adultData])
+    }, [adultData, kidIds])
 
     useEffect(() => {
         const fetchKidsIds = async () => {

@@ -179,6 +179,10 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [quill, setQuill] = useState<Quill | null>(null);
+  console.log(openNoteEditor)
+  console.log(content)
+
+  const defaultText: Delta = new Delta().insert('Write a note', { bold: true });
 
   useEffect(() => {
     if (editorRef.current && toolbarRef.current && !quill) {
@@ -190,11 +194,13 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
       });
       setQuill(quillInstance);
     }
-  }, []);
+  }, [openNoteEditor, quill]);
 
   useEffect(() => {
-    if (quill && content) {
-      quill.setContents(content);
+    if (quill) {
+      if (content) {
+        quill.setContents(content);
+      }
     }
   }, [quill, content]);
 
@@ -202,7 +208,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
     if (quill) {
       quill.enable(openNoteEditor);
       if (toolbarRef.current) {
-        toolbarRef.current.style.display = openNoteEditor ? '' : 'none';
+        toolbarRef.current.style.display = openNoteEditor ? 'block' : 'none';
       }
     }
   }, [openNoteEditor, quill]);
@@ -228,31 +234,40 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
   };
 
   return (
-    <div>
-      <div ref={toolbarRef}>
-        <span className="ql-formats">
-          <button className="ql-bold"></button>
-          <button className="ql-italic"></button>
-          <button className="ql-underline"></button>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-list" value="ordered"></button>
-          <button className="ql-list" value="bullet"></button>
-        </span>
-        <span className="ql-formats">
-          <button className="ql-clean"></button>
-        </span>
-      </div>
-      <div ref={editorRef} style={{ height: '200px', border: '1px solid #ccc' }}></div>
-      {openNoteEditor && (
-        <button
-          className="min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none"
-          onClick={handleSaveNote}
-        >
-          Save Note
-        </button>
-      )}
-    </div>
+    content || openNoteEditor
+      ?
+      <>
+        <div className="quillEditorContainer w-5/6 h-auto rounded flex flex-col justify-center border-appBlue border-2">
+          <div ref={toolbarRef}>
+            <span className="ql-formats">
+              <button className="ql-bold"></button>
+              <button className="ql-italic"></button>
+              <button className="ql-underline"></button>
+            </span>
+            <span className="ql-formats">
+              <button className="ql-list" value="ordered"></button>
+              <button className="ql-list" value="bullet"></button>
+            </span>
+            <span className="ql-formats">
+              <button className="ql-clean"></button>
+            </span>
+          </div>
+          <div ref={editorRef} ></div>
+
+        </div>
+        <div>
+          {openNoteEditor && (
+            <button
+              className="min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none"
+              onClick={handleSaveNote}
+            >
+              Save Note
+            </button>
+          )}
+        </div>
+      </>
+      :
+      null
   );
 };
 

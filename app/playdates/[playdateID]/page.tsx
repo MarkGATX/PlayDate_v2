@@ -96,7 +96,27 @@ export default function PlaydateDetails() {
             }
         }
 
+        const playdateSubscription = supabaseClient
+            .channel('supabase_realtime')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'Playdates',
+                    filter: `id=eq.${params.playdateID}`
+                },
+                (payload) => {
+                    getPlaydateInfo();
+
+                })
+            .subscribe()
+
         getPlaydateInfo()
+
+        return () => {
+            supabaseClient.removeChannel(playdateSubscription)
+        }
 
     }, [params])
 
@@ -242,9 +262,10 @@ export default function PlaydateDetails() {
                         }
                         {/* {openNoteEditor
                             ? */}
-
+                            
                                 <QuillEditor content={playdateInfo.host_notes} playdateID={playdateInfo.id} setOpenNoteEditor={setOpenNoteEditor} openNoteEditor={openNoteEditor}/>
                                 
+                            
                             {/* :
                             playdateInfo.host_notes
                                 ?                               
@@ -259,8 +280,13 @@ export default function PlaydateDetails() {
                             <>
 
                                 <div id='editButtonContainer' className='flex justify-between w-5/6'>
-                                    <button className='min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Edit Note'}</button>
-                                    <button className='min-w-40  px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenEditDate(previousValue => !previousValue))}>{openEditDate ? 'Cancel Edit date and time' : 'Edit Date and Time'}</button>
+                                {playdateInfo.host_notes 
+                                ?
+                                    <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Edit Note'}</button>
+                                    :
+                                    <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Add a Note'}</button>
+                                }
+                                    <button className='  px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenEditDate(previousValue => !previousValue))}>{openEditDate ? 'Cancel Edit date and time' : 'Edit Date and Time'}</button>
                                 </div>
                             </>
                             :
