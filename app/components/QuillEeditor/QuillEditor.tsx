@@ -237,7 +237,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
     content || openNoteEditor
       ?
       <>
-        <div className="quillEditorContainer w-5/6 h-auto rounded flex flex-col justify-center border-appBlue border-2">
+        <div className={`quillEditorContainer w-5/6 h-auto rounded flex flex-col justify-center ${openNoteEditor ? 'border-appBlue' : 'border-transparent'} border-2`}>
           <div ref={toolbarRef}>
             <span className="ql-formats">
               <button className="ql-bold"></button>
