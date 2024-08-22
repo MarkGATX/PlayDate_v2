@@ -74,7 +74,6 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
 
     useEffect(() => {
         const getCurrentUser = async () => {
-            // getCachedUser()
             try {
                 const firebase_uid = user?.uid
                 if (!firebase_uid) {
@@ -192,45 +191,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                             <p > Loading Images...</p>
                         }
                     </Swiper>
-                    {/* <Swiper pagination={true} effect={'fade'} navigation={true} modules={[Pagination, Navigation, EffectFade]}>
-                        {currentPlace
-                            ?
-                            (currentPlace.photos?.length > 0 // Check if photos array has elements
-                                ?
-                                (currentPlace.photos.map((photo, index) => (
-                                    <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
-                                        <Image
-                                            src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=300&maxHeightPx=300`}
-                                            alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
-                                            fill={true}
-                                            style={{ objectFit: 'cover' }}
-                                        />
-                                        {photo.authorAttributions[0].displayName
-                                            ?
-                                            (
-                                                <a href={`${photo.authorAttributions[0].uri}`} target="_blank">
-                                                    <p className='z-10 absolute text-appGold text-xs pl-2 pt-2'>Image by {photo.authorAttributions[0].displayName}</p>
-                                                </a>
-                                            )
-                                            :
-                                            null
-                                        }
-                                    </SwiperSlide>
-                                )))
-                                :
-                                (
-                                    <Image
-                                        src="/logos/playdate_logo.webp"
-                                        alt='Playdate logo'
-                                        fill={true}
-                                        style={{ objectFit: 'cover' }}
-                                    />
-                               
-                                )
-                            ) : 
-                            null
-                            }
-                    </Swiper> */}
+                  
 
                 </div>
                 <div id='placeDetails' className='p-4'>

@@ -1,3 +1,6 @@
+import { Delta } from "quill/core"
+import { AmenityType } from "../map/amenityList"
+
 export type locationType = {
     latitude: number
     longitude: number
@@ -19,16 +22,16 @@ export type editorialSummaryType = {
 }
 
 export type authorAttributionType = {
-    displayName:string
+    displayName: string
     photoUri: string
     uri: string
 }
 
 export type PhotosArrayType = {
-    heightPx:number
-    name:string
-    widthPx:number
-    authorAttributions:authorAttributionType[]
+    heightPx: number
+    name: string
+    widthPx: number
+    authorAttributions: authorAttributionType[]
 }
 
 export type placesDataType = {
@@ -45,7 +48,7 @@ export type placesDataType = {
     rating: number;
     iconMaskBaseUri: string;
     iconBackgroundColor: string;
-    name:string
+    name: string
 }
 
 export type DataType = {
@@ -54,9 +57,33 @@ export type DataType = {
 }
 
 export type placesDataTypeWithExpiry = {
-    places:placesDataType[]
-    expiryDate:number
+    places: placesDataType[]
+    expiryDate: number
 
+}
+
+
+//need to improve the definition so if amenityList.ts changes the type here will change as well
+export type placeReviewType = {
+    id: string;
+    reviewer_notes: Delta;
+    google_place_id: string;
+    reviewer_id: string;
+    stars: number;
+    Restrooms: boolean
+    pool: boolean
+    splash_pad: boolean
+    wading_pool: boolean
+    food: boolean
+    basketball: boolean
+    tennis: boolean
+    soccer: boolean
+    picnic_tables: boolean
+    toddler_swings: boolean
+    hiking: boolean
+    pickle_ball: boolean
+    softball: boolean
+    baseball: boolean
 }
 
 // <div id='placePicContainer' className='flex h-[250px] relative'>

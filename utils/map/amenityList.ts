@@ -3,19 +3,31 @@ export const amenityList: string[] = [
         'Pool',
         'Splash Pad',
         'Wading Pool',
-        'Food for kids',
-        'Food for Grown-ups',
+        'Food',
         'Basketball',
         'Tennis',
         'Soccer',
-        'Vegetarian',
-        'Vegan',
-        'Desserts',
         'Picnic Tables',
         'Toddler Swings',
-        'Soccer',
-        'Hiking Trails',
+        'Hiking',
         'Pickle Ball',
         'Softball',
         'Baseball'
 ]
+
+export type AmenityType = {
+     Restrooms:boolean
+        pool:boolean
+        splash_pad:boolean
+        wading_pool:boolean
+        food:boolean
+        basketball:boolean
+        tennis:boolean
+        soccer:boolean
+        picnic_tables:boolean
+        toddler_swings:boolean
+        hiking:boolean
+        pickle_ball:boolean
+        softball:boolean
+        baseball:boolean   
+}

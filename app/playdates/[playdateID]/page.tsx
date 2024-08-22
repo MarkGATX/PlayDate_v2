@@ -16,7 +16,7 @@ import { useParams } from "next/navigation"
 import { Suspense, useContext, useEffect, useRef, useState } from "react"
 import { DateTime } from "luxon"
 import { sendPlaydateUpdates } from "@/utils/actions/notificationActions"
-import QuillEditor from "@/app/components/QuillEeditor/QuillEditor"
+import QuillEditor from "@/app/components/QuillEditor/QuillEditor"
 import { Delta } from "quill/core"
 
 
@@ -74,7 +74,7 @@ export default function PlaydateDetails() {
                     // check for location in local storage first
                     const localStoragePlaces = localStorage.getItem('placesData');
                     const placesData: placesDataTypeWithExpiry = localStoragePlaces ? JSON.parse(localStoragePlaces) : [];
-                    //if places has any data, check to see if stored locally other wise fetch
+                    //if places has any data, check to see if stored locally otherwise fetch
                     if (placesData?.places?.length > 0) {
                         const selectedPlace = placesData.places.find(
                             (place: placesDataType) => place.id === playdateData[0].location
