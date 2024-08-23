@@ -13,18 +13,36 @@
   
   .swiper-button-next {
     color:var(--appBlue);
+    background-color: var(--appGold);
+    border-radius:10px;
+    transition:all .2s;
+    scale:1;
   }
 
   .swiper-button-next:hover {
-    text-shadow: 0 0 5px var(--appGold)   
+    text-shadow: 0 0 5px var(--appGold) ; 
+    background-color: var(--appBlue); 
+    color:var(--appGold);
+    scale:1.1;
+  }
+  .swiper-button-next:active {
+    scale:.9;
+    box-shadow:inset 2px 2px 5px black;
   }
   
   .swiper-button-prev {
     color:var(--appBlue);
+    background-color: var(--appGold);
+    border-radius:10px;
+    transition:all .2s;
+    scale:1;
   }
 
   .swiper-button-prev:hover {
     text-shadow:0 0 5px var(--appGold);    
+    background-color: var(--appBlue); 
+    color:var(--appGold);
+    scale:1.1;
   }
   
   .swiper-button-disabled {
@@ -33,4 +51,8 @@
 
   .swiper-slide-override {
     width:100dvw !important;
+  }
+
+  .swiper-button-prev:after, .swiper-button-next:after {
+    font-size:1rem;
   }

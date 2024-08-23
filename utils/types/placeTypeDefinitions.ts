@@ -1,5 +1,6 @@
 import { Delta } from "quill/core"
 import { AmenityType } from "../map/amenityList"
+import { AdultsType } from "./userTypeDefinitions"
 
 export type locationType = {
     latitude: number
@@ -84,6 +85,7 @@ export type placeReviewType = {
     pickle_ball: boolean
     softball: boolean
     baseball: boolean
+    Adults:AdultsType
 }
 
 // <div id='placePicContainer' className='flex h-[250px] relative'>
