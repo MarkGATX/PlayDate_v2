@@ -39,13 +39,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
         if (editorRef.current && toolbarRef.current && !quill) {
             const quillInstance = new Quill(editorRef.current, {
                 theme: 'snow',
-                // modules: {
-                //     toolbar: [
-                //       ['bold', 'italic', 'underline'],
-                //       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-                //       ['clean']
-                //     ]
-                //   }
+
                 modules: {
                     toolbar: toolbarRef.current
                 }

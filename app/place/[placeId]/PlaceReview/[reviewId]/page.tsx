@@ -16,6 +16,7 @@ import 'swiper/css/navigation';
 import '@/utils/SwiperCustom/swiperCustom.scss'
 import Quill from "quill";
 import { AuthContext } from "@/utils/firebase/AuthContext";
+import { AdultsType } from "@/utils/types/userTypeDefinitions";
 
 export default function PlaceReview({ params }: { params: { reviewId: string } }) {
     const { reviewId } = params
@@ -27,6 +28,8 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
     const toolbarRef = useRef<HTMLDivElement>(null);
     const [starRating, setStarRating] = useState<number>(0)
     const { user } = useContext(AuthContext)
+    const [currentUser, setCurrentUser] = useState<AdultsType>()
+    const [amenityEdits, setAmenityEdits] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         if (editorRef.current && toolbarRef.current && !quill) {
@@ -48,6 +51,30 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
     }, [quill, currentReview]);
 
     useEffect(() => {
+        const getCurrentUser = async () => {
+            try {
+                const firebase_uid = user?.uid
+                if (!firebase_uid) {
+                    return
+                }
+                const { data: adultData, error: adultError } = await supabaseClient
+                    .from('Adults')
+                    .select('*')
+                    .eq('firebase_uid', firebase_uid);
+                if (adultError) {
+                    throw adultError;
+                }
+                if (adultData) {
+                    setCurrentUser(adultData[0])
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        getCurrentUser();
+    }, [user])
+
+    useEffect(() => {
         if (quill) {
             quill.enable(openReviewEditor);
             if (toolbarRef.current) {
@@ -67,8 +94,12 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                     throw reviewDataError;
                 }
                 setCurrentReview(reviewData[0])
-                console.log(reviewData[0].stars)
                 setStarRating(reviewData[0].stars)
+                //use rest to isolate the available amenities.
+                const { created_at, Adults, stars, reviewer_notes, reviewer_id, google_place_id, id, ...amenities } = reviewData[0];
+                // iterate over the new amenities object and 
+                setAmenityEdits({ ...amenities })
+
                 if (reviewData[0].google_place_id) {
                     //check local storage to see if place already exists. if so, set state with that place. otherwise fetch the place details first and then set the place
                     const places: placesDataType[] = JSON.parse(localStorage.getItem('placesData') || '[]')
@@ -97,9 +128,62 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
             }
         }
         getPlaceReview();
-    }, [params.reviewId])
+    }, [reviewId])
 
-    console.log(starRating)
+
+    const handleCancelEdits = async () => {
+        if (currentReview) {
+            setStarRating(currentReview.stars)
+        }
+        if (quill && currentReview?.reviewer_notes) {
+            quill.setContents(currentReview.reviewer_notes);
+        }
+        setOpenReviewEditor(previousValue => !previousValue)
+    }
+
+    // Function to update amenityEdits state
+    const handleAmenityChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setAmenityEdits(previousState => ({ ...previousState, [event.target.id.replace(/ /g, '_')]: event.target.checked }));
+    }
+
+    const handleSavingReviewEdits = async (event: React.PointerEvent<HTMLButtonElement>) => {
+        event?.preventDefault();
+        try {
+            if (!quill) return;
+
+            // Get Quill editor contents
+            const reviewDeltaContent = quill.getContents();
+            // check to make sure place and user are valid
+            if (!currentPlace || !currentUser) {
+                return
+            }
+            //double check to make sure currentUser and review owner are the same
+            if (currentUser.id == currentReview?.reviewer_id) {
+                const editedLocationReviewData = {
+                    reviewer_notes: reviewDeltaContent,
+                    google_place_id: currentPlace?.id,
+                    reviewer_id: currentUser?.id,
+                    stars: starRating,
+                    ...amenityEdits, // Spread the amenity data into individual key value pairs
+                };
+                console.log(editedLocationReviewData)
+                const { data: editedLocationReview, error: editedLocationReviewError } = await supabaseClient
+                    .from('Location_Reviews')
+                    .update(editedLocationReviewData)
+                    .eq('id', currentReview.id)
+                    .select();
+                if (editedLocationReviewError) {
+                    throw editedLocationReviewError;
+                }
+                console.log(editedLocationReview)
+                setCurrentReview({ ...currentReview, ...editedLocationReview[0] })
+                setOpenReviewEditor(false);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <main >
             <div id='placePicContainer' className='flex h-[250px] w-full'>
@@ -158,11 +242,11 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                     {currentReview
                         ?
                         <>
-                            <Image src={starRating >= 1 || currentReview.stars >= 1 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(1) : null}></Image>
-                            <Image src={starRating >= 2 || currentReview.stars >= 2 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(2) : null}></Image>
-                            <Image src={starRating >= 3 || currentReview.stars >= 3 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(3) : null}></Image>
-                            <Image src={starRating >= 4 || currentReview.stars >= 4 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(4) : null}></Image>
-                            <Image src={starRating >= 5 || currentReview.stars >= 5 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(5) : null}></Image>
+                            <Image src={(starRating ?? currentReview.stars) >= 1 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(1) : null}></Image>
+                            <Image src={(starRating ?? currentReview.stars) >= 2 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(2) : null}></Image>
+                            <Image src={(starRating ?? currentReview.stars) >= 3 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(3) : null}></Image>
+                            <Image src={(starRating ?? currentReview.stars) >= 4 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(4) : null}></Image>
+                            <Image src={(starRating ?? currentReview.stars) >= 5 ? `/icons/star.webp` : `/icons/empty-star.webp`} className='mr-1' width={36} height={36} alt='Empty star' onPointerDown={() => openReviewEditor ? setStarRating(5) : null}></Image>
                         </>
                         :
                         null
@@ -172,41 +256,42 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                     {currentReview ? (
                         (() => {
                             //use rest to isolate the available amenities.
-                            const { Adults, stars, reviewer_notes, reviewer_id, google_place_id, id, ...amenities } = currentReview;
+                            const { created_at, Adults, stars, reviewer_notes, reviewer_id, google_place_id, id, ...amenities } = currentReview;
                             // iterate over the new amenities object and 
                             return Object.entries(amenities).map(([key, value], index) => {
                                 const amenity = key.replace(/_/g, ' ');
                                 return (
-                                    <div key={index} className='w-1/2 flex justify-start'>
-                                        <input
-                                            type='checkbox'
-                                            id={key}
-                                            checked={value}
-                                            readOnly
-                                            //false inputs still allowed checks so added onclick to prevent
-                                            onClick={(event) => event.preventDefault()}
-                                            aria-readonly="true"
-                                        />
-                                        <label htmlFor={key} className='pl-2 text-sm'>{amenity}</label>
+                                    <div key={index} className='w-1/2 flex justify-start items-center'>
+                                        {openReviewEditor || !amenityEdits[key] ? (
+                                            <input
+                                                type='checkbox'
+                                                id={amenity}
+                                                checked={amenityEdits[key]}
+                                                disabled={!openReviewEditor}
+                                                readOnly={!openReviewEditor}
+                                                //false inputs still allowed checks so added onclick to prevent
+                                                onChange={(event) => handleAmenityChange(event)}
+                                            />
+                                        ) : (
+                                            amenityEdits[key] && (
+                                            <div className='h-2 w-2 relative flex align-center justify-center'><Image src='/icons/checkmark.webp' alt='checkmark' fill={true} style={{objectFit:'cover'}}></Image>
+                                            </div>
+                                            )
+                                        )
+                                        }
+                                        <label htmlFor={amenity} className={`pl-2 text-sm ${amenityEdits[key] ? 'font-bold' : null}`}>{amenity}</label>
                                     </div>
                                 );
                             });
                         })()
-                    ) : (
-                        amenityList.map((amenity, index) => {
-                            const transformedAmenity = amenity.toLowerCase().replace(/\s+/g, '_');
-                            return (
-                                <div key={index} className='w-1/2 flex justify-start'>
-                                    <input type='checkbox' id={transformedAmenity} />
-                                    <label htmlFor={transformedAmenity} className='pl-2 text-sm'>{amenity}</label>
-                                </div>
-                            );
-                        })
-                    )}
+                    )
+                        :
+                        null
+                    }
                 </fieldset>
                 {currentReview && currentReview.reviewer_notes
                     ?
-                    <div className={`quillEditorContainer w-full min-h-48 rounded flex flex-col justify-center border-appBlue border-2 mt-4`}>
+                    <div className={`quillEditorContainer transition-all w-full ${openReviewEditor ? 'min-h-48' : 'h-auto'} rounded flex flex-col justify-center ${openReviewEditor ? 'border-appBlue' : 'border-transparent'} border-2 mt-4`}>
                         <div ref={toolbarRef}>
                             <span className="ql-formats">
                                 <button className="ql-bold"></button>
@@ -227,17 +312,21 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                     null
                 }
 
-
-                {/* <div id='reviewSaveButtonContainer' className='flex w-full justify-center mt-4'>
-                    <button className='px-4 min-w-48 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onPointerDown={(event) => handleSaveReview(event)}>Save Your Review</button>
-                </div> */}
+                {openReviewEditor
+                    ?
+                    <div id='reviewSaveButtonContainer' className='flex w-full justify-center mt-4'>
+                        <button className='px-4 min-w-48 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onPointerDown={(event) => handleSavingReviewEdits(event)}>Save Your Review</button>
+                    </div>
+                    :
+                    null
+                }
                 {currentReview?.Adults.firebase_uid === user?.uid
                     ?
-                    <div className={`p-4 flex ${openReviewEditor ? 'justify-between' : 'justify-center'} align-center w-full`}>
+                    <div className={`p-4 flex flex-wrap justify-center align-center w-full gap-2`}>
                         <button className={`px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold ${openReviewEditor ? 'hover:bg-green-700' : 'hover:bg-appBlue'} hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none`} onPointerDown={() => setOpenReviewEditor(previousValue => !previousValue)} >{openReviewEditor ? 'Save your Edits' : 'Edit Your Review'}</button>
                         {openReviewEditor
                             ?
-                            <button className='px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold hover:bg-red-700 hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onPointerDown={() => setOpenReviewEditor(previousValue => !previousValue)} >Cancel your edits</button>
+                            <button className='px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold hover:bg-red-700 hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onPointerDown={handleCancelEdits} >Cancel your edits</button>
                             :
                             null
                         }

@@ -66,6 +66,7 @@ export type placesDataTypeWithExpiry = {
 
 //need to improve the definition so if amenityList.ts changes the type here will change as well
 export type placeReviewType = {
+    created_at:Date;
     id: string;
     reviewer_notes: Delta;
     google_place_id: string;
