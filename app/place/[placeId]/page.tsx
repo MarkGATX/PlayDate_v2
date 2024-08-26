@@ -18,6 +18,7 @@ import { AdultsType } from "@/utils/types/userTypeDefinitions"
 import { AddPlaydate } from "@/utils/actions/playdateActions"
 import { Router } from "next/router"
 import { useRouter } from "next/navigation"
+import PDPlaceReviews from "@/app/components/PDPlaceReviews/PDPlaceReviews"
 
 export default function PlaceDetails({ params }: { params: { placeId: string } }) {
     const [openSelectKid, setOpenSelectKid] = useState<boolean>(false)
@@ -81,7 +82,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 }
                 const { data: adultData, error: adultError } = await supabaseClient
                     .from('Adults')
-                    .select('*') 
+                    .select('*')
                     .eq('firebase_uid', firebase_uid);
                 if (adultError) {
                     throw adultError;
@@ -191,7 +192,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                             <p > Loading Images...</p>
                         }
                     </Swiper>
-                  
+
 
                 </div>
                 <div id='placeDetails' className='p-4'>
@@ -212,18 +213,29 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                         {currentPlace?.rating ? `${currentPlace.rating} on Google` : 'No ratings'}
                     </div>
                     <div id='placeDescription'>{currentPlace?.editorialSummary?.text}</div>
+                    {currentPlace ?
+                        <PDPlaceReviews user={currentUser} placeID={currentPlace.id} />
+                        :
+                        null
+                    }
                     <div id='placeButtons' className='my-8 flex justify-around w-full'>
+                        {currentUser && currentPlace
+                        ?
+                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => router.push(`/place/${currentPlace.id}/CreateReview`)}>Write a review</button>
+                        : 
+                        null
+                    }
                         {
                             currentUser
                                 ?
                                 (() => {
                                     switch (true) {
                                         case (currentUser.id && currentUser.Kids && currentUser.Kids?.length === 1):
-                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleStartPlaydate}>Start a Playdate here...</button>;
+                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleStartPlaydate}>Start a Playdate</button>;
                                         case (currentUser.id && currentUser.Kids && currentUser.Kids?.length > 1):
-                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setOpenSelectKid(previousValue => !previousValue)}>{openSelectKid === true ? "Cancel playdate" : "Start a Playdate here..."}</button>;
+                                            return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setOpenSelectKid(previousValue => !previousValue)}>{openSelectKid === true ? "Cancel playdate" : "Start a Playdate"}</button>;
                                         default:
-                                            return <p className='text-xs'>You must be logged in and have kids associated with your account in order to start a Playdate</p>
+                                           null
                                     }
                                 })()
                                 :
@@ -234,11 +246,11 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                         ?
                         <section id='startPlaydateSection' className='flex flex-col w-full items-center'>
                             <p>Who is this playdate for?</p>
-                            <select value = '' ref={selectedKidForPlaydateRef} onChange={async (e) => {
+                            <select value='' ref={selectedKidForPlaydateRef} onChange={async (e) => {
                                 setSelectedKid(e.target.value);
                                 await handleStartPlaydate();
                             }} className='mb-4' >
-                                <option value= '' disabled>Select which kid..</option>
+                                <option value='' disabled>Select which kid..</option>
                                 {currentUser.Kids.map((kid, index) => (
                                     <option key={index} value={kid.id}>
                                         {kid.first_name} {kid.last_name}

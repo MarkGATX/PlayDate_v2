@@ -17,6 +17,14 @@ import '@/utils/SwiperCustom/swiperCustom.scss'
 import Quill from "quill";
 import { AuthContext } from "@/utils/firebase/AuthContext";
 import { AdultsType } from "@/utils/types/userTypeDefinitions";
+import Link from "next/link";
+import { Delta } from "quill/core";
+import { useRouter } from "next/navigation";
+
+export type textReviewContentType = {
+    reviewDeltaContent: Delta,
+    reviewPlainTextContent: string
+}
 
 export default function PlaceReview({ params }: { params: { reviewId: string } }) {
     const { reviewId } = params
@@ -30,6 +38,10 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
     const { user } = useContext(AuthContext)
     const [currentUser, setCurrentUser] = useState<AdultsType>()
     const [amenityEdits, setAmenityEdits] = useState<Record<string, boolean>>({});
+    const [editedReviewData, setEditedReviewData] = useState<placeReviewType | null>(currentReview || null);
+    const [isReviewSaved, setIsReviewSaved] = useState(false);
+
+    // const router = useRouter();
 
     useEffect(() => {
         if (editorRef.current && toolbarRef.current && !quill) {
@@ -147,43 +159,51 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
     }
 
     const handleSavingReviewEdits = async (event: React.PointerEvent<HTMLButtonElement>) => {
-        event?.preventDefault();
+        event.preventDefault();
         try {
             if (!quill) return;
 
-            // Get Quill editor contents
-            const reviewDeltaContent = quill.getContents();
-            // check to make sure place and user are valid
-            if (!currentPlace || !currentUser) {
-                return
+            const reviewDeltaContent: Delta = quill.getContents();
+            const reviewPlainTextContent: string = await new Promise((resolve) => {
+                resolve(quill.getText());
+            });
+
+            console.log(reviewPlainTextContent)
+            console.log(currentReview)
+            setCurrentReview(previousState => ({...previousState, reviewer_notes:reviewDeltaContent, reviewer_notes_plain_text:reviewPlainTextContent}))
+            saveToDB(reviewDeltaContent, reviewPlainTextContent)
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const saveToDB = async (reviewDeltaContent: Delta, reviewPlainTextContent: string) => {
+        console.log(reviewPlainTextContent)
+        try {
+            const locationReviewData = {
+                reviewer_notes: reviewDeltaContent,
+                reviewer_notes_plain_text: reviewPlainTextContent,
+                stars: starRating,
+                ...amenityEdits, // Spread the amenity data into individual key value pairs
+            };
+            console.log(locationReviewData)
+            const { data: locationReview, error: locationReviewError } = await supabaseClient
+                .from('Location_Reviews')
+                .update(locationReviewData)
+                .eq('id', currentReview?.id)
+                .select();
+            if (locationReviewError) {
+                throw locationReviewError;
             }
-            //double check to make sure currentUser and review owner are the same
-            if (currentUser.id == currentReview?.reviewer_id) {
-                const editedLocationReviewData = {
-                    reviewer_notes: reviewDeltaContent,
-                    google_place_id: currentPlace?.id,
-                    reviewer_id: currentUser?.id,
-                    stars: starRating,
-                    ...amenityEdits, // Spread the amenity data into individual key value pairs
-                };
-                console.log(editedLocationReviewData)
-                const { data: editedLocationReview, error: editedLocationReviewError } = await supabaseClient
-                    .from('Location_Reviews')
-                    .update(editedLocationReviewData)
-                    .eq('id', currentReview.id)
-                    .select();
-                if (editedLocationReviewError) {
-                    throw editedLocationReviewError;
-                }
-                console.log(editedLocationReview)
-                setCurrentReview({ ...currentReview, ...editedLocationReview[0] })
-                setOpenReviewEditor(false);
-            }
+
+
         } catch (error) {
             console.error(error);
         }
     }
 
+
+    console.log(currentReview)
     return (
         <main >
             <div id='placePicContainer' className='flex h-[250px] w-full'>
@@ -229,7 +249,9 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                 ?
                 <>
                     <div className="bg-appBlue text-appBG py-4">
-                        <h2 className='text-lg font-bold px-4 '>{currentPlace?.displayName.text} Review</h2>
+                        <h2 className='text-lg font-bold p-4 bg-appBlue text-appBG'>
+                            <Link href={`/place/${currentPlace.id}`} className='underline cursor-pointer'>{currentPlace?.displayName.text}</Link> Review
+                        </h2>
                         <p className='px-4'>by {currentReview?.Adults.first_name} {currentReview?.Adults.last_name}</p>
                     </div>
                 </>
@@ -256,7 +278,7 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                     {currentReview ? (
                         (() => {
                             //use rest to isolate the available amenities.
-                            const { created_at, Adults, stars, reviewer_notes, reviewer_id, google_place_id, id, ...amenities } = currentReview;
+                            const { created_at, Adults, stars, reviewer_notes, reviewer_notes_plain_text, reviewer_id, google_place_id, id, ...amenities } = currentReview;
                             // iterate over the new amenities object and 
                             return Object.entries(amenities).map(([key, value], index) => {
                                 const amenity = key.replace(/_/g, ' ');
@@ -274,8 +296,8 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                                             />
                                         ) : (
                                             amenityEdits[key] && (
-                                            <div className='h-2 w-2 relative flex align-center justify-center'><Image src='/icons/checkmark.webp' alt='checkmark' fill={true} style={{objectFit:'cover'}}></Image>
-                                            </div>
+                                                <div className='h-2 w-2 relative flex align-center justify-center'><Image src='/icons/checkmark.webp' alt='checkmark' fill={true} style={{ objectFit: 'cover' }}></Image>
+                                                </div>
                                             )
                                         )
                                         }

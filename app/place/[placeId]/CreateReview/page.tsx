@@ -18,6 +18,7 @@ import { EffectFade, Navigation, Pagination } from "swiper/modules"
 import Quill from "quill"
 import { Delta } from "quill/core"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function CreateReview({ params }: { params: { placeId: string } }) {
     const [currentPlace, setCurrentPlace] = useState<placesDataType | undefined>(undefined)
@@ -30,7 +31,7 @@ export default function CreateReview({ params }: { params: { placeId: string } }
     //Record is typescript referencing an array of key value pairs that have a boolean for the value
     const [amenityValues, setAmenityValues] = useState<Record<string, boolean>>({});
 
-    const defaultText: Delta = new Delta().insert('Write a note', { bold: true });
+    // const defaultText: Delta = new Delta().insert('Write a note', { bold: true });
     const router = useRouter();
 
     const { user } = useContext(AuthContext)
@@ -115,29 +116,32 @@ export default function CreateReview({ params }: { params: { placeId: string } }
 
             // Get Quill editor contents
             const reviewDeltaContent = quill.getContents();
+            const reviewPlainTextContent = quill.getText();
+            console.log(reviewPlainTextContent)
             if (!currentPlace || !currentUser) {
                 return
             } else {
-            const locationReviewData = {
-                reviewer_notes: reviewDeltaContent,
-                google_place_id: currentPlace?.id,
-                reviewer_id: currentUser?.id,
-                stars:starRating,
-                ...amenityValues, // Spread the amenity data into individual key value pairs
+                const locationReviewData = {
+                    reviewer_notes: reviewDeltaContent,
+                    reviewer_notes_plain_text:reviewPlainTextContent,
+                    google_place_id: currentPlace?.id,
+                    reviewer_id: currentUser?.id,
+                    stars: starRating,
+                    ...amenityValues, // Spread the amenity data into individual key value pairs
 
-            };
-        
+                };
 
-            const { data: locationReview, error: locationReviewError } = await supabaseClient
-                .from('Location_Reviews')
-                .insert(locationReviewData)
-                .select();
-            if (locationReviewError) {
-                throw locationReviewError;
+
+                const { data: locationReview, error: locationReviewError } = await supabaseClient
+                    .from('Location_Reviews')
+                    .insert(locationReviewData)
+                    .select();
+                if (locationReviewError) {
+                    throw locationReviewError;
+                }
+
+                router.push(`/place/${currentPlace?.id}/PlaceReview/${locationReview[0].id}`)
             }
-            
-            router.push(`/place/${currentPlace?.id}/PlaceReview/${locationReview[0].id}`)
-        }
         } catch (error) {
             console.error(error);
         }
@@ -186,7 +190,9 @@ export default function CreateReview({ params }: { params: { placeId: string } }
             </div>
             {currentPlace
                 ?
-                <h2 className='text-lg font-bold p-4 bg-appBlue text-appBG'>{currentPlace?.displayName.text} Review</h2>
+                <h2 className='text-lg font-bold p-4 bg-appBlue text-appBG'>
+                    <Link href={`/place/${currentPlace.id}`}>{currentPlace?.displayName.text}</Link> Review
+                </h2>
                 :
                 <h2 className='text-lg font-bold'>{`That place isn't found. Check your link and try again.`}</h2>
             }

@@ -69,6 +69,7 @@ export type placeReviewType = {
     created_at:Date;
     id: string;
     reviewer_notes: Delta;
+    reviewer_notes_plain_text:string;
     google_place_id: string;
     reviewer_id: string;
     stars: number;
