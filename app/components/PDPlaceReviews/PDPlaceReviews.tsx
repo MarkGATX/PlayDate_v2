@@ -29,28 +29,14 @@ export default function PDPlaceReviews({ placeID, user }: { placeID: string, use
                 }
                 console.log(placeReviewData)
                 setLocationReviews(placeReviewData)
-                // const totalStars = placeReviewData.reduce((sum: number, review: placeReviewType) => sum + review.stars, 0);
-                // const averageStars = totalStars / placeReviewData.length
-                // setAverageStars(parseFloat(averageStars.toFixed(1)));
 
-
-                // setFullStars(Math.floor(averageStars) || 0)
-                // setDecimal(averageStars - fullStars)
-                // if (decimal >= .6) {
-                //     setHalfStars(0)
-                //     setFullStars(previousValue => previousValue + 1)
-                // } else if (decimal === 0) {
-                //     setHalfStars(0)
-                // } else {
-                //     setHalfStars(1)
-                // }
                 // setEmptyStars(5 - (fullStars + halfStars))
 
                 let halfStars = 0;
                 let totalStars = (placeReviewData.reduce((sum: number, review: placeReviewType) => sum + review.stars, 0))
-                
+
                 let averageStars = totalStars / placeReviewData.length
-                
+
                 let fullStars = Math.floor(averageStars)
                 let decimal = averageStars - fullStars
                 if (decimal >= .6) {
@@ -65,7 +51,12 @@ export default function PDPlaceReviews({ placeID, user }: { placeID: string, use
                 setFullStars(fullStars)
                 setHalfStars(halfStars)
                 setEmptyStars(emptyStars)
-                setAverageStars(parseFloat(averageStars.toFixed(1)))
+                if (typeof averageStars !== 'number') {
+                    setAverageStars(0); // or any other default value
+                } else {
+                    setAverageStars(parseFloat(averageStars.toFixed(1)))
+                }
+
 
 
             } catch (error) {
@@ -84,22 +75,27 @@ export default function PDPlaceReviews({ placeID, user }: { placeID: string, use
         <>
             <div className='bg-appBlue w-full p-4 text-appBG'>
                 <h3 className=''>Playdate User Reviews...</h3>
-                <div className='text-sm flex items-center'>
-                    <p className='mr-2'>{averageStars}</p>
-                    {Array.from({ length: fullStars }).map((_, index) => (
-                        <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
-                    )
-                    )}
-                    {Array.from({ length: halfStars }).map((_, index) => (
-                        <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
-                    )
-                    )}
-                    {Array.from({ length: emptyStars }).map((_, index) => (
-                        <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
-                    )
-                    )}
-                    <p className='text-xs'>({locationReviews?.length} Playdate reviews)</p>
-                </div>
+                {locationReviews && locationReviews.length > 0
+                    ?
+                    <div className='text-sm flex items-center'>
+                        <p className='mr-2'>{averageStars}</p>
+                        {Array.from({ length: fullStars }).map((_, index) => (
+                            <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
+                        )
+                        )}
+                        {Array.from({ length: halfStars }).map((_, index) => (
+                            <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
+                        )
+                        )}
+                        {Array.from({ length: emptyStars }).map((_, index) => (
+                            <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
+                        )
+                        )}
+                        <p className='text-xs'>({locationReviews?.length} Playdate reviews)</p>
+                    </div>
+                    :
+                    null
+                }
             </div>
             <div className='px-4 w-full'>
                 {locationReviews && locationReviews.length > 0 ?
