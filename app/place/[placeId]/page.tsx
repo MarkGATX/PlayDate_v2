@@ -213,18 +213,14 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                         {currentPlace?.rating ? `${currentPlace.rating} on Google` : 'No ratings'}
                     </div>
                     <div id='placeDescription'>{currentPlace?.editorialSummary?.text}</div>
-                    {currentPlace ?
-                        <PDPlaceReviews user={currentUser} placeID={currentPlace.id} />
-                        :
-                        null
-                    }
+
                     <div id='placeButtons' className='my-8 flex justify-around w-full'>
                         {currentUser && currentPlace
-                        ?
-                        <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => router.push(`/place/${currentPlace.id}/CreateReview`)}>Write a review</button>
-                        : 
-                        null
-                    }
+                            ?
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => router.push(`/place/${currentPlace.id}/CreateReview`)}>Write a review</button>
+                            :
+                            null
+                        }
                         {
                             currentUser
                                 ?
@@ -235,7 +231,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                                         case (currentUser.id && currentUser.Kids && currentUser.Kids?.length > 1):
                                             return <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setOpenSelectKid(previousValue => !previousValue)}>{openSelectKid === true ? "Cancel playdate" : "Start a Playdate"}</button>;
                                         default:
-                                           null
+                                            null
                                     }
                                 })()
                                 :
@@ -265,6 +261,15 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                             <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
                         </Link> */}
                 </div>
+                {currentPlace ?
+                    <>
+                        
+                            <PDPlaceReviews user={currentUser} placeID={currentPlace.id} />
+                        
+                    </>
+                    :
+                    null
+                }
 
             </main >
         </>

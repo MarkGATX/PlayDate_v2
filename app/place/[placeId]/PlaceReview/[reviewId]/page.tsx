@@ -53,10 +53,11 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
             });
             setQuill(quillInstance);
         }
-    }, [quill, currentReview]);
+    }, [currentReview]);
 
     // Separate useEffect for setting contents
     useEffect(() => {
+        console.log(quill)
         if (quill && currentReview?.reviewer_notes) {
             quill.setContents(currentReview.reviewer_notes);
         }
@@ -160,33 +161,50 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
 
     const handleSavingReviewEdits = async (event: React.PointerEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        try {
-            if (!quill) return;
+        if (currentReview) {
+            try {
+                if (!quill) return;
 
-            const reviewDeltaContent: Delta = quill.getContents();
-            const reviewPlainTextContent: string = await new Promise((resolve) => {
-                resolve(quill.getText());
-            });
+                const reviewDeltaContent: Delta = quill.getContents();
+                const reviewPlainTextContent = quill.getText();
+                // const reviewPlainTextContent: string = await new Promise((resolve) => {
+                //     resolve(quill.getText());
+                // });
 
-            console.log(reviewPlainTextContent)
-            console.log(currentReview)
-            setCurrentReview(previousState => ({...previousState, reviewer_notes:reviewDeltaContent, reviewer_notes_plain_text:reviewPlainTextContent}))
-            saveToDB(reviewDeltaContent, reviewPlainTextContent)
-        } catch(error) {
-            console.log(error)
+                // console.log(reviewPlainTextContent)
+                // console.log(currentReview)
+                // setCurrentReview({ ...currentReview, reviewer_notes:reviewDeltaContent, reviewer_notes_plain_text:reviewPlainTextContent })
+                // saveToDB(reviewDeltaContent, reviewPlainTextContent)
+
+                const { data: locationReview, error: locationReviewError } = await supabaseClient
+                .from('Location_Reviews')
+                .update({...amenityEdits, reviewer_notes: reviewDeltaContent, reviewer_notes_plain_text:reviewPlainTextContent, stars:starRating})
+                .eq('id', currentReview?.id)
+                .select();
+                console.log(locationReview)
+                setOpenReviewEditor(previousValue => !previousValue)
+            if (locationReviewError) {
+                throw locationReviewError;
+            }
+            } catch (error) {
+                console.log(error)
+            }
         }
     }
 
     const saveToDB = async (reviewDeltaContent: Delta, reviewPlainTextContent: string) => {
-        console.log(reviewPlainTextContent)
+        console.log("Review Delta Content in saveToDB:", reviewDeltaContent); // Log the value
+        console.log("Review Plain Text Content in saveToDB:", reviewPlainTextContent); // Log the value
+        console.log(currentReview)
         try {
             const locationReviewData = {
+                ...currentReview,
                 reviewer_notes: reviewDeltaContent,
                 reviewer_notes_plain_text: reviewPlainTextContent,
                 stars: starRating,
                 ...amenityEdits, // Spread the amenity data into individual key value pairs
             };
-            console.log(locationReviewData)
+            console.log("Location Review Data:", locationReviewData); // Log the value
             const { data: locationReview, error: locationReviewError } = await supabaseClient
                 .from('Location_Reviews')
                 .update(locationReviewData)
@@ -345,12 +363,12 @@ export default function PlaceReview({ params }: { params: { reviewId: string } }
                 {currentReview?.Adults.firebase_uid === user?.uid
                     ?
                     <div className={`p-4 flex flex-wrap justify-center align-center w-full gap-2`}>
-                        <button className={`px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold ${openReviewEditor ? 'hover:bg-green-700' : 'hover:bg-appBlue'} hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none`} onPointerDown={() => setOpenReviewEditor(previousValue => !previousValue)} >{openReviewEditor ? 'Save your Edits' : 'Edit Your Review'}</button>
+
                         {openReviewEditor
                             ?
                             <button className='px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold hover:bg-red-700 hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onPointerDown={handleCancelEdits} >Cancel your edits</button>
                             :
-                            null
+                            <button className={`px-4 min-w-36 text-sm cursor-pointer py-2 bg-appGold ${openReviewEditor ? 'hover:bg-green-700' : 'hover:bg-appBlue'} hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none`} onPointerDown={() => setOpenReviewEditor(previousValue => !previousValue)} >Edit Your Review</button>
                         }
                     </div>
                     :
