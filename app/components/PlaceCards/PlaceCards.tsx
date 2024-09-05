@@ -1,8 +1,10 @@
 'use client'
 import { AddPlaydate } from "@/utils/actions/playdateActions";
 import { AuthContext } from "@/utils/firebase/AuthContext";
+import supabaseClient from "@/utils/supabase/client";
 import { placesDataType } from "@/utils/types/placeTypeDefinitions";
 import { AdultsType } from "@/utils/types/userTypeDefinitions";
+import { PostgrestError } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,6 +26,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
     const [showMore, setShowMore] = useState<boolean>(false)
     const [openSelectKid, setOpenSelectKid] = useState<boolean>(false)
     const [selectedKid, setSelectedKid] = useState<string>('')
+    const [userReviewStars, setUserReviewStars] = useState<number | null>(null)
     const addressElement = document.getElementById(`${place.id}Address`);
     const summaryElement = document.getElementById(`${place.id}Summary`);
     const linkElement = document.getElementById(`${place.id}Link`);
@@ -32,19 +35,15 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
     const linkElementRef = useRef<HTMLDivElement>()
     const selectedKidForPlaydateRef = useRef<HTMLSelectElement>(null)
 
-    //set number of stars for ratings
-    let halfStars: number = 0;
-    let fullStars: number = Math.floor(place.rating)
-    let decimal: number = place.rating - fullStars
-    if (decimal >= .6) {
-        halfStars = 0
-        fullStars = fullStars + 1
-    } else if (decimal === 0) {
-        halfStars = 0
-    } else {
-        halfStars = 1
-    }
-    let emptyStars: number = 5 - (fullStars + halfStars)
+    //set number of stars for rating need to combine into one function that can be called instead of separate. is state needed?
+
+    const fullStars = place.rating ? Math.floor(place.rating) : 0;
+    const halfStars = place.rating ? (place.rating % 1 >= 0.5 ? 1 : 0) : 0;
+    const emptyStars = place.rating ? 5 - fullStars - halfStars : 5;
+
+    const userFullStars = userReviewStars ? Math.floor(userReviewStars) : 0;
+    const userHalfStars = userReviewStars ? (userReviewStars % 1 >= 0.5 ? 1 : 0) : 0;
+    const userEmptyStars = userReviewStars ? 5 - userFullStars - userHalfStars : 5;
 
     const handleStartPlaydate = async () => {
         if (!kids) {
@@ -61,9 +60,9 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                 host_kid_id: selectedKidForPlaydateRef?.current?.value || kids[0].id
             }
             const newPlaydate = await AddPlaydate(newPlaydateData)
-            if(newPlaydate) {
+            if (newPlaydate) {
                 router.push(`/playdates/${newPlaydate.id}`)
-            } 
+            }
         } catch (error) {
             console.error(error)
         }
@@ -73,6 +72,29 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
         setOpenSelectKid(true)
         setShowMore(previousValue => !previousValue)
 
+    }
+
+    const getUserStars = () => {
+       
+        const fetchRawStarReviews = async () => {
+            try {
+                const { data: reviewStarsData, error: reviewStarsDataError }: { data: { stars: number }[] | null; error: PostgrestError | null } = await supabaseClient
+                    .from('Location_Reviews')
+                    .select('stars')
+                    .eq('google_place_id', place.id)
+                if (reviewStarsDataError) {
+                    throw new Error('Error getting playdate user stars')
+                }
+                if (reviewStarsData && reviewStarsData.length > 0) {
+                    const starSum = reviewStarsData?.reduce((sum, review) => sum + review.stars, 0)
+                    const averageStars = starSum / reviewStarsData.length
+                    setUserReviewStars(averageStars)
+                }
+            } catch (error) {
+                console.error(error)
+            }
+        }
+        fetchRawStarReviews();
     }
 
     //replace with useGSAP toi smooth out animations and opacity change. switch to refs but figure out if needs to be unique
@@ -87,6 +109,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
         } else {
             placeCardDetails.style.height = '0px';
         }
+        getUserStars();
     }, [showMore, addressElement?.offsetHeight, place.id, summaryElement?.offsetHeight, linkElement?.offsetHeight, openSelectKid]);
 
 
@@ -100,7 +123,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                     :
                     <div className='text-red-500 text-xs mb-1'>Currently closed</div>
                 }
-                <div id='starRatings' className='text-xs flex '>
+                <div id='starRatings' className='text-xs flex items-center'>
                     {Array.from({ length: fullStars }).map((_, index) => (
                         <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
                     )
@@ -113,8 +136,28 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                         <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
                     )
                     )}
-                    {place.rating ? `${place.rating} on Google` : 'No ratings'}
+                    {place.rating ? `${place.rating} stars on Google` : 'No ratings'}
                 </div>
+                {userReviewStars
+                    ?
+                    <div id='userStarRating' className='text-xs flex mt-2 items-center'>
+                        {Array.from({ length: userFullStars }).map((_, index) => (
+                            <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
+                        )
+                        )}
+                        {Array.from({ length: userHalfStars }).map((_, index) => (
+                            <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
+                        )
+                        )}
+                        {Array.from({ length: userEmptyStars }).map((_, index) => (
+                            <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
+                        )
+                        )}
+                        {`${userReviewStars} stars on Playdate`}
+                    </div>
+                    :
+                    null
+                }
             </section>
             <section id='placeCardMoreInfo' className='w-full flex flex-col justify-between items-between min-h-12 h-fit border-t-2 border-appBlue bg-appGold '>
                 <div id='moreToggleContainer' className='w-full flex justify-center items-center py-4 cursor-pointer hover:scale-150 transform ease-in-out duration-300' onClick={() => setShowMore(previousState => !previousState)}>
@@ -155,7 +198,8 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                             ?
                             <section >
                                 <p>Who is this playdate for?</p>
-                                <select ref={selectedKidForPlaydateRef} value='' onChange={async (e) => {setSelectedKid(e.target.value);
+                                <select ref={selectedKidForPlaydateRef} value='' onChange={async (e) => {
+                                    setSelectedKid(e.target.value);
                                     await handleStartPlaydate();
                                 }} className='mb-4' >
                                     <option value='' disabled>Select which kid..</option>
