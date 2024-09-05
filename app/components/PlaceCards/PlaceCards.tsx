@@ -1,8 +1,9 @@
 'use client'
 import { AddPlaydate } from "@/utils/actions/playdateActions";
 import { AuthContext } from "@/utils/firebase/AuthContext";
+import { amenityIcons, amenityList } from "@/utils/map/amenityList";
 import supabaseClient from "@/utils/supabase/client";
-import { placesDataType } from "@/utils/types/placeTypeDefinitions";
+import { AmenityReview, placeReviewType, placesDataType } from "@/utils/types/placeTypeDefinitions";
 import { AdultsType } from "@/utils/types/userTypeDefinitions";
 import { PostgrestError } from "@supabase/supabase-js";
 import Image from "next/image";
@@ -27,6 +28,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
     const [openSelectKid, setOpenSelectKid] = useState<boolean>(false)
     const [selectedKid, setSelectedKid] = useState<string>('')
     const [userReviewStars, setUserReviewStars] = useState<number | null>(null)
+    const [placeAmenities, setPlaceAmenities] = useState<AmenityReview | null>(null)
     const addressElement = document.getElementById(`${place.id}Address`);
     const summaryElement = document.getElementById(`${place.id}Summary`);
     const linkElement = document.getElementById(`${place.id}Link`);
@@ -74,28 +76,57 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
 
     }
 
-    const getUserStars = () => {
-       
-        const fetchRawStarReviews = async () => {
-            try {
-                const { data: reviewStarsData, error: reviewStarsDataError }: { data: { stars: number }[] | null; error: PostgrestError | null } = await supabaseClient
-                    .from('Location_Reviews')
-                    .select('stars')
-                    .eq('google_place_id', place.id)
-                if (reviewStarsDataError) {
-                    throw new Error('Error getting playdate user stars')
-                }
-                if (reviewStarsData && reviewStarsData.length > 0) {
-                    const starSum = reviewStarsData?.reduce((sum, review) => sum + review.stars, 0)
-                    const averageStars = starSum / reviewStarsData.length
-                    setUserReviewStars(averageStars)
-                }
-            } catch (error) {
-                console.error(error)
+    const getUserReviews = async () => {
+
+        try {
+            const { data: reviewData, error: reviewDataError }: { data: placeReviewType[] | null; error: PostgrestError | null } = await supabaseClient
+                .from('Location_Reviews')
+                .select('*')
+                .eq('google_place_id', place.id)
+            if (reviewDataError) {
+                throw new Error('Error getting playdate user ')
             }
+            //set PD user review stars
+            if (reviewData && reviewData.length > 0) {
+                const sum = reviewData?.reduce((sum, review) => sum + review.stars, 0)
+                const average = Math.round(sum / reviewData.length)
+                setUserReviewStars(average)
+
+                //set list of user review amenities
+                setPlaceAmenities(aggregateAmenities(reviewData));
+
+            }
+            console.log(reviewData)
+        } catch (error) {
+            console.error(error)
         }
-        fetchRawStarReviews();
     }
+
+
+    const aggregateAmenities = (reviews: placeReviewType[]): AmenityReview => {
+        return reviews.reduce((acc, review) => {
+            (Object.keys(acc) as Array<keyof AmenityReview>).forEach(amenity => {
+                console.log(amenity)
+                acc[amenity] = acc[amenity] || review[amenity];
+            });
+            return acc;
+        }, {
+            restrooms: false,
+            pool: false,
+            splash_pad: false,
+            wading_pool: false,
+            food: false,
+            basketball: false,
+            tennis: false,
+            soccer: false,
+            picnic_tables: false,
+            toddler_swings: false,
+            hiking: false,
+            pickle_ball: false,
+            softball: false,
+            baseball: false,
+        } as AmenityReview);
+    };
 
     //replace with useGSAP toi smooth out animations and opacity change. switch to refs but figure out if needs to be unique
 
@@ -109,55 +140,71 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
         } else {
             placeCardDetails.style.height = '0px';
         }
-        getUserStars();
+        getUserReviews();
     }, [showMore, addressElement?.offsetHeight, place.id, summaryElement?.offsetHeight, linkElement?.offsetHeight, openSelectKid]);
-
 
     return (
         <div id={place.id} className='min-h-28 w-9/12 mb-12 rounded-xl border-2 border-appBlue overflow-hidden flex flex-col justify-between gap-2'>
-            <section id='placeCardDetails' className='w-full p-2 min-h-14 '>
-
-                <h2 className='text-left w-full'>{place.displayName.text}</h2>
-                {place.currentOpeningHours?.openNow || place.currentOpeningHours === undefined ?
-                    null
-                    :
-                    <div className='text-red-500 text-xs mb-1'>Currently closed</div>
-                }
-                <div id='starRatings' className='text-xs flex items-center'>
-                    {Array.from({ length: fullStars }).map((_, index) => (
-                        <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
-                    )
-                    )}
-                    {Array.from({ length: halfStars }).map((_, index) => (
-                        <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
-                    )
-                    )}
-                    {Array.from({ length: emptyStars }).map((_, index) => (
-                        <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
-                    )
-                    )}
-                    {place.rating ? `${place.rating} stars on Google` : 'No ratings'}
-                </div>
-                {userReviewStars
-                    ?
-                    <div id='userStarRating' className='text-xs flex mt-2 items-center'>
-                        {Array.from({ length: userFullStars }).map((_, index) => (
+            <section id='placeCardDetails' className='flex flex-col'>
+                <div className='w-full p-2 min-h-14 '>
+                    <h2 className='text-left font-bold w-full text-lg mb-2'>{place.displayName.text}</h2>
+                    {place.currentOpeningHours?.openNow || place.currentOpeningHours === undefined ?
+                        null
+                        :
+                        <div className='text-red-500 text-xs mb-1'>Currently closed</div>
+                    }
+                    <div id='starRatings' className='text-xs flex items-center'>
+                        {Array.from({ length: fullStars }).map((_, index) => (
                             <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
                         )
                         )}
-                        {Array.from({ length: userHalfStars }).map((_, index) => (
+                        {Array.from({ length: halfStars }).map((_, index) => (
                             <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
                         )
                         )}
-                        {Array.from({ length: userEmptyStars }).map((_, index) => (
+                        {Array.from({ length: emptyStars }).map((_, index) => (
                             <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
                         )
                         )}
-                        {`${userReviewStars} stars on Playdate`}
+                        {place.rating ? `${place.rating} stars on Google` : 'No ratings'}
                     </div>
-                    :
-                    null
-                }
+                    {userReviewStars
+                        ?
+                        <div id='userStarRating' className='text-xs flex mt-2 items-center'>
+                            {Array.from({ length: userFullStars }).map((_, index) => (
+                                <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
+                            )
+                            )}
+                            {Array.from({ length: userHalfStars }).map((_, index) => (
+                                <Image src='/icons/half-star.webp' className='mr-1' width={20} height={20} alt='Half star' key={index}></Image>
+                            )
+                            )}
+                            {Array.from({ length: userEmptyStars }).map((_, index) => (
+                                <Image src='/icons/empty-star.webp' className='mr-1' width={20} height={20} alt='Empty star' key={index}></Image>
+                            )
+                            )}
+                            {`${userReviewStars} stars on Playdate`}
+                        </div>
+                        :
+                        null
+
+                    }
+                </div>
+                <div id='placeAmenities' className='flex mt-2 px-2'>
+                    {placeAmenities && (Object.keys(placeAmenities) as Array<keyof AmenityReview>).map((amenity) => (
+                        placeAmenities[amenity] ? (
+                            <Image key={`${amenity}${place.id}`}
+                                src={amenityIcons[amenity]}
+                                className="mr-1"
+                                width={32}
+                                height={32}
+                                alt={`${amenity} icon`}
+                            />
+                        )
+                            :
+                            null
+                    ))}
+                </div>
             </section>
             <section id='placeCardMoreInfo' className='w-full flex flex-col justify-between items-between min-h-12 h-fit border-t-2 border-appBlue bg-appGold '>
                 <div id='moreToggleContainer' className='w-full flex justify-center items-center py-4 cursor-pointer hover:scale-150 transform ease-in-out duration-300' onClick={() => setShowMore(previousState => !previousState)}>

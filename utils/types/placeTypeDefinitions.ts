@@ -73,7 +73,7 @@ export type placeReviewType = {
     google_place_id: string;
     reviewer_id: string;
     stars: number;
-    Restrooms: boolean
+    restrooms: boolean
     pool: boolean
     splash_pad: boolean
     wading_pool: boolean
@@ -87,27 +87,25 @@ export type placeReviewType = {
     pickle_ball: boolean
     softball: boolean
     baseball: boolean
+    shady:boolean
     Adults:AdultsType
+
 }
 
-// <div id='placePicContainer' className='flex h-[250px] relative'>
-//                     {currentPlace && currentPlace.photos && currentPlace.photos.length > 0
-//                         ?
-//                         <Swiper pagination={true} effect={'fade'} navigation={true} modules={[Pagination, Navigation, EffectFade]} >
-//                             {currentPlace.photos?.map((photo, index) => (
-//                                 <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
-//                                     <Image src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=300&maxHeightPx=300`} alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`} fill={true} style={{ objectFit: 'cover' }}></Image>
-//                                     {photo.authorAttributions[0].displayName
-//                                         ?
-//                                         <a href={`${photo.authorAttributions[0].uri}`} target="_blank"><p className='z-10 absolute text-appGold text-xs pl-2 pt-2'>Image by {photo.authorAttributions[0].displayName}</p></a>
-//                                         :
-//                                         null
-//                                     }
-//                                 </SwiperSlide>
-//                             ))}
-//                         </Swiper>
-//                         :
-//                         <Image src="/logos/playdate_logo.webp" alt='Playdate logo' fill={true} style={{ objectFit: 'contain' }}></Image>
-//                     }
-
-//                 </div>
+export type AmenityReview = {
+    restrooms: boolean;
+    pool: boolean;
+    splash_pad: boolean;
+    wading_pool: boolean;
+    food: boolean;
+    basketball: boolean;
+    tennis: boolean;
+    soccer: boolean;
+    picnic_tables: boolean;
+    toddler_swings: boolean;
+    hiking: boolean;
+    pickle_ball: boolean;
+    softball: boolean;
+    baseball: boolean;
+    shady:boolean
+  };
