@@ -125,6 +125,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
             pickle_ball: false,
             softball: false,
             baseball: false,
+            playscape:false
         } as AmenityReview);
     };
 
@@ -190,15 +191,16 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
 
                     }
                 </div>
-                <div id='placeAmenities' className='flex mt-2 px-2'>
+                <div id='placeAmenities' className='flex mt-2 px-2 flex-wrap'>
                     {placeAmenities && (Object.keys(placeAmenities) as Array<keyof AmenityReview>).map((amenity) => (
                         placeAmenities[amenity] ? (
                             <Image key={`${amenity}${place.id}`}
                                 src={amenityIcons[amenity]}
-                                className="mr-1"
+                                className="m-2"
                                 width={32}
                                 height={32}
                                 alt={`${amenity} icon`}
+                                title={`${amenity}`}
                             />
                         )
                             :

@@ -13,7 +13,8 @@ export const amenityList: string[] = [
         'Pickle Ball',
         'Softball',
         'Baseball',
-        'Shady'
+        'Shady',
+        "Playscape"
 ]
 
 export type AmenityType = {
@@ -32,23 +33,25 @@ export type AmenityType = {
         softball: boolean
         baseball: boolean
         shady: boolean
+        playscape:boolean
 }
 
 // Define the mapping of amenities to their corresponding icons
 export const amenityIcons = {
-        restrooms: '/icons/splash_pad.webp',
-        pool: '/icons/splash_pad.webp',
+        restrooms: '/icons/restrooms.webp',
+        pool: '/icons/swimming_pool.webp',
         splash_pad: '/icons/splash_pad.webp',
-        wading_pool: '/icons/splash_pad.webp',
-        food: '/icons/splash_pad.webp',
-        basketball: '/icons/splash_pad.webp',
-        tennis: '/icons/splash_pad.webp',
-        soccer: '/icons/splash_pad.webp',
-        picnic_tables: '/icons/splash_pad.webp',
+        wading_pool: '/icons/wading_pool.webp',
+        food: '/icons/food.webp',
+        basketball: '/icons/basketball.webp',
+        tennis: '/icons/tennis.webp',
+        soccer: '/icons/soccer.webp',
+        picnic_tables: '/icons/picnic_table.webp',
         toddler_swings: '/icons/splash_pad.webp',
         hiking: '/icons/splash_pad.webp',
         pickle_ball: '/icons/splash_pad.webp',
         softball: '/icons/splash_pad.webp',
         baseball: '/icons/splash_pad.webp',
         shady: '/icons/splash_pad.webp',
+        playscape: '/icons/playscape.webp'
 };

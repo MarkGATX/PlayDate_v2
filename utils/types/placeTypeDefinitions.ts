@@ -88,6 +88,7 @@ export type placeReviewType = {
     softball: boolean
     baseball: boolean
     shady:boolean
+    playscape:boolean
     Adults:AdultsType
 
 }
@@ -107,5 +108,6 @@ export type AmenityReview = {
     pickle_ball: boolean;
     softball: boolean;
     baseball: boolean;
-    shady:boolean
+    shady:boolean;
+    playscape:boolean;
   };
