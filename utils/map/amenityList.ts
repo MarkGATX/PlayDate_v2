@@ -48,10 +48,10 @@ export const amenityIcons = {
         soccer: '/icons/soccer.webp',
         picnic_tables: '/icons/picnic_table.webp',
         toddler_swings: '/icons/splash_pad.webp',
-        hiking: '/icons/splash_pad.webp',
-        pickle_ball: '/icons/splash_pad.webp',
-        softball: '/icons/splash_pad.webp',
-        baseball: '/icons/splash_pad.webp',
-        shady: '/icons/splash_pad.webp',
+        hiking: '/icons/hiking.webp',
+        pickle_ball: '/icons/pickle_ball.webp',
+        softball: '/icons/softball.webp',
+        baseball: '/icons/baseball.webp',
+        shady: '/icons/shady.webp',
         playscape: '/icons/playscape.webp'
 };

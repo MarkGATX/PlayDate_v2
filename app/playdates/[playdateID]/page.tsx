@@ -4,7 +4,7 @@ import KidSearchResults from "@/app/components/KidSearchResults/KidSearchResults
 import KidSearchResultsSuspense from "@/app/components/KidSearchResults/KidSearchResultsSuspense"
 import PlaydateAttendanceTabs from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabs"
 import PlaydateAttendanceTabsSuspense from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabsSuspense"
-import { fetchPlaceData } from "@/utils/actions/playdateActions"
+import { deletePlaydate, fetchPlaceData } from "@/utils/actions/playdateActions"
 import { AuthContext } from "@/utils/firebase/AuthContext"
 import supabaseClient from "@/utils/supabase/client"
 import { placesDataType, placesDataTypeWithExpiry } from "@/utils/types/placeTypeDefinitions"
@@ -12,12 +12,13 @@ import { PlaydateType } from "@/utils/types/playdateTypeDefinitions"
 import { AdultsType } from "@/utils/types/userTypeDefinitions"
 import Image from "next/image"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { notFound, useParams, useRouter } from "next/navigation"
 import { Suspense, useContext, useEffect, useRef, useState } from "react"
 import { DateTime } from "luxon"
 import { sendPlaydateUpdates } from "@/utils/actions/notificationActions"
-import QuillEditor from "@/app/components/QuillEditor/QuillEditor"
-import { Delta } from "quill/core"
+const QuillEditor = dynamic(() => import ( "@/app/components/QuillEditor/QuillEditor"), {ssr:false})
+import Quill, { Delta } from "quill/core"
+import dynamic from "next/dynamic"
 
 
 export default function PlaydateDetails() {
@@ -32,10 +33,11 @@ export default function PlaydateDetails() {
     const newDateInputRef = useRef<HTMLInputElement | null>(null)
     const [editDateError, setEditDateError] = useState<string>()
     const [openNoteEditor, setOpenNoteEditor] = useState<boolean>(false)
+    const [openDeletePlaydateModal, setOpenDeletePlaydateModal] = useState<boolean>(false)
 
     const { user } = useContext(AuthContext)
     const playdateID: string = params.playdateID
-
+    const router = useRouter();
 
     useEffect(() => {
         const getPlaydateInfo = async () => {
@@ -45,10 +47,16 @@ export default function PlaydateDetails() {
                     .select('*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)')
                     .eq('id', params.playdateID);
                 if (playdateDataError) {
-
                     throw playdateDataError;
                 }
-                if (playdateData) {
+                console.log(playdateData)
+                if (playdateData.length === 0) {
+                    console.log('calling not found')
+                    notFound();
+                    
+                }
+                else if (playdateData.length > 0) {
+                    console.log('passing not found')
                     let luxonDate = DateTime.fromISO(playdateData[0].time)
 
                     setUnformattedPlaydateDate(luxonDate)
@@ -203,6 +211,15 @@ export default function PlaydateDetails() {
 
     }
 
+    const handleDeletePlaydate = async () => {
+        try {
+            await deletePlaydate(playdateID)
+            // router.push('/dashboard')
+        } catch (error) {
+            console.error('Error deleting playdate: ', error)
+        }
+    }
+
     return (
         <main>
 
@@ -262,16 +279,16 @@ export default function PlaydateDetails() {
                         }
                         {/* {openNoteEditor
                             ? */}
-                            
-                                <QuillEditor content={playdateInfo.host_notes} playdateID={playdateInfo.id} setOpenNoteEditor={setOpenNoteEditor} openNoteEditor={openNoteEditor}/>
-                                
-                            
-                            {/* :
+
+                        <QuillEditor content={playdateInfo.host_notes} playdateID={playdateInfo.id} setOpenNoteEditor={setOpenNoteEditor} openNoteEditor={openNoteEditor} />
+
+
+                        {/* :
                             playdateInfo.host_notes
                                 ?                               
                                 <div> */}
-                                    {/* {convertDeltaToHTML(playdateInfo.host_notes)} */}
-                                {/* </div>
+                        {/* {convertDeltaToHTML(playdateInfo.host_notes)} */}
+                        {/* </div>
                                 :
                                 null
                         } */}
@@ -279,14 +296,15 @@ export default function PlaydateDetails() {
                             ?
                             <>
 
-                                <div id='editButtonContainer' className='flex justify-between w-5/6'>
-                                {playdateInfo.host_notes 
-                                ?
-                                    <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Edit Note'}</button>
-                                    :
-                                    <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Add a Note'}</button>
-                                }
+                                <div id='editButtonContainer' className='flex justify-between w-5/6 flex-wrap'>
+                                    {playdateInfo.host_notes
+                                        ?
+                                        <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Edit Note'}</button>
+                                        :
+                                        <button className='min-w-28 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenNoteEditor(previousValue => !previousValue))}>{openNoteEditor ? 'Cancel Note Edits' : 'Add a Note'}</button>
+                                    }
                                     <button className='  px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenEditDate(previousValue => !previousValue))}>{openEditDate ? 'Cancel Edit date and time' : 'Edit Date and Time'}</button>
+                                    <button className='  px-2 w-full text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-red-700 active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={(() => setOpenDeletePlaydateModal(true))}>Cancel playdate</button>
                                 </div>
                             </>
                             :
@@ -337,7 +355,28 @@ export default function PlaydateDetails() {
                     </Suspense>
                 </section>
                 :
-                null}
+                null
+            }
+            {openDeletePlaydateModal
+                ?
+
+                <dialog className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-50 z-50 overflow-auto backdrop-blur flex justify-center items-center">
+                    <div className="bg-appGold rounded-xl m-auto p-4 w-3/4">
+                        <div className="flex flex-col items-center">
+
+                            <p className='block text-center mb-4'>This will PREMANENTLY DELETE this playdate. </p>
+
+                            <p className='block text-center mb-4'>Do you want to PERMANENTLY DELETE this playdate?</p>
+                            <br />
+                            <button type="button" className="px-1 w-full text-xs cursor-pointer py-1 mt-2 mb-4 hover:bg-red-800  active:shadow-activeButton mr-2  hover:text-white border-2 border-red-700 rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none bg-red-500 text-appGold p-2 font-bold" onClick={handleDeletePlaydate}>DELETE </button>
+                            <button type="button" className="px-1 w-full text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none" onClick={() => setOpenDeletePlaydateModal(false)}>Cancel</button>
+
+                        </div>
+                    </div>
+                </dialog>
+                :
+                null
+            }
         </main>
     )
 }
