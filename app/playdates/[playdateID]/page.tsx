@@ -52,7 +52,8 @@ export default function PlaydateDetails() {
                 console.log(playdateData)
                 if (playdateData.length === 0) {
                     console.log('calling not found')
-                    notFound();
+                    // notFound();
+                    router.push('/playdates/')
                     
                 }
                 else if (playdateData.length > 0) {
