@@ -3,8 +3,8 @@ import { LocationContext } from "@/utils/location/LocationContext";
 import { fetchNearbyPlaces } from "@/utils/map/nearbyPlacesAPI";
 import { placesDataTypeWithExpiry, placesDataType } from "@/utils/types/placeTypeDefinitions";
 import { WeatherContext } from "@/utils/weather/WeatherContext";
-import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin, useAdvancedMarkerRef } from "@vis.gl/react-google-maps";
-import { useContext, useEffect, useState } from "react";
+import { APIProvider, AdvancedMarker, InfoWindow, Map, Pin, useAdvancedMarkerRef, useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
+import { useContext, useEffect, useRef, useState } from "react";
 import { goodWeatherCodes } from "@/utils/map/activityTypes";
 import { goodWeatherActivity } from "@/utils/map/activityTypes";
 import { badWeatherActivity } from "@/utils/map/activityTypes";
@@ -12,6 +12,8 @@ import PlaceCards from "../PlaceCards/PlaceCards";
 import { AuthContext } from "@/utils/firebase/AuthContext";
 import { AdultsType } from "@/utils/types/userTypeDefinitions";
 import supabaseClient from "@/utils/supabase/client";
+import { fetchSearchedPlace } from "@/utils/actions/searchActions";
+
 
 export default function MapContainer() {
     const [error, setError] = useState<string | null>(null);
@@ -20,63 +22,77 @@ export default function MapContainer() {
     const [currentPage, setCurrentPage] = useState<number>(1)
     const currentLocation = useContext(LocationContext)
     const currentWeather = useContext(WeatherContext)
-    const {user} = useContext(AuthContext)
+    const { user } = useContext(AuthContext)
+    const searchTermRef = useRef<HTMLInputElement>(null)
+    const [placesService, setPlacesService] = useState<google.maps.places.PlacesService | null>(null);
+
+    // const [isPlacesLibLoaded, setIsPlacesLibLoaded] = useState(false);
+    // const map = useMap();
+    // const placesLibrary = useMapsLibrary('places');
+
+    // useEffect(() => {
+    //     if (!placesLibrary || !map) return;
+
+    //     // when placesLibrary is loaded, the library can be accessed via the
+    //     // placesLibrary API object
+    //     setPlacesService(new placesLibrary.PlacesService(map));
+    //   }, [placesLibrary, map]);
+
 
     useEffect(() => {
-        
-            const getCurrentUser = async () => {
-                // getCachedUser()
-                try {
-                    const firebase_uid = user?.uid
-                    if (!firebase_uid) {
-                        return
-                    }
-                    const { data: adultData, error: adultError } = await supabaseClient
-                        .from('Adults')
-                        .select('*') // Select only the ID for efficiency
-                        .eq('firebase_uid', firebase_uid);
-                    if (adultError) {
-                        throw adultError;
-                    }
-                    if (adultData) {
-                        setCurrentUser(adultData[0])
-                        // get kids associated with adult
-                        //COMBINE INTO ONE QUERY, SELECT('KID_ID, KIDS(FIRST_NAME, LAST_NAME, ID)')
-                        const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
-                            .from('Adult_Kid')
-                            .select('kid_id')
-                            .eq('adult_id', adultData[0].id)
-
-                        if (kidsJoinDataError) {
-                            throw kidsJoinDataError;
-                        }
-                        if (kidsJoinData) {
-                            //map kidsJoinData into array to use .in method
-                            const kidIds = kidsJoinData.map(kidJoin => kidJoin.kid_id);                           
-                            const { data: kidsData, error: kidsDataError } = await supabaseClient
-                                .from('Kids')
-                                .select('first_name, last_name, id')
-                                .in('id', kidIds);
-                            if (kidsDataError) {
-                                throw kidsDataError;
-                            }
-                            if (kidsData) {
-
-                                setCurrentUser({
-                                    ...adultData[0],
-                                    Kids: kidsData,
-                                })
-                            }
-                        }
-                        
-                        // }
-    
-                    }
-                } catch (error) {
-                    console.error(error)
+        const getCurrentUser = async () => {
+            // getCachedUser()
+            try {
+                const firebase_uid = user?.uid
+                if (!firebase_uid) {
+                    return
                 }
+                const { data: adultData, error: adultError } = await supabaseClient
+                    .from('Adults')
+                    .select('*') // Select only the ID for efficiency
+                    .eq('firebase_uid', firebase_uid);
+                if (adultError) {
+                    throw adultError;
+                }
+                if (adultData) {
+                    setCurrentUser(adultData[0])
+                    // get kids associated with adult
+                    //COMBINE INTO ONE QUERY, SELECT('KID_ID, KIDS(FIRST_NAME, LAST_NAME, ID)')
+                    const { data: kidsJoinData, error: kidsJoinDataError } = await supabaseClient
+                        .from('Adult_Kid')
+                        .select('kid_id')
+                        .eq('adult_id', adultData[0].id)
+
+                    if (kidsJoinDataError) {
+                        throw kidsJoinDataError;
+                    }
+                    if (kidsJoinData) {
+                        //map kidsJoinData into array to use .in method
+                        const kidIds = kidsJoinData.map(kidJoin => kidJoin.kid_id);
+                        const { data: kidsData, error: kidsDataError } = await supabaseClient
+                            .from('Kids')
+                            .select('first_name, last_name, id')
+                            .in('id', kidIds);
+                        if (kidsDataError) {
+                            throw kidsDataError;
+                        }
+                        if (kidsData) {
+
+                            setCurrentUser({
+                                ...adultData[0],
+                                Kids: kidsData,
+                            })
+                        }
+                    }
+
+                    // }
+
+                }
+            } catch (error) {
+                console.error(error)
             }
-        
+        }
+
 
         const getPlaces = async () => {
             try {
@@ -96,7 +112,7 @@ export default function MapContainer() {
                         localStorage.removeItem('placesData')
                         // Store the places in local storage. handled in fetchNearbyPlaces
                         placesData = await fetchNearbyPlaces(activityTypes, currentLocation.latitude, currentLocation.longitude);
-                        
+
                         setPlaces(placesData)
                     }
                 } else {
@@ -120,9 +136,61 @@ export default function MapContainer() {
         )
     }
 
+    function normalizePlaceData(place: any): placesDataType {
+        return {
+            id: place.id || place.place_id,
+            displayName: {
+                text: place.displayName?.text || place.name || '',
+            },
+            internationalPhoneNumber: place.internationalPhoneNumber || place.formatted_phone_number || '',
+            formattedAddress: place.formattedAddress || place.formatted_address || '',
+            location: {
+                latitude: place.location?.latitude || place.geometry?.location?.lat || 0,
+                longitude: place.location?.longitude || place.geometry?.location?.lng || 0,
+            },
+            photos: (place.photos || []).map((photo: any) => ({
+                heightPx: photo.heightPx || photo.height,
+                name: photo.name || '',
+                widthPx: photo.widthPx || photo.width,
+                authorAttributions: (photo.authorAttributions || []).map((attr: any) => ({
+                    displayName: attr.displayName || '',
+                    photoUri: attr.photoUri || '',
+                    uri: attr.uri || '',
+                })),
+            })),
+            businessStatus: place.businessStatus || '',
+            currentOpeningHours: {
+                openNow: place.currentOpeningHours?.openNow || place.opening_hours?.open_now || false,
+                weekdayDescriptions: place.currentOpeningHours?.weekdayDescriptions || place.opening_hours?.weekday_text || [],
+            },
+            goodForChildren: place.goodForChildren || false,
+            editorialSummary: {
+                text: place.editorialSummary?.text || '',
+                languageCode: place.editorialSummary?.languageCode || 'en',
+            },
+            rating: place.rating || 0,
+            iconMaskBaseUri: place.iconMaskBaseUri || '',
+            iconBackgroundColor: place.iconBackgroundColor || '',
+            name: place.name || place.displayName?.text || '',
+        };
+    }
+
+    const handlePlaceSearch = async () => {
+        if (!searchTermRef.current) {
+            return
+        }
+        const searchedPlace = await fetchSearchedPlace(searchTermRef.current.value);
+        //normalize the data to match the same format returned from the maps api
+        console.log(searchedPlace)
+        const normalizedResults = searchedPlace.results.map(normalizePlaceData);
+        console.log(normalizedResults)
+        //set places to place markers on map and update place cards
+        setPlaces(normalizedResults);   
+    }
+ console.log(places)
     return (
         (process.env.NEXT_PUBLIC_GOOGLE_MAPS_API && currentLocation.latitude != 0 && currentLocation.longitude != 0) ?
-            <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}>
+            <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API} libraries={['places']}>
                 {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
                 <Map
                     style={{ width: '100vw', height: '40dvh', marginBottom: '2rem' }}
@@ -152,9 +220,15 @@ export default function MapContainer() {
                         null
                     }
                 </Map>
-
+                <div className="flex flex-col items-center justify-center w-full mb-8">
+                    <input type='text' ref={searchTermRef} className='border-2 border-appBlue rounded-lg mb-4 w-5/6 p-2' placeholder="Search for a place..."></input>
+                    <button className='px-4 w-[130px] text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 active:bg-appGold active:shadow-activeButton active:text-appBlue disabled:opacity-50  disabled:pointer-events-none' onClick={handlePlaceSearch}>Search</button>
+                </div>
                 {places ?
                     <>
+
+<p className="w-full bg-appBlue text-appBG p-4 mb-8 font-bold text-lg">Suggestions...</p>
+
                         <div id='paginationButtons' className='flex justify-around w-full mb-12'>
                             <button className='px-4 w-[130px] text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>
                                 {currentPage === 1 ? 'Start' : 'Previous 5'}

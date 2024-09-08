@@ -39,3 +39,33 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
     }
 
 }
+
+export async function fetchSearchedPlace(searchTerm: string) {
+    const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
+    if (!mapsApiKey) {
+        throw new Error('Google Places API key is not set');
+    }
+
+    // Use the Place Details endpoint
+    const baseURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchTerm}&key=${mapsApiKey}`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': mapsApiKey,
+            // 'X-Goog-FieldMask': 'id,displayName,internationalPhoneNumber,formattedAddress,location,businessStatus,currentOpeningHours,goodForChildren,editorialSummary,rating,iconMaskBaseUri,iconBackgroundColor,primaryType,photos'
+        },
+    };
+    try {
+        const response = await fetch(baseURL, options);
+        if (!response.ok) {
+            throw new Error(`Error fetching playdate location data: ${response.status} - ${response.statusText}`); // Include status text for more info
+        }
+        const searchedPlaceData = await response.json();
+        return searchedPlaceData;
+    } catch (error) {
+        console.error(error)
+    }
+
+}

@@ -96,7 +96,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                 setPlaceAmenities(aggregateAmenities(reviewData));
 
             }
-            console.log(reviewData)
+           
         } catch (error) {
             console.error(error)
         }
@@ -106,7 +106,6 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
     const aggregateAmenities = (reviews: placeReviewType[]): AmenityReview => {
         return reviews.reduce((acc, review) => {
             (Object.keys(acc) as Array<keyof AmenityReview>).forEach(amenity => {
-                console.log(amenity)
                 acc[amenity] = acc[amenity] || review[amenity];
             });
             return acc;
@@ -149,6 +148,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
             <section id='placeCardDetails' className='flex flex-col'>
                 <div className='w-full p-2 min-h-14 '>
                     <h2 className='text-left font-bold w-full text-lg mb-2'>{place.displayName.text}</h2>
+                    
                     {place.currentOpeningHours?.openNow || place.currentOpeningHours === undefined ?
                         null
                         :
@@ -207,6 +207,16 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                             null
                     ))}
                 </div>
+                {place?.formattedAddress ?
+                        <p className='px-2 text-xs'>{place.formattedAddress}</p>
+                        :
+                        null
+                    }
+                    {place?.internationalPhoneNumber ?
+                        <p className='px-2 text-xs'>{place.internationalPhoneNumber}</p>
+                        :
+                        null
+                    }
             </section>
             <section id='placeCardMoreInfo' className='w-full flex flex-col justify-between items-between min-h-12 h-fit border-t-2 border-appBlue bg-appGold '>
                 <div id='moreToggleContainer' className='w-full flex justify-center items-center py-4 cursor-pointer hover:scale-150 transform ease-in-out duration-300' onClick={() => setShowMore(previousState => !previousState)}>

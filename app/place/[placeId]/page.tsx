@@ -152,7 +152,7 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
         setOpenSelectKid(true)
 
     }
-
+    console.log(currentPlace)
     return (
         <>
             <main>
@@ -197,7 +197,18 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 </div>
                 <div id='placeDetails' className='p-4'>
                     <h1 className='text-lg font-bold'>{currentPlace?.displayName.text}</h1>
-                    <div id='starRatings' className='text-xs flex mb-8'>
+                    {currentPlace?.formattedAddress ?
+                        <p>{currentPlace.formattedAddress}</p>
+                        :
+                        null
+                    }
+                    {currentPlace?.internationalPhoneNumber ?
+                        <p>{currentPlace.internationalPhoneNumber}</p>
+                        :
+                        null
+                    }
+
+                    <div id='starRatings' className='text-xs flex mb-8 mt-4'>
                         {Array.from({ length: fullStars }).map((_, index) => (
                             <Image src='/icons/star.webp' className='mr-1' width={20} height={20} alt='Full star' key={index}></Image>
                         )
@@ -263,9 +274,9 @@ export default function PlaceDetails({ params }: { params: { placeId: string } }
                 </div>
                 {currentPlace ?
                     <>
-                        
-                            <PDPlaceReviews user={currentUser} placeID={currentPlace.id} />
-                        
+
+                        <PDPlaceReviews user={currentUser} placeID={currentPlace.id} />
+
                     </>
                     :
                     null
