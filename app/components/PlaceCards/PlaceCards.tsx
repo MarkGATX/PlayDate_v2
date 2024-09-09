@@ -96,7 +96,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                 setPlaceAmenities(aggregateAmenities(reviewData));
 
             }
-           
+
         } catch (error) {
             console.error(error)
         }
@@ -124,7 +124,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
             pickle_ball: false,
             softball: false,
             baseball: false,
-            playscape:false
+            playscape: false
         } as AmenityReview);
     };
 
@@ -148,7 +148,7 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
             <section id='placeCardDetails' className='flex flex-col'>
                 <div className='w-full p-2 min-h-14 '>
                     <h2 className='text-left font-bold w-full text-lg mb-2'>{place.displayName.text}</h2>
-                    
+
                     {place.currentOpeningHours?.openNow || place.currentOpeningHours === undefined ?
                         null
                         :
@@ -208,26 +208,22 @@ export default function PlaceCards({ place, kids, currentUserID }: { place: plac
                     ))}
                 </div>
                 {place?.formattedAddress ?
-                        <p className='px-2 text-xs'>{place.formattedAddress}</p>
-                        :
-                        null
-                    }
-                    {place?.internationalPhoneNumber ?
-                        <p className='px-2 text-xs'>{place.internationalPhoneNumber}</p>
-                        :
-                        null
-                    }
+                    <p className='px-2 text-xs'>{place.formattedAddress}</p>
+                    :
+                    null
+                }
+                {place?.internationalPhoneNumber ?
+                    <p className='px-2 text-xs'>{place.internationalPhoneNumber}</p>
+                    :
+                    null
+                }
             </section>
             <section id='placeCardMoreInfo' className='w-full flex flex-col justify-between items-between min-h-12 h-fit border-t-2 border-appBlue bg-appGold '>
                 <div id='moreToggleContainer' className='w-full flex justify-center items-center py-4 cursor-pointer hover:scale-150 transform ease-in-out duration-300' onClick={() => setShowMore(previousState => !previousState)}>
                     <Image src={`/icons/down_arrow.webp`} width={15} height={16} alt='down icon to show more details' title='more details' className={`transform ease-in-out duration-700  ${showMore ? '-rotate-180' : 'rotate-0'} `}></Image>
                 </div>
-                <section id={`${place.id}Details`} style={{ height: 0 }} className={`w-100 mt-2 p-1 overflow-y-hidden transition-all ease-in-out duration-700 ${showMore ? `opacity-100 ` : 'opacity'}`}>
-                    {place.formattedAddress ?
-                        <p id={`${place.id}Address`} className='text-sm px-2 mb-4'>{place.formattedAddress}</p>
-                        :
-                        null
-                    }
+                <section id={`${place.id}Details`}  className={`w-100 mt-2 p-1 overflow-y-hidden transition-all ease-in-out duration-700 ${showMore ? `opacity-100 ` : 'opacity-0'}`}>
+
                     {place.editorialSummary ?
                         <>
                             <p id={`${place.id}Summary`} className='text-sm px-2 pb-4 mb-4'>{place.editorialSummary.text}</p>
