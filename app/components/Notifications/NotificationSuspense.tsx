@@ -1,7 +1,7 @@
-export default function NotificationSuspense () {
-    return (
-        <div id='singleNotificationContainer' className='bg-appGold w-full rounded'>
-            Getting notification...
-        </div>
-    )
+export default function NotificationSuspense() {
+  return (
+    <div id="singleNotificationContainer" className="w-full rounded bg-appGold">
+      Getting notification...
+    </div>
+  );
 }

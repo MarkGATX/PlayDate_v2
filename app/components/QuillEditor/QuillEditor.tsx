@@ -59,7 +59,6 @@
 
 //   return (
 
-
 //     <>
 //       <ReactQuill value={noteContent} readOnly={!openNoteEditor} onChange={handleChange} modules={modules} />
 //       {openNoteEditor
@@ -162,11 +161,11 @@
 
 // export default QuillEditor;
 
-import React, { useEffect, useRef, useState } from 'react';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
-import { Delta } from 'quill/core';
-import supabaseClient from '@/utils/supabase/client';
+import React, { useEffect, useRef, useState } from "react";
+import Quill from "quill";
+import "quill/dist/quill.snow.css";
+import { Delta } from "quill/core";
+import supabaseClient from "@/utils/supabase/client";
 
 interface QuillEditorProps {
   content: Delta | undefined;
@@ -175,22 +174,27 @@ interface QuillEditorProps {
   openNoteEditor: boolean;
 }
 
-const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenNoteEditor, openNoteEditor }) => {
+const QuillEditor: React.FC<QuillEditorProps> = ({
+  content,
+  playdateID,
+  setOpenNoteEditor,
+  openNoteEditor,
+}) => {
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [quill, setQuill] = useState<Quill | null>(null);
-  console.log(openNoteEditor)
-  console.log(content)
+  console.log(openNoteEditor);
+  console.log(content);
 
-  const defaultText: Delta = new Delta().insert('Write a note', { bold: true });
+  const defaultText: Delta = new Delta().insert("Write a note", { bold: true });
 
   useEffect(() => {
     if (editorRef.current && toolbarRef.current && !quill) {
       const quillInstance = new Quill(editorRef.current, {
-        theme: 'snow',
+        theme: "snow",
         modules: {
-          toolbar: toolbarRef.current
-        }
+          toolbar: toolbarRef.current,
+        },
       });
       setQuill(quillInstance);
     }
@@ -208,7 +212,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
     if (quill) {
       quill.enable(openNoteEditor);
       if (toolbarRef.current) {
-        toolbarRef.current.style.display = openNoteEditor ? 'block' : 'none';
+        toolbarRef.current.style.display = openNoteEditor ? "block" : "none";
       }
     }
   }, [openNoteEditor, quill]);
@@ -218,11 +222,12 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
 
     try {
       const deltaContent = quill.getContents();
-      const { data: updatedHostNote, error: updatedHostNoteError } = await supabaseClient
-        .from('Playdates')
-        .update({ host_notes: deltaContent })
-        .eq('id', playdateID)
-        .select();
+      const { data: updatedHostNote, error: updatedHostNoteError } =
+        await supabaseClient
+          .from("Playdates")
+          .update({ host_notes: deltaContent })
+          .eq("id", playdateID)
+          .select();
       if (updatedHostNoteError) {
         throw updatedHostNoteError;
       }
@@ -233,42 +238,39 @@ const QuillEditor: React.FC<QuillEditorProps> = ({ content, playdateID, setOpenN
     }
   };
 
-  return (
-    content || openNoteEditor
-      ?
-      <>
-        <div className={`quillEditorContainer w-5/6 h-auto rounded flex flex-col justify-center ${openNoteEditor ? 'border-appBlue' : 'border-transparent'} border-2`}>
-          <div ref={toolbarRef}>
-            <span className="ql-formats">
-              <button className="ql-bold"></button>
-              <button className="ql-italic"></button>
-              <button className="ql-underline"></button>
-            </span>
-            <span className="ql-formats">
-              <button className="ql-list" value="ordered"></button>
-              <button className="ql-list" value="bullet"></button>
-            </span>
-            <span className="ql-formats">
-              <button className="ql-clean"></button>
-            </span>
-          </div>
-          <div ref={editorRef} ></div>
-
+  return content || openNoteEditor ? (
+    <>
+      <div
+        className={`quillEditorContainer flex h-auto w-5/6 flex-col justify-center rounded ${openNoteEditor ? "border-appBlue" : "border-transparent"} border-2`}
+      >
+        <div ref={toolbarRef}>
+          <span className="ql-formats">
+            <button className="ql-bold"></button>
+            <button className="ql-italic"></button>
+            <button className="ql-underline"></button>
+          </span>
+          <span className="ql-formats">
+            <button className="ql-list" value="ordered"></button>
+            <button className="ql-list" value="bullet"></button>
+          </span>
+          <span className="ql-formats">
+            <button className="ql-clean"></button>
+          </span>
         </div>
-        <div>
-          {openNoteEditor && (
-            <button
-              className="min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none"
-              onClick={handleSaveNote}
-            >
-              Save Note
-            </button>
-          )}
-        </div>
-      </>
-      :
-      null
-  );
+        <div ref={editorRef}></div>
+      </div>
+      <div>
+        {openNoteEditor && (
+          <button
+            className="w-90 my-2 min-w-40 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+            onClick={handleSaveNote}
+          >
+            Save Note
+          </button>
+        )}
+      </div>
+    </>
+  ) : null;
 };
 
 export default QuillEditor;

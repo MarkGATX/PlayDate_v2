@@ -1,7 +1,10 @@
-export default function PlaydateAttendanceTabsSuspense () {
-    return (
-        <section id='playdateAttendanceTabs' className='flex flex-col gap-2 items-start rounded-lg justify-start p-4 border-2 border-appBlue m-2'>
-            <p>Loading attendance ...</p>
-        </section>
-    )
+export default function PlaydateAttendanceTabsSuspense() {
+  return (
+    <section
+      id="playdateAttendanceTabs"
+      className="m-2 flex flex-col items-start justify-start gap-2 rounded-lg border-2 border-appBlue p-4"
+    >
+      <p>Loading attendance ...</p>
+    </section>
+  );
 }

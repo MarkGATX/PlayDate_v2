@@ -3,70 +3,79 @@ const radius = 4000; // Radius in meters
 
 import { DataType } from "../types/placeTypeDefinitions";
 
+export async function fetchNearbyPlaces(
+  types: string[],
+  latitude: number,
+  longitude: number,
+  pageToken?: string,
+) {
+  const baseUrl = "https://places.googleapis.com/v1/places:searchNearby";
 
-export async function fetchNearbyPlaces(types: string[], latitude: number, longitude: number, pageToken?: string) {
-    const baseUrl = 'https://places.googleapis.com/v1/places:searchNearby';
-
-    const dataOptions = {
-        includedPrimaryTypes: types,
-        maxResultCount: 20,
-        // rankPreference: 'DISTANCE',
-        locationRestriction: {
-            circle: {
-                center: {
-                    latitude: latitude,
-                    longitude: longitude,
-                },
-                radius: radius,
-            },
+  const dataOptions = {
+    includedPrimaryTypes: types,
+    maxResultCount: 20,
+    // rankPreference: 'DISTANCE',
+    locationRestriction: {
+      circle: {
+        center: {
+          latitude: latitude,
+          longitude: longitude,
         },
-        pageToken: pageToken
-    };
+        radius: radius,
+      },
+    },
+    pageToken: pageToken,
+  };
 
-    if (!mapsApiKey) {
-        throw new Error('Google Places API key is not set');
+  if (!mapsApiKey) {
+    throw new Error("Google Places API key is not set");
+  }
+
+  const options = {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": mapsApiKey,
+      // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
+      "X-Goog-FieldMask":
+        "places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType,places.photos",
+    },
+    body: JSON.stringify(dataOptions),
+  };
+
+  try {
+    const response = await fetch(baseUrl, options);
+    if (!response.ok) {
+      throw new Error(`Error fetching nearby locations: ${response.status}`);
     }
+    const data: DataType = await response.json();
 
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': mapsApiKey,
-            // 'X-Goog-FieldMask': '*', // Field to retrieve (optional)
-            'X-Goog-FieldMask': 'places.id,places.displayName.text,places.internationalPhoneNumber,places.formattedAddress,places.location,places.businessStatus,places.currentOpeningHours,places.goodForChildren,places.editorialSummary,places.rating,places.iconMaskBaseUri,places.iconBackgroundColor,places.primaryType,places.photos'
-        },
-        body: JSON.stringify(dataOptions),
-    };
-
-    try {
-        const response = await fetch(baseUrl, options);
-        if (!response.ok) {
-            throw new Error(`Error fetching nearby locations: ${response.status}`);
-        }
-        const data: DataType = await response.json();
-
-        if (!data ) {
-            console.error('No data received from API');
-            return;
-          }
-        data.places = data.places.filter(place => place.businessStatus != "CLOSED" && place.businessStatus != 'CLOSED_TEMPORARILY')
-
-        // shuffle results for random display
-        for (let i = data.places.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
-        }
-        const dataWithExpiry = {
-            places: data.places,
-            expiryDate: new Date().getTime() + (60 * 60 * 1000)
-        }
-        //handle page token for pagination
-        // const mapPageToken = data.pageToken;
-        localStorage.setItem('placesData', JSON.stringify(dataWithExpiry))
-        return data.places
-    } catch (error) {
-        console.error('Error fetching nearby places:', error);
+    if (!data) {
+      console.error("No data received from API");
+      return;
     }
+    data.places = data.places.filter(
+      (place) =>
+        place.businessStatus != "CLOSED" &&
+        place.businessStatus != "CLOSED_TEMPORARILY",
+    );
+
+    // shuffle results for random display
+    for (let i = data.places.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [data.places[i], data.places[j]] = [data.places[j], data.places[i]];
+    }
+    const dataWithExpiry = {
+      places: data.places,
+      expiryDate: new Date().getTime() + 60 * 60 * 1000,
+    };
+    //handle page token for pagination
+    // const mapPageToken = data.pageToken;
+    localStorage.setItem("placesData", JSON.stringify(dataWithExpiry));
+    return data.places;
+  } catch (error) {
+    console.error("Error fetching nearby places:", error);
+  }
 }
 
 /*

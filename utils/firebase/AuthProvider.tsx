@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { useEffect, useState } from "react";
 import { AuthContext, AuthContextType } from "./AuthContext";
@@ -10,12 +10,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     // auth.onAuthStateChanged(() => setUser(user))
-    auth.onAuthStateChanged(setUser) 
-  }, [])
+    auth.onAuthStateChanged(setUser);
+  }, []);
 
   return (
-    <AuthContext.Provider value={{user}}>
-      {children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
   );
 };

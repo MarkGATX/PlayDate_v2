@@ -1,58 +1,59 @@
 .swiper-pagination-bullet {
-    background:var(--appBlue) !important;
-    opacity:.5
-  }
-  
-  .swiper-pagination-bullet-active {
-    /* Styles for the active pagination bullet (current slide) */
-    background: var(--appBlue) !important;
-    scale:1.4;
-    border:2px solid var(--appGold);
-    opacity:1;
-  }
-  
-  .swiper-button-next {
-    color:var(--appBlue);
-    background-color: var(--appGold);
-    border-radius:10px;
-    transition:all .2s;
-    scale:1;
-  }
+  background: var(--appBlue) !important;
+  opacity: 0.5;
+}
 
-  .swiper-button-next:hover {
-    text-shadow: 0 0 5px var(--appGold) ; 
-    background-color: var(--appBlue); 
-    color:var(--appGold);
-    scale:1.1;
-  }
-  .swiper-button-next:active {
-    scale:.9;
-    box-shadow:inset 2px 2px 5px black;
-  }
-  
-  .swiper-button-prev {
-    color:var(--appBlue);
-    background-color: var(--appGold);
-    border-radius:10px;
-    transition:all .2s;
-    scale:1;
-  }
+.swiper-pagination-bullet-active {
+  /* Styles for the active pagination bullet (current slide) */
+  background: var(--appBlue) !important;
+  scale: 1.4;
+  border: 2px solid var(--appGold);
+  opacity: 1;
+}
 
-  .swiper-button-prev:hover {
-    text-shadow:0 0 5px var(--appGold);    
-    background-color: var(--appBlue); 
-    color:var(--appGold);
-    scale:1.1;
-  }
-  
-  .swiper-button-disabled {
-    color:var(--appGold) !important;
-  }
+.swiper-button-next {
+  color: var(--appBlue);
+  background-color: var(--appGold);
+  border-radius: 10px;
+  transition: all 0.2s;
+  scale: 1;
+}
 
-  .swiper-slide-override {
-    width:100dvw !important;
-  }
+.swiper-button-next:hover {
+  text-shadow: 0 0 5px var(--appGold);
+  background-color: var(--appBlue);
+  color: var(--appGold);
+  scale: 1.1;
+}
+.swiper-button-next:active {
+  scale: 0.9;
+  box-shadow: inset 2px 2px 5px black;
+}
 
-  .swiper-button-prev:after, .swiper-button-next:after {
-    font-size:1rem;
-  }
+.swiper-button-prev {
+  color: var(--appBlue);
+  background-color: var(--appGold);
+  border-radius: 10px;
+  transition: all 0.2s;
+  scale: 1;
+}
+
+.swiper-button-prev:hover {
+  text-shadow: 0 0 5px var(--appGold);
+  background-color: var(--appBlue);
+  color: var(--appGold);
+  scale: 1.1;
+}
+
+.swiper-button-disabled {
+  color: var(--appGold) !important;
+}
+
+.swiper-slide-override {
+  width: 100dvw !important;
+}
+
+.swiper-button-prev:after,
+.swiper-button-next:after {
+  font-size: 1rem;
+}

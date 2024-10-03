@@ -1,13 +1,23 @@
-'use client'
- 
-import { useFormStatus } from 'react-dom'
- 
-export default function SubmitButton({text, uiHandler}:{text:string, uiHandler?:() => void}) {
-  const { pending } = useFormStatus()
- 
+"use client";
+
+import { useFormStatus } from "react-dom";
+
+export default function SubmitButton({
+  text,
+  uiHandler,
+}: {
+  text: string;
+  uiHandler?: () => void;
+}) {
+  const { pending } = useFormStatus();
+
   return (
-    <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mr-2'  type="submit" disabled={pending} >
-    {text}
+    <button
+      className="w-90 mr-2 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+      type="submit"
+      disabled={pending}
+    >
+      {text}
     </button>
-  )
+  );
 }

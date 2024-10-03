@@ -1,5 +1,3 @@
-export default function KidSearchResultsSuspense () {
-    return (
-        <div>Search result suspense component</div>
-    )
+export default function KidSearchResultsSuspense() {
+  return <div>Search result suspense component</div>;
 }

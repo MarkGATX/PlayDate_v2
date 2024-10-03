@@ -14,7 +14,7 @@ const firebaseConfig = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APPID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUERMENTID
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUERMENTID,
 };
 
 // Initialize Firebase
@@ -22,4 +22,4 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const auth = getAuth(app);
 
-export {auth, app}
+export { auth, app };

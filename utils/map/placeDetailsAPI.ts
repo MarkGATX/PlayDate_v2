@@ -4,34 +4,33 @@ import { DataType } from "../types/placeTypeDefinitions";
 
 const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
 
-
 export async function fetchPlaceDetails(placeId: string) {
-    const baseUrl = `https://places.googleapis.com/v1/places/${placeId}`;
+  const baseUrl = `https://places.googleapis.com/v1/places/${placeId}`;
 
-    if (!mapsApiKey) {
-        throw new Error('Google Places API key is not set');
+  if (!mapsApiKey) {
+    throw new Error("Google Places API key is not set");
+  }
+
+  const options = {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Goog-Api-Key": mapsApiKey,
+      "X-Goog-FieldMask":
+        "id,displayName.text,internationalPhoneNumber,formattedAddress,location,businessStatus,currentOpeningHours,goodForChildren,editorialSummary,rating,iconMaskBaseUri,iconBackgroundColor,primaryType,photos,name",
+    },
+  };
+
+  try {
+    const response = await fetch(baseUrl, options);
+    if (!response.ok) {
+      throw new Error(`Error fetching location: ${response.status}`);
     }
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Goog-Api-Key': mapsApiKey,
-            'X-Goog-FieldMask': 'id,displayName.text,internationalPhoneNumber,formattedAddress,location,businessStatus,currentOpeningHours,goodForChildren,editorialSummary,rating,iconMaskBaseUri,iconBackgroundColor,primaryType,photos,name'
-        },
-    };
-
-    try {
-        const response = await fetch(baseUrl, options);
-        if (!response.ok) {
-            throw new Error(`Error fetching location: ${response.status}`);
-        }
-        const data: placesDataType = await response.json();
-        return data
-
-    } catch (error) {
-        console.error('Error:', error);
-    }
+    const data: placesDataType = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error:", error);
+  }
 }
 
 /*
