@@ -207,7 +207,7 @@ export default function MapContainer() {
     if (!searchTermRef.current) {
       return;
     }
-    const searchedPlace = await fetchSearchedPlace(searchTermRef.current.value);
+    const searchedPlace = await fetchSearchedPlace(searchTermRef.current.value, currentLocation.latitude, currentLocation.longitude);
     //normalize the data to match the same format returned from the maps api
     console.log(searchedPlace);
     const normalizedResults = searchedPlace.results.map(normalizePlaceData);
@@ -215,6 +215,7 @@ export default function MapContainer() {
     //set places to place markers on map and update place cards
     setPlaces(normalizedResults);
   };
+
   console.log(places);
   return process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&
     currentLocation.latitude != 0 &&
@@ -272,7 +273,7 @@ export default function MapContainer() {
           type="text"
           ref={searchTermRef}
           className="mb-4 w-5/6 rounded-lg border-2 border-appBlue p-2"
-          placeholder="Search for a place..."
+          placeholder="Search for nearby places..."
         ></input>
         <button
           className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"

@@ -49,14 +49,14 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
   }
 }
 
-export async function fetchSearchedPlace(searchTerm: string) {
+export async function fetchSearchedPlace(searchTerm: string, latitude:number, longitude:number) {
   const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API;
   if (!mapsApiKey) {
     throw new Error("Google Places API key is not set");
   }
 
   // Use the Place Details endpoint
-  const baseURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchTerm}&key=${mapsApiKey}`;
+  const baseURL = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${searchTerm}&location=${latitude},${longitude}&key=${mapsApiKey}`;
 
   const options = {
     method: "GET",
