@@ -49,11 +49,18 @@ export async function fetchNearbyPlaces(
       throw new Error(`Error fetching nearby locations: ${response.status}`);
     }
     const data: DataType = await response.json();
+    console.log(data)
 
     if (!data) {
       console.error("No data received from API");
       return;
     }
+
+    if (!Array.isArray(data.places)) {
+      console.error("Received data does not contain a places array");
+      return [];
+    }
+
     data.places = data.places.filter(
       (place) =>
         place.businessStatus != "CLOSED" &&

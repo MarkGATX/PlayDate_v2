@@ -122,24 +122,32 @@ export default function MapContainer() {
             setPlaces(placesData.places);
           } else {
             localStorage.removeItem("placesData");
-            // Store the places in local storage. handled in fetchNearbyPlaces
+            if (!currentLocation.updated) {
+              return
+            } else {
+              // Store the places in local storage. handled in fetchNearbyPlaces
+              placesData = await fetchNearbyPlaces(
+                activityTypes,
+                currentLocation.latitude,
+                currentLocation.longitude,
+              );
+
+              setPlaces(placesData);
+            }
+          }
+        } else {
+          //get the data from Google Places
+          if (!currentLocation.updated) {
+            return
+          } else {
             placesData = await fetchNearbyPlaces(
               activityTypes,
               currentLocation.latitude,
               currentLocation.longitude,
             );
-
+            // Store the places in local storage, handled in fetchNearbyPlaces
             setPlaces(placesData);
           }
-        } else {
-          //get the data from Google Places
-          placesData = await fetchNearbyPlaces(
-            activityTypes,
-            currentLocation.latitude,
-            currentLocation.longitude,
-          );
-          // Store the places in local storage, handled in fetchNearbyPlaces
-          setPlaces(placesData);
         }
       } catch (error: any) {
         setError(error);
@@ -236,36 +244,36 @@ export default function MapContainer() {
         disableDefaultUI={true}
         mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}
       >
-        {places
-          ? places
-              .slice((currentPage - 1) * 5, currentPage * 5)
-              .map((place) => {
-                return (
-                  <AdvancedMarker
-                    key={place.id}
-                    position={{
-                      lat: place.location.latitude,
-                      lng: place.location.longitude,
-                    }}
-                    title={place.displayName.text}
-                    onClick={() =>
-                      document
-                        .getElementById(place.id)
-                        ?.scrollIntoView({ behavior: "smooth" })
-                    }
+        {places && places.length > 0
+          ?
+          (places.length === 1 ? places : places.slice((currentPage - 1) * 5, currentPage * 5))
+            .map((place) => {
+              return (
+                <AdvancedMarker
+                  key={place.id}
+                  position={{
+                    lat: place.location.latitude,
+                    lng: place.location.longitude,
+                  }}
+                  title={place.displayName.text}
+                  onClick={() =>
+                    document
+                      .getElementById(place.id)
+                      ?.scrollIntoView({ behavior: "smooth" })
+                  }
+                >
+                  <div
+                    className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-appBlue p-1 text-appGold`}
                   >
-                    <div
-                      className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-appBlue p-1 text-appGold`}
-                    >
-                      <h3>
-                        {place.displayName.text.length >= 30
-                          ? `${place.displayName.text.slice(0, 30)}...`
-                          : place.displayName.text}
-                      </h3>
-                    </div>
-                  </AdvancedMarker>
-                );
-              })
+                    <h3>
+                      {place.displayName.text.length >= 30
+                        ? `${place.displayName.text.slice(0, 30)}...`
+                        : place.displayName.text}
+                    </h3>
+                  </div>
+                </AdvancedMarker>
+              );
+            })
           : null}
       </Map>
       <div className="mb-8 flex w-full flex-col items-center justify-center">

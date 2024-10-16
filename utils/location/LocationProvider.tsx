@@ -12,6 +12,7 @@ export const LocationProvider = ({
   const [locationData, setLocationData] = useState<LocationData>({
     latitude: 0,
     longitude: 0,
+    updated:false
   });
 
   useEffect(() => {
@@ -19,6 +20,7 @@ export const LocationProvider = ({
       setLocationData({
         latitude: position.coords.latitude,
         longitude: position.coords.longitude,
+        updated:true
       });
     };
 
