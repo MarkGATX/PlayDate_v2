@@ -2,6 +2,7 @@
 
 import {
   AdultsType,
+  FriendGroupType,
   KidsType,
   RelationshipType,
 } from "../types/userTypeDefinitions";
@@ -20,7 +21,7 @@ export async function AddKid(rawAddKidData: Omit<KidsType, "id">) {
       await supabaseClient
         .from("Kids")
         .insert([rawAddKidData])
-        .select("id")
+        .select("id, first_name")
         .single();
     if (newKidError) {
       throw handleSupabaseError(newKidError);
@@ -43,6 +44,20 @@ export async function AddKid(rawAddKidData: Omit<KidsType, "id">) {
       if (newRelationshipError) {
         throw handleSupabaseError(newRelationshipError);
       }
+      console.log(newKidData)
+      const newFriendGroupData = {
+        group_name: `${newKidData.first_name}${newKidData.first_name.slice(-1) === "s" ? "'" : "'s"} friend group`,
+        kid_owner: newKidData.id
+      }
+      console.log(newFriendGroupData)
+      const { data: newKidFriendGroup, error: newKidFriendGroupError }: { data: FriendGroupType | null; error: PostgrestError | null } = await supabaseClient
+        .from("Friend_Group")
+        .insert(newFriendGroupData)
+        .single();
+      if (newKidFriendGroupError) {
+        console.log(newKidFriendGroupError)
+      }
+      console.log(newKidFriendGroup)
       return newKidData;
     }
   } catch (error) {

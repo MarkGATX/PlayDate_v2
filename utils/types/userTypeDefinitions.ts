@@ -46,3 +46,8 @@ export type RelationshipType = {
   kid_id: string;
   adult_id: string;
 };
+
+export type FriendGroupType = {
+  group_name: string;
+  kid_owner: string;
+}
