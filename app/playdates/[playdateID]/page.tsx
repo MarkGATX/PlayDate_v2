@@ -15,7 +15,7 @@ import {
   placesDataTypeWithExpiry,
 } from "@/utils/types/placeTypeDefinitions";
 import { PlaydateType } from "@/utils/types/playdateTypeDefinitions";
-import { AdultsType } from "@/utils/types/userTypeDefinitions";
+import { AdultsType, FriendGroupType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -44,6 +44,7 @@ export default function PlaydateDetails() {
   const [openNoteEditor, setOpenNoteEditor] = useState<boolean>(false);
   const [openDeletePlaydateModal, setOpenDeletePlaydateModal] =
     useState<boolean>(false);
+  const [friendGroups, setFriendGroups] = useState<FriendGroupType[]>([])
 
   const { user } = useContext(AuthContext);
   const playdateID: string = params.playdateID;
@@ -64,11 +65,11 @@ export default function PlaydateDetails() {
         }
         console.log(playdateData);
         if (playdateData.length === 0) {
-          console.log("calling not found");
+
           // notFound();
           router.push("/playdates/");
         } else if (playdateData.length > 0) {
-          console.log("passing not found");
+
           let luxonDate = DateTime.fromISO(playdateData[0].time);
 
           setUnformattedPlaydateDate(luxonDate);
@@ -87,8 +88,47 @@ export default function PlaydateDetails() {
             },
             kid_first_name_only: Kids.first_name_only,
           };
-
           setPlaydateInfo(newPlaydateData);
+
+          //get kid friend groups
+          const { data: friendGroupData, error: friendGroupError } = await supabaseClient
+            .from("Friend_Group")
+            .select("*")
+            .eq("kid_owner", newPlaydateData.host_kid_id)
+          if (friendGroupError) {
+            throw friendGroupError
+          }
+
+          console.log(friendGroupData)
+
+          // Use a temporary array to collect friend groups
+          const tempFriendGroups = [];
+
+          // Clear previous friend groups before setting new ones
+          setFriendGroups([]);
+          //use for...of to handle await in each fetch from supabase
+          for (const friendGroup of friendGroupData) {
+            const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
+              .from("Friend_Group_Members")
+              .select("kid_uid")
+              .eq("friend_group_uid", friendGroup.id)
+            if (friendGroupMembersError) {
+              throw friendGroupMembersError
+            }
+            const friendGroupData = {
+              id:friendGroup.id,
+              group_name: friendGroup.group_name,
+              //map group members to extract from uid and use a string
+              friend_group_members: friendGroupMembers.map(member => member.kid_uid),
+              kid_owner: friendGroup.kid_owner
+            }
+            console.log(friendGroupData)
+            console.log(friendGroupMembers)
+            tempFriendGroups.push(friendGroupData)
+
+          }
+          setFriendGroups(tempFriendGroups)
+
           //get location data
           // check for location in local storage first
           const localStoragePlaces = localStorage.getItem("placesData");
@@ -239,6 +279,8 @@ export default function PlaydateDetails() {
     }
   };
 
+  console.log(friendGroups)
+
   return (
     <main>
       {playdateInfo && placeDetails ? (
@@ -361,8 +403,8 @@ export default function PlaydateDetails() {
                                 null
                         } */}
             {playdateInfo &&
-            placeDetails &&
-            currentUser?.id === playdateInfo.host_id ? (
+              placeDetails &&
+              currentUser?.id === playdateInfo.host_id ? (
               <>
                 <div
                   id="editButtonContainer"
@@ -450,8 +492,8 @@ export default function PlaydateDetails() {
       )}
 
       {playdateInfo &&
-      placeDetails &&
-      currentUser?.id === playdateInfo.host_id ? (
+        placeDetails &&
+        currentUser?.id === playdateInfo.host_id ? (
         <section id="inviteKidsSection" className="p-4">
           <h3 className="font-bold">Search for kids to invite...</h3>
           <input
@@ -469,6 +511,7 @@ export default function PlaydateDetails() {
               currentUser={currentUser}
               searchTerm={kidSearchTerm}
               playdateInfo={playdateInfo}
+              friendGroups={friendGroups}
             />
           </Suspense>
         </section>

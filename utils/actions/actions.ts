@@ -44,24 +44,43 @@ export async function AddKid(rawAddKidData: Omit<KidsType, "id">) {
       if (newRelationshipError) {
         throw handleSupabaseError(newRelationshipError);
       }
-      console.log(newKidData)
+      //add default friend group
       const newFriendGroupData = {
         group_name: `${newKidData.first_name}${newKidData.first_name.slice(-1) === "s" ? "'" : "'s"} friend group`,
         kid_owner: newKidData.id
       }
-      console.log(newFriendGroupData)
       const { data: newKidFriendGroup, error: newKidFriendGroupError }: { data: FriendGroupType | null; error: PostgrestError | null } = await supabaseClient
         .from("Friend_Group")
         .insert(newFriendGroupData)
         .single();
       if (newKidFriendGroupError) {
-        console.log(newKidFriendGroupError)
+        throw handleSupabaseError(newKidFriendGroupError)
       }
-      console.log(newKidFriendGroup)
       return newKidData;
     }
   } catch (error) {
     console.error("Unexpected error:", error); // Log unexpected errors
+  }
+}
+
+export async function createNewFriendGroup(kidId:string, groupName:string) {
+  if (!kidId) {
+    return
+  }
+  const newGroupData:FriendGroupType = {
+    kid_owner:kidId,
+    group_name:groupName
+  }
+  try {
+    const {data:newFriendGroupData, error:newFriendGroupError} = await supabaseClient
+      .from('Friend_Group')
+      .insert(newGroupData)
+      .single();
+      if (newFriendGroupError) {
+        throw handleSupabaseError(newFriendGroupError)
+      }
+  } catch(error) {
+    console.log('Error adding friend group: ', error)
   }
 }
 

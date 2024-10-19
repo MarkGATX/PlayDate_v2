@@ -1,5 +1,5 @@
 import { searchForKids } from "@/utils/actions/searchActions";
-import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
+import { AdultsType, FriendGroupType, KidsType } from "@/utils/types/userTypeDefinitions";
 import gsap from "gsap";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,11 +12,13 @@ export default function KidSearchResults({
   searchTerm,
   currentUser,
   playdateInfo,
+  friendGroups
 }: {
   searchType: string;
   searchTerm: string;
   currentUser: AdultsType;
   playdateInfo?: PlaydateType;
+  friendGroups:FriendGroupType[]
 }) {
   const [searchResults, setSearchResults] = useState<KidsType[]>([]);
   const [leftButtonEnd, setLeftButtonEnd] = useState<boolean>(true);
@@ -75,7 +77,7 @@ export default function KidSearchResults({
         setSearchResults((previousValue) => kidResultArray);
         gsap.to(kidSearchResultsRef.current, {
           autoAlpha: 1,
-          maxHeight: "350px",
+          maxHeight: "450px",
           height: "auto",
           duration: 0.5,
           ease: "power1.inOut",
@@ -84,7 +86,7 @@ export default function KidSearchResults({
         setSearchResults((previousValue) => kidResultArray);
         gsap.to(kidSearchResultsRef.current, {
           autoAlpha: 1,
-          maxHeight: "350px",
+          maxHeight: "450px",
           height: "auto",
           duration: 0.5,
           ease: "power1.inOut",
@@ -94,7 +96,7 @@ export default function KidSearchResults({
         setSearchResults([]); // Set an empty array or display a loading message
         gsap.to(kidSearchResultsRef.current, {
           autoAlpha: 0,
-          maxHeight: "350px",
+          maxHeight: "450px",
           height: 0,
           duration: 0.5,
           ease: "power1.inOut",
@@ -129,6 +131,7 @@ export default function KidSearchResults({
                     playdateInfo={playdateInfo}
                     currentUserId={currentUser.id}
                     kidData={kid}
+                    friendGroups={friendGroups}
                   />
                 );
               })

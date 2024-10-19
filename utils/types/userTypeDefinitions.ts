@@ -48,6 +48,13 @@ export type RelationshipType = {
 };
 
 export type FriendGroupType = {
+  id:string;
   group_name: string;
   kid_owner: string;
+  friend_group_members?:string[]
+}
+
+export type FriendGroupMembersType = {
+  friend_group_name: string;
+  friend_group_members: string[];
 }

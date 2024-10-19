@@ -176,6 +176,27 @@ export async function getKidsPlaydateData(adultId: string) {
   return playdates;
 }
 
+export async function inviteFriendGroupToPlaydate() {
+
+}
+
+export async function addKidToFriendGroup(friendGroupId: string, kidId: string) {
+  const newGroupMemberData = {
+    friend_group_uid: friendGroupId,
+    kid_uid: kidId
+  }
+  try {
+    const { data: addKidToGroup, error: addKidToGroupError } = await supabaseClient
+      .from("Friend_Group_Members")
+      .insert([newGroupMemberData]);
+    if (addKidToGroupError) {
+      throw addKidToGroupError
+    }
+  } catch (error) {
+    console.log('There was an error adding to the friend group', error)
+  }
+}
+
 export async function inviteKidToPlaydate(
   kidtoInvite: string,
   invitedKidsPrimary: string,
