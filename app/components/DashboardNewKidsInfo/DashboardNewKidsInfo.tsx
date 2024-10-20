@@ -287,6 +287,7 @@ export default function DashboardNewKidsInfo({
             }}
           ></input>
           <Suspense fallback={<KidSearchResultsSuspense />}>
+          
             <KidSearchResults
               searchType="addKidToParent"
               currentUser={currentUser}

@@ -18,7 +18,7 @@ export default function KidSearchResults({
   searchTerm: string;
   currentUser: AdultsType;
   playdateInfo?: PlaydateType;
-  friendGroups:FriendGroupType[]
+  friendGroups?:FriendGroupType[]
 }) {
   const [searchResults, setSearchResults] = useState<KidsType[]>([]);
   const [leftButtonEnd, setLeftButtonEnd] = useState<boolean>(true);
@@ -131,7 +131,7 @@ export default function KidSearchResults({
                     playdateInfo={playdateInfo}
                     currentUserId={currentUser.id}
                     kidData={kid}
-                    friendGroups={friendGroups}
+                    friendGroups={friendGroups ?? []}
                   />
                 );
               })
