@@ -6,7 +6,7 @@ import {
   InviteStatusEnum,
   PlaydateType,
 } from "../types/playdateTypeDefinitions";
-import { AdultsType } from "../types/userTypeDefinitions";
+import { AdultsType, FriendGroupType } from "../types/userTypeDefinitions";
 import supabaseClient from "../supabase/client";
 import { NotificationsType } from "../types/notificationTypeDefinitions";
 import { NotificationEnums } from "../enums/notificationEnums";
@@ -176,8 +176,66 @@ export async function getKidsPlaydateData(adultId: string) {
   return playdates;
 }
 
-export async function inviteFriendGroupToPlaydate() {
+export async function inviteFriendGroup(friendGroup: FriendGroupType, playdate: PlaydateType,) {
+  try {
+    if (friendGroup.friend_group_members) {
+      for (const friend of friendGroup.friend_group_members) {
 
+        const inviteAttendanceData = {
+          playdate_id: playdate.id,
+          kid_id: friend.kid_id,
+          invite_status: InviteStatusEnum.invited,
+        };
+        //add playdate invitation recipient to playdate attendace table
+        const {
+          data: newPlaydateInviteAttendance,
+          error: newPlaydateInviteAttendanceError,
+        }: { data: PlaydateType | null; error: PostgrestError | null } =
+          await supabaseClient
+            .from("Playdate_Attendance")
+            .upsert([inviteAttendanceData])
+            .select("id")
+            .single();
+        if (newPlaydateInviteAttendanceError) {
+          if (newPlaydateInviteAttendanceError.code === '23505') { // Unique constraint violation
+            console.log('This kid has already been invited to this playdate');
+            // Handle the case where the kid is already invited
+          } else {
+            console.error('Error sending invitation:', newPlaydateInviteAttendanceError);
+            // Handle other errors
+          }
+        } else {
+          console.log('Invitation sent successfully');
+          // Handle successful invitation
+        }
+        if (newPlaydateInviteAttendance) {
+          const newInviteData = {
+            sender_id: playdate.host_id,
+            receiver_id: friend.primary_caregiver_id,
+            kid_id: friend.kid_id,
+            notification_type: NotificationEnums.inviteToPlaydate,
+            playdate_id: playdate.id,
+          };
+          const {
+            data: newPlaydateInvite,
+            error: newPlaydateInviteError,
+          }: { data: NotificationsType | null; error: PostgrestError | null } =
+            await supabaseClient
+              .from("Notifications")
+              .insert(newInviteData)
+              .single();
+          if (newPlaydateInviteError) {
+            throw handleSupabaseError(newPlaydateInviteError);
+          }
+          return newPlaydateInvite;
+        }
+        return newPlaydateInviteAttendance;
+
+      }
+    }
+  } catch (error) {
+    console.error("Error inviting friends to the playdate:", error);
+  }
 }
 
 export async function addKidToFriendGroup(friendGroupId: string, kidId: string) {
@@ -190,7 +248,16 @@ export async function addKidToFriendGroup(friendGroupId: string, kidId: string) 
       .from("Friend_Group_Members")
       .insert([newGroupMemberData]);
     if (addKidToGroupError) {
-      throw addKidToGroupError
+      if (addKidToGroupError.code === '23505') { // Unique constraint violation
+        console.log('This kid is already in this friend group');
+        // Handle the case where the kid is already invited
+      } else {
+        console.error('Error adding to the friend grop:', addKidToGroupError);
+        // Handle other errors
+      }
+    } else {
+      console.log('added to the friend group successfully');
+      // Handle successful invitation
     }
   } catch (error) {
     console.log('There was an error adding to the friend group', error)
@@ -220,7 +287,16 @@ export async function inviteKidToPlaydate(
         .select("id")
         .single();
     if (newPlaydateInviteAttendanceError) {
-      throw handleSupabaseError(newPlaydateInviteAttendanceError);
+      if (newPlaydateInviteAttendanceError.code === '23505') { // Unique constraint violation
+        console.log('This kid has already been invited to this playdate');
+        // Handle the case where the kid is already invited
+      } else {
+        console.error('Error sending invitation:', newPlaydateInviteAttendanceError);
+        // Handle other errors
+      }
+    } else {
+      console.log('Invitation sent successfully');
+      // Handle successful invitation
     }
     if (newPlaydateInviteAttendance) {
       const newInviteData = {

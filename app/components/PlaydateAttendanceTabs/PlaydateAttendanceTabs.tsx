@@ -24,6 +24,7 @@ export default function PlaydateAttendanceTabs({
 
   useEffect(() => {
     const getPlaydateAttendanceData = async () => {
+      console.log('GET ATTENDANCE')
       //using returns to override what supabase expects to receive. They expect an array here but sending an object, so overriding to expect an object
       const {
         data: playdateAttendanceData,
@@ -37,6 +38,7 @@ export default function PlaydateAttendanceTabs({
         .returns<InviteStatusType[]>();
 
       if (playdateAttendanceData) {
+        console.log(attendanceData)
         setAttendanceData(playdateAttendanceData);
       }
       if (playdateAttendanceData && playdateAttendanceData.length > 0) {
@@ -73,7 +75,7 @@ export default function PlaydateAttendanceTabs({
     getPlaydateAttendanceData();
 
     const attendanceSubscription = supabaseClient
-      .channel("supabase_realtime")
+      .channel("attendance_tabs")
       .on(
         "postgres_changes",
         {
@@ -83,6 +85,7 @@ export default function PlaydateAttendanceTabs({
           filter: `playdate_id=eq.${playdate}`,
         },
         (payload) => {
+          console.log(payload)
           getPlaydateAttendanceData();
         },
       )

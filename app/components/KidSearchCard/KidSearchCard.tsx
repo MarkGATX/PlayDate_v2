@@ -80,6 +80,10 @@ export default function KidSearchCard({
     }
   };
 
+  const inviteGroupToPlaydate = async() => {
+    
+  }
+
   return (
     <div
       id="kidSearchResultCard"

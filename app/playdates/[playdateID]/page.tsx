@@ -7,6 +7,7 @@ import PlaydateAttendanceTabsSuspense from "@/app/components/PlaydateAttendanceT
 import {
   deletePlaydate,
   fetchPlaceData,
+  inviteFriendGroup,
 } from "@/utils/actions/playdateActions";
 import { AuthContext } from "@/utils/firebase/AuthContext";
 import supabaseClient from "@/utils/supabase/client";
@@ -15,7 +16,7 @@ import {
   placesDataTypeWithExpiry,
 } from "@/utils/types/placeTypeDefinitions";
 import { PlaydateType } from "@/utils/types/playdateTypeDefinitions";
-import { AdultsType, FriendGroupType } from "@/utils/types/userTypeDefinitions";
+import { AdultsType, FriendGroupMembersType, FriendGroupType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -49,6 +50,13 @@ export default function PlaydateDetails() {
   const { user } = useContext(AuthContext);
   const playdateID: string = params.playdateID;
   const router = useRouter();
+
+  interface SupabaseFriendGroupMemberType {
+    kid_uid: string;
+    Kids: {
+      primary_caregiver: string | null;
+    };
+  };
 
   useEffect(() => {
     const getPlaydateInfo = async () => {
@@ -107,20 +115,27 @@ export default function PlaydateDetails() {
           // Clear previous friend groups before setting new ones
           setFriendGroups([]);
           //use for...of to handle await in each fetch from supabase
+          //use returns to ensure correct typing of response. once again supabase expecting an array but returning an object. this return overrides that
           for (const friendGroup of friendGroupData) {
             const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
               .from("Friend_Group_Members")
-              .select("kid_uid")
+              .select("kid_uid, Kids(primary_caregiver)")
               .eq("friend_group_uid", friendGroup.id)
+              .returns<SupabaseFriendGroupMemberType[]>();
             if (friendGroupMembersError) {
               throw friendGroupMembersError
             }
+            console.log(friendGroupMembers)
             const friendGroupData = {
               id:friendGroup.id,
-              group_name: friendGroup.group_name,
+              group_name: friendGroup.group_name,             
+              kid_owner: friendGroup.kid_owner,
               //map group members to extract from uid and use a string
-              friend_group_members: friendGroupMembers.map(member => member.kid_uid),
-              kid_owner: friendGroup.kid_owner
+              friend_group_members: friendGroupMembers.map((member:SupabaseFriendGroupMemberType) => 
+                ({kid_id:member.kid_uid, 
+                  primary_caregiver_id:member.Kids.primary_caregiver || ''
+                }))
+
             }
             console.log(friendGroupData)
             console.log(friendGroupMembers)
@@ -278,6 +293,17 @@ export default function PlaydateDetails() {
       console.error("Error deleting playdate: ", error);
     }
   };
+
+  const handleInviteFriendGroup = async () => {
+    if (friendGroups.length === 0 || !playdateInfo) {
+      return
+    }
+    try {
+      await inviteFriendGroup( friendGroups[0], playdateInfo)
+    } catch(error) {
+      console.error('There was an error inviting the friend group', error)
+    }
+  }
 
   console.log(friendGroups)
 
@@ -494,13 +520,14 @@ export default function PlaydateDetails() {
       {playdateInfo &&
         placeDetails &&
         currentUser?.id === playdateInfo.host_id ? (
-        <section id="inviteKidsSection" className="p-4">
-          <h3 className="font-bold">Search for kids to invite...</h3>
+        <section id="inviteKidsSection" className="p-4 flex flex-col">
+          <h3 className="font-bold w-full">Search for kids to invite...</h3>
+          <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50" onClick={handleInviteFriendGroup}>{`Invite ${playdateInfo.kid_name.first_name}${playdateInfo.kid_name.first_name.slice(-1)==='s' ? "'" : "'s"} Friend Group`}</button>
           <input
             type="text"
             value={kidSearchTerm}
             placeholder={`Kid's name`}
-            className="rounded-lg border-2 bg-inputBG px-2"
+            className="rounded-lg border-2 bg-inputBG px-2 mt-4"
             onChange={(event) => {
               setKidSearchTerm(event.target.value);
             }}
