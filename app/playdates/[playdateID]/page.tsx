@@ -16,7 +16,7 @@ import {
   placesDataTypeWithExpiry,
 } from "@/utils/types/placeTypeDefinitions";
 import { PlaydateType } from "@/utils/types/playdateTypeDefinitions";
-import { AdultsType, FriendGroupMembersType, FriendGroupType } from "@/utils/types/userTypeDefinitions";
+import { AdultsType, FriendGroupMembersType, FriendGroupType, SupabaseFriendGroupMemberType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, useParams, useRouter } from "next/navigation";
@@ -51,12 +51,7 @@ export default function PlaydateDetails() {
   const playdateID: string = params.playdateID;
   const router = useRouter();
 
-  interface SupabaseFriendGroupMemberType {
-    kid_uid: string;
-    Kids: {
-      primary_caregiver: string | null;
-    };
-  };
+  
 
   useEffect(() => {
     const getPlaydateInfo = async () => {
@@ -119,7 +114,7 @@ export default function PlaydateDetails() {
           for (const friendGroup of friendGroupData) {
             const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
               .from("Friend_Group_Members")
-              .select("kid_uid, Kids(primary_caregiver)")
+              .select("kid_uid, Kids(primary_caregiver, first_name, first_name_only, last_name, profile_pic)")
               .eq("friend_group_uid", friendGroup.id)
               .returns<SupabaseFriendGroupMemberType[]>();
             if (friendGroupMembersError) {
@@ -133,9 +128,12 @@ export default function PlaydateDetails() {
               //map group members to extract from uid and use a string
               friend_group_members: friendGroupMembers.map((member:SupabaseFriendGroupMemberType) => 
                 ({kid_id:member.kid_uid, 
-                  primary_caregiver_id:member.Kids.primary_caregiver || ''
+                  primary_caregiver_id:member.Kids.primary_caregiver || '',
+                  profile_pic:member.Kids.profile_pic || '',
+                  first_name:member.Kids.first_name,
+                  last_name:member.Kids.last_name,
+                  first_name_only: member.Kids.first_name_only
                 }))
-
             }
             console.log(friendGroupData)
             console.log(friendGroupMembers)

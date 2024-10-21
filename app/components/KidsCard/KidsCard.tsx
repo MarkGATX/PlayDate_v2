@@ -1,4 +1,4 @@
-import { KidsType } from "@/utils/types/userTypeDefinitions";
+import { FriendGroupMembersType, FriendGroupType, KidsType, SupabaseFriendGroupMemberType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 import SubmitButton from "../SubmitButton/SubmitButton";
@@ -10,6 +10,7 @@ import {
 import { useFormStatus } from "react-dom";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import supabaseClient from "@/utils/supabase/client";
 
 export default function KidsCard({
   kid,
@@ -34,6 +35,7 @@ export default function KidsCard({
   const [kidProfilePic, setKidProfilePic] = useState<string | undefined>(
     kid.profile_pic,
   );
+  const [friendGroups, setFriendGroups] = useState<FriendGroupType[]>([])
   const [openRemoveKidModal, setOpenRemoveKidModal] = useState<boolean>(false);
   const [openDeleteKidModal, setOpenDeleteKidModal] = useState<boolean>(false);
   const { pending } = useFormStatus();
@@ -44,6 +46,8 @@ export default function KidsCard({
   const readOnlyKidContentRef = useRef<HTMLDivElement | null>(null);
   const removeKidModalRef = useRef<HTMLDialogElement | null>(null);
   const deleteKidModalRef = useRef<HTMLDialogElement | null>(null);
+  const friendGroupRef = useRef<HTMLDivElement | null>(null)
+  const [showFriendGroup, setShowFriendGroup] = useState(false)
 
   //use js bind method to include kid id in submitted form with form action
   // const editKidWithId = EditKid.bind(null,kid.id )
@@ -210,12 +214,96 @@ export default function KidsCard({
     setKidProfilePic(kid.profile_pic);
   };
 
+  const { contextSafe } = useGSAP();
+
+  const handleShowFriendGroup = contextSafe(() => {
+    if (friendGroupRef.current) {
+      if (!showFriendGroup) {
+        gsap.to(friendGroupRef.current, {
+          height: "auto",
+          autoAlpha: 1,
+          ease: "power2.inOut",
+          duration: 0.8,
+        });
+        setShowFriendGroup((previousValue) => !previousValue);
+        //trying to get element to scroll into view when opened. currently seems to be re-rendering parent and causing visual jump
+        // upcomingPlaydatesRef.current.scrollIntoView({ behavior: "smooth" });
+      } else {
+        gsap.to(friendGroupRef.current, {
+          height: 0,
+          autoAlpha: 0,
+          ease: "power2.inOut",
+          duration: 0.8,
+        });
+        setShowFriendGroup((previousValue) => !previousValue);
+      }
+    }
+  })
+
+  useEffect(() => {
+    const getFriendGroups = async () => {
+      try {
+        const { data: friendGroupData, error: friendGroupError } = await supabaseClient
+          .from("Friend_Group")
+          .select("*")
+          .eq("kid_owner", kid.id)
+        if (friendGroupError) {
+          throw friendGroupError
+        }
+        console.log(friendGroupData[0])
+        // Use a temporary array to collect friend groups
+        const tempFriendGroups = [];
+        // Clear previous friend groups before setting new ones
+        setFriendGroups([]);
+        //use for...of to handle await in each fetch from supabase
+        //use returns to ensure correct typing of response. once again supabase expecting an array but returning an object. this return overrides that
+        for (const friendGroup of friendGroupData) {
+          const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
+            .from("Friend_Group_Members")
+            .select("kid_uid, Kids(primary_caregiver, first_name, first_name_only, last_name, profile_pic)")
+            .eq("friend_group_uid", friendGroup.id)
+            .returns<SupabaseFriendGroupMemberType[]>();
+          if (friendGroupMembersError) {
+            throw friendGroupMembersError
+          }
+          console.log(friendGroupMembers)
+          const friendGroupData = {
+            id: friendGroup.id,
+            group_name: friendGroup.group_name,
+            kid_owner: friendGroup.kid_owner,
+            //map group members to extract from uid and use a string
+            friend_group_members: friendGroupMembers.map((member: SupabaseFriendGroupMemberType) =>
+            ({
+              kid_id: member.kid_uid,
+              primary_caregiver_id: member.Kids.primary_caregiver || '',
+              profile_pic: member.Kids.profile_pic || '',
+              first_name: member.Kids.first_name,
+              last_name: member.Kids.last_name,
+              first_name_only: member.Kids.first_name_only
+            }))
+              // Sort by first name
+              .sort((a, b) => a.first_name.localeCompare(b.first_name)),
+          }
+          console.log(friendGroupData)
+          console.log(friendGroupMembers)
+          tempFriendGroups.push(friendGroupData)
+
+        }
+        setFriendGroups(tempFriendGroups)
+
+      } catch (error) {
+        console.error("There was an error getting friend groups in the kid card", error)
+      }
+    }
+
+    getFriendGroups();
+  }, [kid])
+
+  console.log(friendGroups)
+
   return (
     <>
-      <div
-        key={kid.id}
-        className="singleKid flex flex-col gap-4 overflow-hidden rounded-xl bg-inputBG p-2"
-      >
+      <div key={kid.id} className="singleKid flex flex-col gap-4 overflow-hidden rounded-xl bg-inputBG p-2">
         <div className="flex w-full items-start justify-between gap-4">
           <div
             id="kidProfilePicContainer"
@@ -696,103 +784,156 @@ export default function KidsCard({
                                             <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Caregiver</button>
                                         </div>
                                     </div> */}
-      </div>
-      {openRemoveKidModal ? (
-        <dialog
-          ref={removeKidModalRef}
-          className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-black bg-opacity-50 backdrop-blur"
-        >
-          <div className="m-auto w-3/4 rounded-xl bg-appGold p-4">
-            <div className="flex flex-col flex-wrap items-center text-sm">
-              <p className="mb-4 block text-center">
-                This will remove your access to{" "}
-                <span className="font-bold">
-                  {kidFirstName} {kidLastName}
-                </span>
-                .{" "}
-              </p>
-              <p className="mb-4 block text-center">
-                This does NOT delete the kid from the system.
-              </p>
-              <p className="mb-4 block text-center">
-                {" "}
-                Deleting can ONLY be done by the Primary Caregiver
-              </p>
-              <p className="mb-4 block text-center">
-                Do you want to remove{" "}
-                <span className="font-bold">
-                  {kidFirstName} {kidLastName}
-                </span>
-                ?
-              </p>
-              <br />
-              <div
-                id="removeModalButtonContainer"
-                className="flex w-full flex-col"
-              >
+        {friendGroups.length > 0 ?
+          <div>
+            <div className='w-full bg-appBlue text-appBG flex p-2 rounded-md'>
+              <h3>{`${kid.first_name}${kid.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</h3>
+              <div className=" ml-2 transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125" onClick={handleShowFriendGroup} >
+                <Image
+                  src={`/icons/down_arrow.webp`}
+                  width={12}
+                  height={13}
+                  alt="down icon to show more details"
+                  title="more details"
+                  className={`transform duration-700 ease-in-out ${showFriendGroup ? "-rotate-180" : "rotate-0"}`}
+                ></Image>
+              </div>
+            </div>
+            <div ref={friendGroupRef} className="flex h-0 flex-col gap-2 overflow-y-hidden px-4 pt-2 opacity-0" >
+              {friendGroups.map((group) => {
+                return (
+                  <div>
+                    <div key={group.id}>
+                      <h4>{group.group_name}</h4>
+                    </div>
+
+                    {group.friend_group_members?.map((member) => {
+                      return (
+                        <div key={`${member.kid_id}${group.id}`} className="mb-2 flex w-full items-center justify-start rounded-lg bg-appGold p-2 text-sm" >
+                          <div className="relative mr-4 h-5 w-5 rounded-full">
+                            <Image
+                              src={`${member.profile_pic}`}
+                              fill={true}
+                              alt={`profile picture of ${member.first_name}`}
+                              style={{ objectFit: "cover" }}
+                              className="rounded-full"
+                            />
+                          </div>
+                          <p className='w-3/4'>
+                            {member.first_name} {member.first_name_only ? '' : member.last_name}
+                          </p>
+                          <button className=" w-28 transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50 ">Remove</button>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+          :
+          null}
+      </div >
+      {
+        openRemoveKidModal ? (
+          <dialog
+            ref={removeKidModalRef}
+            className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-black bg-opacity-50 backdrop-blur"
+          >
+            <div className="m-auto w-3/4 rounded-xl bg-appGold p-4">
+              <div className="flex flex-col flex-wrap items-center text-sm">
+                <p className="mb-4 block text-center">
+                  {`This will remove your access to `}
+                  <span className="font-bold">
+                    {kidFirstName} {kidLastName}
+                  </span>
+                  .
+                </p>
+                <p className="mb-4 block text-center">
+                  This does NOT delete the kid from the system.
+                </p>
+                <p className="mb-4 block text-center">
+
+                  Deleting can ONLY be done by the Primary Caregiver
+                </p>
+                <p className="mb-4 block text-center">
+                  {`Do you want to remove `}
+                  <span className="font-bold">
+                    {kidFirstName} {kidLastName}
+                  </span>
+                  ?
+                </p>
+                <br />
+                <div
+                  id="removeModalButtonContainer"
+                  className="flex w-full flex-col"
+                >
+                  <button
+                    type="button"
+                    className="mb-4 mr-2 mt-2 w-full transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    onClick={handleConfirmRemoveKid}
+                  >
+                    Remove {kidFirstName} {kidLastName}
+                  </button>
+                  <button
+                    type="button"
+                    className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => setOpenRemoveKidModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </dialog >
+        ) : null
+      }
+      {
+        openDeleteKidModal ? (
+          <dialog
+            ref={deleteKidModalRef}
+            className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-black bg-opacity-50 backdrop-blur"
+          >
+            <div className="m-auto w-3/4 rounded-xl bg-appGold p-4">
+              <div className="flex flex-col items-center">
+                <p className="mb-4 block text-center">
+                  {`This will PREMANENTLY DELETE `}
+                  <span className="font-bold">
+                    {kidFirstName} {kidLastName}
+                  </span>{" "}
+                  from the app.{" "}
+                </p>
+                <p className="mb-4 block text-center">This CAN NOT be undone.</p>
+                <p className="mb-4 block text-center">
+                  {`Deleting can only be done by the Primary Caregiver`}
+                </p>
+                <p className="mb-4 block text-center">
+                  {`Do you want to PERMANENTLY DELETE `}
+                  <span className="font-bold">
+                    {kidFirstName} {kidLastName}
+                  </span>
+                  ?
+                </p>
+                <br />
                 <button
                   type="button"
-                  className="mb-4 mr-2 mt-2 w-full transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                  onClick={handleConfirmRemoveKid}
+                  className="mb-4 mr-2 mt-2 w-full transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs font-bold text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                  onClick={handleConfirmDeleteKid}
                 >
-                  Remove {kidFirstName} {kidLastName}
+                  DELETE {kidFirstName} {kidLastName}
                 </button>
                 <button
                   type="button"
                   className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                  onClick={() => setOpenRemoveKidModal(false)}
+                  onClick={() => setOpenDeleteKidModal(false)}
                 >
                   Cancel
                 </button>
               </div>
             </div>
-          </div>
-        </dialog>
-      ) : null}
-      {openDeleteKidModal ? (
-        <dialog
-          ref={deleteKidModalRef}
-          className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-black bg-opacity-50 backdrop-blur"
-        >
-          <div className="m-auto w-3/4 rounded-xl bg-appGold p-4">
-            <div className="flex flex-col items-center">
-              <p className="mb-4 block text-center">
-                This will PREMANENTLY DELETE{" "}
-                <span className="font-bold">
-                  {kidFirstName} {kidLastName}
-                </span>{" "}
-                from the app.{" "}
-              </p>
-              <p className="mb-4 block text-center">This CAN NOT be undone.</p>
-              <p className="mb-4 block text-center">
-                Deleting can only be done by the Primary Caregiver
-              </p>
-              <p className="mb-4 block text-center">
-                Do you want to PERMANENTLY DELETE{" "}
-                <span className="font-bold">
-                  {kidFirstName} {kidLastName}
-                </span>
-                ?
-              </p>
-              <br />
-              <button
-                type="button"
-                className="mb-4 mr-2 mt-2 w-full transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs font-bold text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                onClick={handleConfirmDeleteKid}
-              >
-                DELETE {kidFirstName} {kidLastName}
-              </button>
-              <button
-                type="button"
-                className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                onClick={() => setOpenDeleteKidModal(false)}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </dialog>
-      ) : null}
+          </dialog>
+        ) : null
+      }
     </>
   );
 }

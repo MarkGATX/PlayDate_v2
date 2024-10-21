@@ -48,13 +48,28 @@ export type RelationshipType = {
 };
 
 export type FriendGroupType = {
-  id:string;
+  id: string;
   group_name: string;
   kid_owner: string;
-  friend_group_members?:FriendGroupMembersType[]
+  friend_group_members?: FriendGroupMembersType[]
 }
 
 export type FriendGroupMembersType = {
   kid_id: string;
   primary_caregiver_id: string;
+  profile_pic?: string;
+  first_name_only: boolean;
+  first_name: string;
+  last_name: string;
 }
+
+export type SupabaseFriendGroupMemberType = {
+  kid_uid: string;
+  Kids: {
+    primary_caregiver: string | null;
+    profile_pic?: string;
+    first_name_only: boolean;
+    first_name: string;
+    last_name: string;
+  };
+};
