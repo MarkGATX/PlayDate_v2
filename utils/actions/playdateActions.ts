@@ -365,6 +365,23 @@ export async function rejectPlaydateInvite(
   }
 }
 
+export async function removeKidFromFriendGroup(kid_id:string, friend_group_id:string) {
+  try {
+    const {data:friendData, error:friendDataError} = await supabaseClient
+    .from("Friend_Group_Members")
+    .delete()
+    .eq('friend_group_uid', friend_group_id)
+    .eq('kid_uid', kid_id)
+    .single()
+    if(friendDataError) {
+      throw friendDataError
+    }
+    return friendData
+  }catch(error) {
+    console.error("Error removing kid from friend group: ", error)
+  }
+}
+
 function handleSupabaseError(error: PostgrestError): Error {
   const { message, details } = error;
   console.error("Error adding record:", message, details);

@@ -51,7 +51,7 @@ export type FriendGroupType = {
   id: string;
   group_name: string;
   kid_owner: string;
-  friend_group_members?: FriendGroupMembersType[]
+  friend_group_members: FriendGroupMembersType[]
 }
 
 export type FriendGroupMembersType = {
