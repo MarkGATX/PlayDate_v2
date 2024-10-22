@@ -225,108 +225,121 @@ export default function MapContainer() {
   };
 
   console.log(places);
-  return process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&
-    currentLocation.latitude != 0 &&
-    currentLocation.longitude != 0 ? (
-    <APIProvider
-      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}
-      libraries={["places"]}
-    >
-      {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
-      <Map
-        style={{ width: "100vw", height: "40dvh", marginBottom: "2rem" }}
-        defaultCenter={{
-          lat: currentLocation.latitude,
-          lng: currentLocation.longitude,
-        }}
-        defaultZoom={12}
-        gestureHandling={"greedy"}
-        disableDefaultUI={true}
-        mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}
-      >
-        {places && places.length > 0
-          ?
-          (places.length === 1 ? places : places.slice((currentPage - 1) * 5, currentPage * 5))
-            .map((place) => {
-              return (
-                <AdvancedMarker
-                  key={place.id}
-                  position={{
-                    lat: place.location.latitude,
-                    lng: place.location.longitude,
-                  }}
-                  title={place.displayName.text}
-                  onClick={() =>
-                    document
-                      .getElementById(place.id)
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                >
-                  <div
-                    className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-appBlue p-1 text-appGold`}
-                  >
-                    <h3>
-                      {place.displayName.text.length >= 30
-                        ? `${place.displayName.text.slice(0, 30)}...`
-                        : place.displayName.text}
-                    </h3>
-                  </div>
-                </AdvancedMarker>
-              );
-            })
-          : null}
-      </Map>
-      <div className="mb-8 flex w-full flex-col items-center justify-center">
-        <input
-          type="text"
-          ref={searchTermRef}
-          className="mb-4 w-5/6 rounded-lg border-2 border-appBlue p-2"
-          placeholder="Search for nearby places..."
-        ></input>
-        <button
-          className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-          onClick={handlePlaceSearch}
-        >
-          Search
-        </button>
-      </div>
-      {places ? (
+  return (
+    <main className='xl:flex'>
+      {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&
+        currentLocation.latitude != 0 &&
+        currentLocation.longitude != 0 ? (
         <>
-          <p className="mb-8 w-full bg-appBlue p-4 text-lg font-bold text-appBG">
-            Suggestions...
-          </p>
+          <div className='xl:w-3/5 flex-none xl:order-2'>
+            <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API} libraries={["places"]} >
+              {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
+              <Map
+                className="h-[250px] sm:h-[33dvh] xl:h-[calc(100dvh-125px)] w-full flex-none"
 
-          <div
-            id="paginationButtons"
-            className="mb-12 flex w-full justify-around"
-          >
-            <button
-              className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-              onClick={() => setCurrentPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              {currentPage === 1 ? "Start" : "Previous 5"}
-            </button>
-            <button
-              className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-              onClick={() => setCurrentPage(currentPage + 1)}
-              disabled={currentPage * 5 >= places.length}
-            >
-              {currentPage * 5 >= places.length ? "End of list" : "Next 5"}
-            </button>
+                defaultCenter={{
+                  lat: currentLocation.latitude,
+                  lng: currentLocation.longitude,
+                }}
+                defaultZoom={12}
+                gestureHandling={"greedy"}
+                disableDefaultUI={true}
+                mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}
+              >
+                {places && places.length > 0
+                  ?
+                  (places.length === 1 ? places : places.slice((currentPage - 1) * 5, currentPage * 5))
+                    .map((place) => {
+                      return (
+                        <AdvancedMarker
+                          key={place.id}
+                          position={{
+                            lat: place.location.latitude,
+                            lng: place.location.longitude,
+                          }}
+                          title={place.displayName.text}
+                          onClick={() =>
+                            document
+                              .getElementById(place.id)
+                              ?.scrollIntoView({ behavior: "smooth" })
+                          }
+                        >
+                          <div
+                            className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-appBlue p-1 text-appGold`}
+                          >
+                            <h3>
+                              {place.displayName.text.length >= 30
+                                ? `${place.displayName.text.slice(0, 30)}...`
+                                : place.displayName.text}
+                            </h3>
+                          </div>
+                        </AdvancedMarker>
+                      );
+                    })
+                  : null}
+              </Map>
+            </APIProvider>
           </div>
-          {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => (
-            <PlaceCards
-              place={place}
-              key={place.id}
-              kids={currentUser?.Kids}
-              currentUserID={currentUser?.id}
-            />
-          ))}
+          <div className='xl:w-2/5 flex-none'>
+            <div className="mb-8 flex w-full flex-col items-center justify-center mt-4">
+              <input
+                type="text"
+                ref={searchTermRef}
+                className="mb-4 w-5/6 rounded-lg border-2 border-appBlue p-2"
+                placeholder="Search for nearby places..."
+              ></input>
+              <button
+                className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                onClick={handlePlaceSearch}
+              >
+                Search
+              </button>
+            </div>
+            {places ? (
+              <>
+                <p className="mb-8 w-full bg-appBlue p-4 text-lg font-bold text-appBG">
+                  Suggestions...
+                </p>
+
+                <div
+                  id="paginationButtons"
+                  className="mb-12 flex w-full justify-around"
+                >
+                  <button
+                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    {currentPage === 1 ? "Start" : "Previous 5"}
+                  </button>
+                  <button
+                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                    disabled={currentPage * 5 >= places.length}
+                  >
+                    {currentPage * 5 >= places.length ? "End of list" : "Next 5"}
+                  </button>
+                </div>
+                <div className='flex flex-col items-center justify-center'>
+                {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => (
+                  <PlaceCards
+                    place={place}
+                    key={place.id}
+                    kids={currentUser?.Kids}
+                    currentUserID={currentUser?.id}
+                  />
+                ))}
+                </div>
+
+              </>
+            ) : null}
+
+          </div>
         </>
-      ) : null}
-    </APIProvider>
-  ) : (
-    <div>Loading map data...</div>
-  );
+      ) : (
+        <div>Loading map data...</div>
+      )
+      }
+    </main>
+  )
 }

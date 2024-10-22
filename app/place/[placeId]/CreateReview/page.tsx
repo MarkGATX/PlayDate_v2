@@ -165,73 +165,75 @@ export default function CreateReview({
   };
 
   return (
-    <main>
-      <div id="placePicContainer" className="flex h-[250px] w-full">
-        <Swiper
-          pagination={true}
-          effect={"fade"}
-          navigation={true}
-          modules={[Pagination, Navigation, EffectFade]}
-        >
-          {currentPlace ? (
-            !currentPlace.photos || currentPlace.photos.length === 0 ? (
-              // use override class to force swiper to not define inline style of 150px width
-              <SwiperSlide className="swiper-slide-override">
-                <Image
-                  src="/logos/playdate_logo.webp"
-                  alt="Playdate logo"
-                  // width={250}
-                  // height={250}
-                  fill={true}
-                  sizes="(max-width:768px) 100vw, 33vw"
-                  style={{ objectFit: "contain" }}
-                />
-              </SwiperSlide>
-            ) : (
-              currentPlace.photos?.map((photo, index) => (
-                <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
+    <main className='xl:flex'>
+      <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>
+        <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[70dvh] w-full ">
+          <Swiper
+            pagination={true}
+            effect={"fade"}
+            navigation={true}
+            modules={[Pagination, Navigation, EffectFade]}
+          >
+            {currentPlace ? (
+              !currentPlace.photos || currentPlace.photos.length === 0 ? (
+                // use override class to force swiper to not define inline style of 150px width
+                <SwiperSlide className="swiper-slide-override">
                   <Image
-                    src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
-                    alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
+                    src="/logos/playdate_logo.webp"
+                    alt="Playdate logo"
+                    // width={250}
+                    // height={250}
                     fill={true}
-                    style={{ objectFit: "cover" }}
-                  ></Image>
-                  {photo.authorAttributions[0].displayName ? (
-                    <a
-                      href={`${photo.authorAttributions[0].uri}`}
-                      target="_blank"
-                    >
-                      <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
-                        Image by {photo.authorAttributions[0].displayName}
-                      </p>
-                    </a>
-                  ) : null}
+                    sizes="(max-width:768px) 100vw, 33vw"
+                    style={{ objectFit: "contain" }}
+                  />
                 </SwiperSlide>
-              ))
-            )
-          ) : (
-            <p> Loading Images...</p>
-          )}
-        </Swiper>
+              ) : (
+                currentPlace.photos?.map((photo, index) => (
+                  <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
+                    <Image
+                      src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
+                      alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
+                      fill={true}
+                      style={{ objectFit: "cover" }}
+                    ></Image>
+                    {photo.authorAttributions[0].displayName ? (
+                      <a
+                        href={`${photo.authorAttributions[0].uri}`}
+                        target="_blank"
+                      >
+                        <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
+                          Image by {photo.authorAttributions[0].displayName}
+                        </p>
+                      </a>
+                    ) : null}
+                  </SwiperSlide>
+                ))
+              )
+            ) : (
+              <p> Loading Images...</p>
+            )}
+          </Swiper>
+        </div>
+        {currentPlace ? (
+          <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG w-full">
+            <Link href={`/place/${currentPlace.id}`}>
+              {currentPlace?.displayName.text}
+            </Link>{" "}
+            Review
+          </h2>
+        ) : (
+          <h2 className="text-lg font-bold">{`That place isn't found. Check your link and try again.`}</h2>
+        )}
       </div>
-      {currentPlace ? (
-        <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG">
-          <Link href={`/place/${currentPlace.id}`}>
-            {currentPlace?.displayName.text}
-          </Link>{" "}
-          Review
-        </h2>
-      ) : (
-        <h2 className="text-lg font-bold">{`That place isn't found. Check your link and try again.`}</h2>
-      )}
 
-      <section className="mt-4 flex flex-wrap justify-center px-4">
-        <div className="flex justify-start">
+      <section className="mt-4 flex flex-wrap xl:flex-col xl:align-top xl:justify-start justify-center px-4 xl:order-1">
+        <div className="flex justify-center flex-none xl:h-[36px] ">
           <Image
             src={
               starRating >= 1 ? `/icons/star.webp` : `/icons/empty-star.webp`
             }
-            className="mr-1"
+            className="mr-1 flex-none"
             width={36}
             height={36}
             alt="Empty star"

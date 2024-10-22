@@ -90,16 +90,22 @@ export default function Dashboard() {
             </div>
           </>
         ) : (
-          <>
-            <DashboardAdultInfo user={currentUser} />
-            <Suspense fallback={<NotificationSuspense />}>
-              <Notification currentUser={currentUser} />
-            </Suspense>
-            <DashboardPlaydateSection adultData={currentUser} />
-            <Suspense fallback={<DashboardKidsSectionSuspense />}>
-              <DashboardKidsSection adultData={currentUser} />
-            </Suspense>
-          </>
+         
+            <div className='lg:flex'>
+              <div className='lg:w-2/5 flex-none'>
+                <DashboardAdultInfo user={currentUser} />
+              </div>
+              <div className='lg:w-3/5 flex-none'>
+                <Suspense fallback={<NotificationSuspense />}>
+                  <Notification currentUser={currentUser} />
+                </Suspense>
+                <DashboardPlaydateSection adultData={currentUser} />
+                <Suspense fallback={<DashboardKidsSectionSuspense />}>
+                  <DashboardKidsSection adultData={currentUser} />
+                </Suspense>
+              </div>
+            </div>
+          
         )}
       </Suspense>
     </main>

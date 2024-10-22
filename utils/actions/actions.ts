@@ -67,7 +67,7 @@ export async function createNewFriendGroup(kidId:string, groupName:string) {
   if (!kidId) {
     return
   }
-  const newGroupData:Omit<FriendGroupType, 'id'> = {
+  const newGroupData:Omit<FriendGroupType, 'id' | 'friend_group_members'> = {
     kid_owner:kidId,
     group_name:groupName
   }

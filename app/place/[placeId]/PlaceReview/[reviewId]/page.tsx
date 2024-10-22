@@ -262,8 +262,9 @@ export default function PlaceReview({
 
   console.log(currentReview);
   return (
-    <main>
-      <div id="placePicContainer" className="flex h-[250px] w-full">
+    <main className='xl:flex'>
+      <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>
+      <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[70dvh] w-full ">
         <Swiper
           pagination={true}
           effect={"fade"}
@@ -332,9 +333,10 @@ export default function PlaceReview({
       ) : (
         <h2 className="text-lg font-bold">{`That place isn't found. Check your link and try again.`}</h2>
       )}
+      </div>
 
-      <section className="mt-4 flex flex-wrap justify-center px-4">
-        <div className="flex justify-start">
+      <section className="mt-4 flex flex-wrap xl:flex-col xl:align-top xl:justify-start justify-center px-4 xl:order-1">
+        <div className="flex justify-center flex-none xl:h-[36px] ">
           {currentReview ? (
             <>
               <Image

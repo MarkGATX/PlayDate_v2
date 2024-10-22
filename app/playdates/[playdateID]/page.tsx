@@ -3,6 +3,11 @@
 import KidSearchResults from "@/app/components/KidSearchResults/KidSearchResults";
 import KidSearchResultsSuspense from "@/app/components/KidSearchResults/KidSearchResultsSuspense";
 import PlaydateAttendanceTabs from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabs";
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+import "swiper/css/navigation";
+import "@/utils/SwiperCustom/swiperCustom.scss";
 import PlaydateAttendanceTabsSuspense from "@/app/components/PlaydateAttendanceTabs/PlaydateAttendanceTabsSuspense";
 import {
   deletePlaydate,
@@ -29,6 +34,9 @@ const QuillEditor = dynamic(
 );
 import Quill, { Delta } from "quill/core";
 import dynamic from "next/dynamic";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { EffectFade, Navigation, Pagination } from "swiper/modules";
+import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI";
 
 export default function PlaydateDetails() {
   const params = useParams<{ playdateID: string }>();
@@ -51,7 +59,7 @@ export default function PlaydateDetails() {
   const playdateID: string = params.playdateID;
   const router = useRouter();
 
-  
+
 
   useEffect(() => {
     const getPlaydateInfo = async () => {
@@ -122,18 +130,19 @@ export default function PlaydateDetails() {
             }
             console.log(friendGroupMembers)
             const friendGroupData = {
-              id:friendGroup.id,
-              group_name: friendGroup.group_name,             
+              id: friendGroup.id,
+              group_name: friendGroup.group_name,
               kid_owner: friendGroup.kid_owner,
               //map group members to extract from uid and use a string
-              friend_group_members: friendGroupMembers.map((member:SupabaseFriendGroupMemberType) => 
-                ({kid_id:member.kid_uid, 
-                  primary_caregiver_id:member.Kids.primary_caregiver || '',
-                  profile_pic:member.Kids.profile_pic || '',
-                  first_name:member.Kids.first_name,
-                  last_name:member.Kids.last_name,
-                  first_name_only: member.Kids.first_name_only
-                }))
+              friend_group_members: friendGroupMembers.map((member: SupabaseFriendGroupMemberType) =>
+              ({
+                kid_id: member.kid_uid,
+                primary_caregiver_id: member.Kids.primary_caregiver || '',
+                profile_pic: member.Kids.profile_pic || '',
+                first_name: member.Kids.first_name,
+                last_name: member.Kids.last_name,
+                first_name_only: member.Kids.first_name_only
+              }))
             }
             console.log(friendGroupData)
             console.log(friendGroupMembers)
@@ -157,10 +166,10 @@ export default function PlaydateDetails() {
             if (selectedPlace) {
               setPlaceDetails(selectedPlace);
             } else {
-              const fetchPlaceDetails = await fetchPlaceData(
+              const fetchPlace = await fetchPlaceDetails(
                 playdateData[0].location,
               );
-              setPlaceDetails(fetchPlaceDetails);
+              setPlaceDetails(fetchPlace);
             }
           } else if (
             placesData?.places?.length === 0 ||
@@ -297,250 +306,286 @@ export default function PlaydateDetails() {
       return
     }
     try {
-      await inviteFriendGroup( friendGroups[0], playdateInfo)
-    } catch(error) {
+      await inviteFriendGroup(friendGroups[0], playdateInfo)
+    } catch (error) {
       console.error('There was an error inviting the friend group', error)
     }
   }
 
-  console.log(friendGroups)
+  console.log(placeDetails)
 
   return (
-    <main>
-      {playdateInfo && placeDetails ? (
-        <>
-          <div
-            id="playdateHeader"
-            className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG"
-          >
-            <h1 className="text-xl font-bold">{`Playdate at`}</h1>{" "}
-            <Link
-              href={`/place/${placeDetails.id}`}
-              className="w-full text-center underline"
+    <main className='xl:flex w-full'>
+      <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>
+        <div id="playdateLocationImageContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[calc(100dvh-125px)] w-full "
+        >
+          <Swiper
+              pagination={true}
+              effect={"fade"}
+              navigation={true}
+              modules={[Pagination, Navigation, EffectFade]}
             >
-              <h1>{`${placeDetails.displayName.text}`}</h1>
-            </Link>
-            <h1>
-              {`with ${playdateInfo.kid_name.first_name}`}{" "}
-              {playdateInfo.kid_first_name_only
-                ? null
-                : `${playdateInfo.kid_name.last_name}`}{" "}
-            </h1>
-          </div>
-        </>
-      ) : (
-        <>
-          <div
-            id="playdateHeader"
-            className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG"
-          >
-            <h1 className="text-xl font-bold">Loading your playdate</h1>
-            <h1>Sit tight...</h1>
-          </div>
-        </>
-      )}
-      {playdateInfo && placeDetails ? (
-        <>
-          <section
-            id="playdateLocationInfo"
-            className="flex w-full flex-col items-center"
-          >
-            <div
-              id="playdateLocationImageContainer"
-              className="relative h-72 w-full"
+              {placeDetails ? (
+                !placeDetails.photos || placeDetails.photos.length === 0 ? (
+                  // use override class to force swiper to not define inline style of 150px width
+                  <SwiperSlide className="swiper-slide-override">
+                    <Image
+                      src="/logos/playdate_logo.webp"
+                      alt="Playdate logo"
+                      // width={250}
+                      // height={250}
+                      fill={true}
+                      sizes="(max-width:768px) 100vw, 33vw"
+                      style={{ objectFit: "contain" }}
+                    />
+                  </SwiperSlide>
+                ) : (
+                  placeDetails.photos?.map((photo, index) => (
+                    <SwiperSlide key={`${placeDetails?.id}photo${index}`}>
+                      <Image
+                        src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
+                        alt={`pic ${index + 1} of ${placeDetails?.displayName.text}`}
+                        fill={true}
+                        style={{ objectFit: "cover" }}
+                      ></Image>
+                      {photo.authorAttributions[0].displayName ? (
+                        <a
+                          href={`${photo.authorAttributions[0].uri}`}
+                          target="_blank"
+                        >
+                          <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
+                            Image by {photo.authorAttributions[0].displayName}
+                          </p>
+                        </a>
+                      ) : null}
+                    </SwiperSlide>
+                  ))
+                )
+              ) : (
+                <p> Loading Images...</p>
+              )}
+            </Swiper>
+          {/* <Image
+            src={`https://places.googleapis.com/v1/${placeDetails?.photos[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
+            alt={`pic of ${placeDetails?.displayName.text}`}
+            fill={true}
+            style={{ objectFit: "cover" }}
+          ></Image>
+          {placeDetails?.photos[0].authorAttributions[0].displayName ? (
+            <a
+              href={`${placeDetails.photos[0].authorAttributions[0].uri}`}
+              target="_blank"
             >
-              <Image
-                src={`https://places.googleapis.com/v1/${placeDetails.photos[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
-                alt={`pic of ${placeDetails?.displayName.text}`}
-                fill={true}
-                style={{ objectFit: "cover" }}
-              ></Image>
-              {placeDetails.photos[0].authorAttributions[0].displayName ? (
-                <a
-                  href={`${placeDetails.photos[0].authorAttributions[0].uri}`}
-                  target="_blank"
-                >
-                  <p className="absolute z-10 bg-appBlueTrans p-1 text-xs text-appGold">
-                    Image by{" "}
-                    {placeDetails.photos[0].authorAttributions[0].displayName}
-                  </p>
-                </a>
-              ) : null}
-            </div>
-            {openEditDate ? (
-              // <h2 className='text-lg font-bold w-full text-center px-4'>edit</h2>
-              <div
-                id="updatePlaydateTimesContainer"
-                className="mt-2 flex w-full flex-wrap justify-around px-4"
+              <p className="absolute z-10 bg-appBlueTrans p-1 text-xs text-appGold">
+                Image by{" "}
+                {placeDetails.photos[0].authorAttributions[0].displayName}
+              </p>
+            </a>
+          ) : null} */}
+        </div>
+      </div>
+      <div className="xl:flex xl:flex-col xl:w-1/3">
+        {playdateInfo && placeDetails ? (
+          <>
+            <div id="playdateHeader" className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG">
+              <h1 className="text-xl font-bold">{`Playdate at`}</h1>{" "}
+              <Link
+                href={`/place/${placeDetails.id}`}
+                className="w-full text-center underline"
               >
-                <input
-                  ref={newDateInputRef}
-                  type="datetime-local"
-                  min={Date.now()}
-                  value={
-                    newPlaydateDate ||
-                    unformattedPlaydateDate?.toFormat("yyyy-MM-dd'T'HH:mm")
-                  }
-                  className={`w-full ${editDateError ? "text-red-600" : "text-inherit"}`}
-                  onChange={handleNewDateChange}
-                ></input>
-                {editDateError ? (
-                  <div className="text-red-600">{editDateError}</div>
-                ) : null}
-                <button
-                  className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                  onClick={() => {
-                    handleUpdateDateAndTime();
-                  }}
+                <h1>{`${placeDetails.displayName.text}`}</h1>
+              </Link>
+              <h1>
+                {`with ${playdateInfo.kid_name.first_name}`}{" "}
+                {playdateInfo.kid_first_name_only
+                  ? null
+                  : `${playdateInfo.kid_name.last_name}`}{" "}
+              </h1>
+            </div>
+            <section
+              id="playdateLocationInfo"
+              className="flex w-full flex-col items-center"
+            >
+              {openEditDate ? (
+                // <h2 className='text-lg font-bold w-full text-center px-4'>edit</h2>
+                <div
+                  id="updatePlaydateTimesContainer"
+                  className="mt-2 flex w-full flex-wrap justify-around px-4"
                 >
-                  Save New Time
-                </button>
-              </div>
-            ) : (
-              <>
-                <h2 className="w-full px-4 text-center text-lg font-bold">
-                  <time dateTime={unformattedPlaydateDate?.toLocaleString()}>
-                    {unformattedPlaydateDate?.toLocaleString(
-                      DateTime.DATETIME_MED,
-                    )}
-                  </time>
-                </h2>
-              </>
-            )}
-            {/* {openNoteEditor
+                  <input
+                    ref={newDateInputRef}
+                    type="datetime-local"
+                    min={Date.now()}
+                    value={
+                      newPlaydateDate ||
+                      unformattedPlaydateDate?.toFormat("yyyy-MM-dd'T'HH:mm")
+                    }
+                    className={`w-full ${editDateError ? "text-red-600" : "text-inherit"}`}
+                    onChange={handleNewDateChange}
+                  ></input>
+                  {editDateError ? (
+                    <div className="text-red-600">{editDateError}</div>
+                  ) : null}
+                  <button
+                    className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    onClick={() => {
+                      handleUpdateDateAndTime();
+                    }}
+                  >
+                    Save New Time
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <h2 className="w-full px-4 text-center text-lg font-bold">
+                    <time dateTime={unformattedPlaydateDate?.toLocaleString()}>
+                      {unformattedPlaydateDate?.toLocaleString(
+                        DateTime.DATETIME_MED,
+                      )}
+                    </time>
+                  </h2>
+                </>
+              )}
+              {/* {openNoteEditor
                             ? */}
 
-            <QuillEditor
-              content={playdateInfo.host_notes}
-              playdateID={playdateInfo.id}
-              setOpenNoteEditor={setOpenNoteEditor}
-              openNoteEditor={openNoteEditor}
-            />
+              <QuillEditor
+                content={playdateInfo.host_notes}
+                playdateID={playdateInfo.id}
+                setOpenNoteEditor={setOpenNoteEditor}
+                openNoteEditor={openNoteEditor}
+              />
 
-            {/* :
+              {/* :
                             playdateInfo.host_notes
                                 ?                               
                                 <div> */}
-            {/* {convertDeltaToHTML(playdateInfo.host_notes)} */}
-            {/* </div>
+              {/* {convertDeltaToHTML(playdateInfo.host_notes)} */}
+              {/* </div>
                                 :
                                 null
                         } */}
-            {playdateInfo &&
-              placeDetails &&
-              currentUser?.id === playdateInfo.host_id ? (
-              <>
-                <div
-                  id="editButtonContainer"
-                  className="flex w-5/6 flex-wrap justify-between"
-                >
-                  {playdateInfo.host_notes ? (
+              {playdateInfo && placeDetails && currentUser?.id === playdateInfo.host_id ? (
+                <>
+                  <div
+                    id="editButtonContainer"
+                    className="flex w-5/6 flex-wrap justify-between"
+                  >
+                    {playdateInfo.host_notes ? (
+                      <button
+                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        onClick={() =>
+                          setOpenNoteEditor((previousValue) => !previousValue)
+                        }
+                      >
+                        {openNoteEditor ? "Cancel Note Edits" : "Edit Note"}
+                      </button>
+                    ) : (
+                      <button
+                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        onClick={() =>
+                          setOpenNoteEditor((previousValue) => !previousValue)
+                        }
+                      >
+                        {openNoteEditor ? "Cancel Note Edits" : "Add a Note"}
+                      </button>
+                    )}
                     <button
-                      className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                      className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                       onClick={() =>
-                        setOpenNoteEditor((previousValue) => !previousValue)
+                        setOpenEditDate((previousValue) => !previousValue)
                       }
                     >
-                      {openNoteEditor ? "Cancel Note Edits" : "Edit Note"}
+                      {openEditDate
+                        ? "Cancel Edit date and time"
+                        : "Edit Date and Time"}
                     </button>
-                  ) : (
                     <button
-                      className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                      onClick={() =>
-                        setOpenNoteEditor((previousValue) => !previousValue)
-                      }
+                      className="my-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-red-700 hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                      onClick={() => setOpenDeletePlaydateModal(true)}
                     >
-                      {openNoteEditor ? "Cancel Note Edits" : "Add a Note"}
+                      Cancel playdate
                     </button>
-                  )}
-                  <button
-                    className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                    onClick={() =>
-                      setOpenEditDate((previousValue) => !previousValue)
-                    }
-                  >
-                    {openEditDate
-                      ? "Cancel Edit date and time"
-                      : "Edit Date and Time"}
-                  </button>
-                  <button
-                    className="my-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-red-700 hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
-                    onClick={() => setOpenDeletePlaydateModal(true)}
-                  >
-                    Cancel playdate
-                  </button>
-                </div>
-              </>
-            ) : null}
+                  </div>
+                </>
+              ) : null}
+              <p className="w-full px-4 text-center">
+                <a href=""></a>
+                {placeDetails.formattedAddress}
+              </p>
+              {/* This url only opens a map without directions. The live anchor opens a map with directions but based solely on lat and long, which may show a different location name */}
+              {/* <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank"> */}
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${placeDetails.location.latitude},${placeDetails.location.longitude}&travelmode=driving`}
+                target="_blank"
+              >
+                <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+                  Get Directions
+                </button>
+              </a>
+            </section>
+          </>
+        ) : (
+          <div>
+            <div
+              id="playdateHeader"
+              className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG"
+            >
+              <h1 className="text-xl font-bold">Loading your playdate</h1>
+              <h1>Sit tight...</h1>
+            </div>
+            <section
+              id="playdateLocationInfo"
+              className="flex w-full flex-col items-center"
+            >
+              <div
+                id="playdateLocationImageContainer"
+                className="relative h-72 w-full"
+              ></div>
+            </section>
+            <h2 className="w-full px-4 text-center text-lg font-bold"></h2>
             <p className="w-full px-4 text-center">
               <a href=""></a>
-              {placeDetails.formattedAddress}
             </p>
-            {/* This url only opens a map without directions. The live anchor opens a map with directions but based solely on lat and long, which may show a different location name */}
-            {/* <a href={`https://www.google.com/maps/place/?q=place_id:${placeDetails.id}&travel_mode`} target="_blank"> */}
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${placeDetails.location.latitude},${placeDetails.location.longitude}&travelmode=driving`}
-              target="_blank"
-            >
-              <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
-                Get Directions
-              </button>
-            </a>
-          </section>
-        </>
-      ) : (
-        <>
-          <section
-            id="playdateLocationInfo"
-            className="flex w-full flex-col items-center"
-          >
-            <div
-              id="playdateLocationImageContainer"
-              className="relative h-72 w-full"
-            ></div>
-          </section>
-          <h2 className="w-full px-4 text-center text-lg font-bold"></h2>
-          <p className="w-full px-4 text-center">
-            <a href=""></a>
-          </p>
-          <div className="flex w-full justify-center p-4">
-            <h1 className="">Loading your location details...</h1>
+            <div className="flex w-full justify-center p-4">
+              <h1 className="">Loading your location details...</h1>
+            </div>
           </div>
-        </>
-      )}
-      {!playdateID ? null : (
-        <Suspense fallback={<p>Loading attendance...</p>}>
-          {/* <Suspense fallback={<PlaydateAttendanceTabsSuspense />} ></Suspense> */}
-          <PlaydateAttendanceTabs playdate={playdateID} />
-        </Suspense>
-      )}
-
-      {playdateInfo &&
-        placeDetails &&
-        currentUser?.id === playdateInfo.host_id ? (
-        <section id="inviteKidsSection" className="p-4 flex flex-col">
-          <h3 className="font-bold w-full">Search for kids to invite...</h3>
-          <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50" onClick={handleInviteFriendGroup}>{`Invite ${playdateInfo.kid_name.first_name}${playdateInfo.kid_name.first_name.slice(-1)==='s' ? "'" : "'s"} Friend Group`}</button>
-          <input
-            type="text"
-            value={kidSearchTerm}
-            placeholder={`Kid's name`}
-            className="rounded-lg border-2 bg-inputBG px-2 mt-4"
-            onChange={(event) => {
-              setKidSearchTerm(event.target.value);
-            }}
-          ></input>
-          <Suspense fallback={<KidSearchResultsSuspense />}>
-            <KidSearchResults
-              searchType="inviteToPlaydate"
-              currentUser={currentUser}
-              searchTerm={kidSearchTerm}
-              playdateInfo={playdateInfo}
-              friendGroups={friendGroups}
-            />
+        )}
+        {!playdateID ? null : (
+          <Suspense fallback={<p>Loading attendance...</p>}>
+            {/* <Suspense fallback={<PlaydateAttendanceTabsSuspense />} ></Suspense> */}
+            <PlaydateAttendanceTabs playdate={playdateID} />
           </Suspense>
-        </section>
-      ) : null}
+        )}
+
+        {playdateInfo &&
+          placeDetails &&
+          currentUser?.id === playdateInfo.host_id ? (
+          <section id="inviteKidsSection" className="p-4 flex flex-col">
+            <h3 className="font-bold w-full">Search for kids to invite...</h3>
+            <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50" onClick={handleInviteFriendGroup}>{`Invite ${playdateInfo.kid_name.first_name}${playdateInfo.kid_name.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</button>
+            <input
+              type="text"
+              value={kidSearchTerm}
+              placeholder={`Kid's name`}
+              className="rounded-lg border-2 bg-inputBG px-2 mt-4"
+              onChange={(event) => {
+                setKidSearchTerm(event.target.value);
+              }}
+            ></input>
+            <Suspense fallback={<KidSearchResultsSuspense />}>
+              <KidSearchResults
+                searchType="inviteToPlaydate"
+                currentUser={currentUser}
+                searchTerm={kidSearchTerm}
+                playdateInfo={playdateInfo}
+                friendGroups={friendGroups}
+              />
+            </Suspense>
+          </section>
+        ) : null}
+      </div>
       {openDeletePlaydateModal ? (
         <dialog className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center overflow-auto bg-black bg-opacity-50 backdrop-blur">
           <div className="m-auto w-3/4 rounded-xl bg-appGold p-4">

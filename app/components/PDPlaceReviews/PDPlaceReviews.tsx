@@ -62,7 +62,7 @@ export default function PDPlaceReviews({
   return (
     <>
       {locationReviews && locationReviews.length > 0 ? (
-        <>
+        <div>
           <div className="w-full bg-appBlue p-4 text-appBG">
             <h3 className="">Playdate User Reviews...</h3>
 
@@ -106,8 +106,8 @@ export default function PDPlaceReviews({
           <div className="w-full px-4">
             {locationReviews.map((review) => {
               return (
-                <>
-                  <Link href={`/place/${placeID}./PlaceReview/${review.id}`}>
+                <div key={review.id}>
+                  <Link href={`/place/${placeID}./PlaceReview/${review.id}`} >
                     <div className="my-4 flex flex-col rounded-lg border-2 border-appBlue p-2 transition-all hover:scale-105">
                       <div className="mb-2 flex">
                         <Image
@@ -182,11 +182,11 @@ export default function PDPlaceReviews({
                       </h3>
                     </div>
                   </Link>
-                </>
+                </div>
               );
             })}
           </div>
-        </>
+        </div>
       ) : null}
     </>
   );

@@ -20,6 +20,7 @@ import { getNotificationNumber } from "@/utils/actions/notificationActions";
 
 export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(true)
   const [userID, setUserID] = useState<string>();
   const [notificationNumber, setNotificationNumber] = useState<
     number | undefined
@@ -52,9 +53,11 @@ export default function Header() {
         }
       }
       /* close mobile menu */
-      showMobileMenu
-        ? setShowMobileMenu((previousValue) => !previousValue)
-        : null;
+      if (isMobile) {
+        showMobileMenu
+          ? setShowMobileMenu((previousValue) => !previousValue)
+          : null;
+      }
     } catch (error) {
       console.error(error);
     }
@@ -63,9 +66,11 @@ export default function Header() {
   const handleGoogleLogout = async () => {
     try {
       await signOut(auth);
-      showMobileMenu
-        ? setShowMobileMenu((previousValue) => !previousValue)
-        : null;
+      if (isMobile) {
+        showMobileMenu
+          ? setShowMobileMenu((previousValue) => !previousValue)
+          : null;
+      }
       router.push("/");
     } catch (error) {
       console.error(error);
@@ -134,6 +139,21 @@ export default function Header() {
 
   // }, [user])
 
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
+
+    // Check on initial load
+    checkIsMobile();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIsMobile);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
   return (
     <>
       <header className="z-10 flex w-full flex-col justify-between gap-3 overflow-hidden pl-4 pr-4 pt-4">
@@ -147,62 +167,88 @@ export default function Header() {
               className=""
             ></Image>
           </Link>
-          <nav className="flex">
-            <div>
-              <Image
-                className="cursor-pointer"
-                src="/icons/hamburger_icon.webp"
-                height={32}
-                width={32}
-                alt="menu icon"
-                onClick={() =>
-                  setShowMobileMenu((previousValue) => !previousValue)
-                }
-              ></Image>
-              {/* To eventually add notification button */}
-              {notificationNumber && notificationNumber > 0 ? (
-                <p
-                  className="absolute right-2 top-2 min-h-5 min-w-5 cursor-pointer rounded-full border-2 border-appBlue bg-appGold text-center text-xs"
-                  onClick={() =>
-                    setShowMobileMenu((previousValue) => !previousValue)
-                  }
+          <nav className="flex w-1/2 justify-end">
+            {isMobile ?
+              <>
+                <div>
+                  <Image
+                    className="cursor-pointer"
+                    src="/icons/hamburger_icon.webp"
+                    height={32}
+                    width={32}
+                    alt="menu icon"
+                    onClick={() =>
+                      setShowMobileMenu((previousValue) => !previousValue)
+                    }
+                  ></Image>
+                  {/* To eventually add notification button */}
+                  {notificationNumber && notificationNumber > 0 ? (
+                    <p
+                      className="absolute right-2 top-2 min-h-5 min-w-5 cursor-pointer rounded-full border-2 border-appBlue bg-appGold text-center text-xs"
+                      onClick={() =>
+                        setShowMobileMenu((previousValue) => !previousValue)
+                      }
+                    >
+                      {notificationNumber}
+                    </p>
+                  ) : null}
+                </div>
+                <div
+                  id="mobileMenuContainer"
+                  className={`min-h-26 min-w-26 absolute right-0 top-12 z-10 w-5/12 rounded-l border-b-2 border-l-2 border-t-2 border-appBlue bg-appGold p-4 transition-all duration-500 ${showMobileMenu ? "translate-x-0" : "translate-x-full"}`}
                 >
-                  {notificationNumber}
-                </p>
-              ) : null}
-            </div>
-            <div
-              id="mobileMenuContainer"
-              className={`min-h-26 min-w-26 absolute right-0 top-12 z-10 w-5/12 rounded-l border-b-2 border-l-2 border-t-2 border-appBlue bg-appGold p-4 transition-all duration-500 ${showMobileMenu ? "translate-x-0" : "translate-x-full"}`}
-            >
-              <ul className="flex flex-col">
-                <Link
-                  href="/"
-                  onClick={() =>
-                    setShowMobileMenu((previousValue) => !previousValue)
-                  }
-                >
-                  <li>Home</li>
-                </Link>
-                <Link
-                  href="/dashboard"
-                  onClick={() =>
-                    setShowMobileMenu((previousValue) => !previousValue)
-                  }
-                >
-                  <li>Dashboard</li>
-                </Link>
-                {user ? (
-                  <li className="cursor-pointer" onClick={handleGoogleLogout}>
-                    Logout
-                  </li>
-                ) : (
-                  <li className="cursor-pointer" onClick={handleGoogleLogin}>
-                    Login
-                  </li>
-                )}
-              </ul>
-            </div>
+                  <ul className="flex flex-col">
+                    <Link
+                      href="/"
+                      onClick={() =>
+                        setShowMobileMenu((previousValue) => !previousValue)
+                      }
+                    >
+                      <li>Home</li>
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                      onClick={() =>
+                        setShowMobileMenu((previousValue) => !previousValue)
+                      }
+                    >
+                      <li>Dashboard</li>
+                    </Link>
+                    {user ? (
+                      <li className="cursor-pointer" onClick={handleGoogleLogout}>
+                        Logout
+                      </li>
+                    ) : (
+                      <li className="cursor-pointer" onClick={handleGoogleLogin}>
+                        Login
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              </>
+              :
+              <ul className="flex gap-4 justify-end w-full">
+                    <Link
+                      href="/"
+                    >
+                      <li>Home</li>
+                    </Link>
+                    <Link
+                      href="/dashboard"
+                    >
+                      <li>Dashboard</li>
+                    </Link>
+                    {user ? (
+                      <li className="cursor-pointer" onClick={handleGoogleLogout}>
+                        Logout
+                      </li>
+                    ) : (
+                      <li className="cursor-pointer" onClick={handleGoogleLogin}>
+                        Login
+                      </li>
+                    )}
+                  </ul>
+            }
           </nav>
         </div>
         <div id="weatherContainer" className="min-h-12 w-full">
