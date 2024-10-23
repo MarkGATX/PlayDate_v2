@@ -150,7 +150,7 @@ export default function DashboardPlaydateSection({
           </div>
         }
       >
-        <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG">
+        <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG xl:rounded-l-med">
           <div
             className="transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125"
             onClick={handleShowplaydates}
@@ -169,7 +169,7 @@ export default function DashboardPlaydateSection({
         <div
           id="upcomingPlaydates"
           ref={upcomingPlaydatesRef}
-          className="flex h-0 flex-col gap-2 overflow-y-hidden px-4 pt-2 opacity-0"
+          className="flex h-0 flex-col items-center gap-2 overflow-y-hidden px-4 pt-2 opacity-0"
         >
           {playdates ? (
             <>

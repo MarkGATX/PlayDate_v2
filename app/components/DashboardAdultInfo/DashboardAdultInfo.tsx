@@ -181,7 +181,7 @@ export default function DashboardAdultInfo({ user }: { user: AdultsType }) {
   return (
     <section
       id="profileDetails"
-      className="flex w-full flex-wrap justify-between gap-y-4 p-4"
+      className="flex w-full flex-wrap justify-between gap-y-4 p-4 xl:px-10"
     >
       {editAdultInfo ? (
         <>

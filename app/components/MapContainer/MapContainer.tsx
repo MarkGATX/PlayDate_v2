@@ -123,7 +123,7 @@ export default function MapContainer() {
             setPlaces(placesData.places);
           } else {
             localStorage.removeItem("placesData");
-            if (!currentLocation.updated) {
+            if (!currentLocation) {
               return
             } else {
               // Store the places in local storage. handled in fetchNearbyPlaces
@@ -138,7 +138,7 @@ export default function MapContainer() {
           }
         } else {
           //get the data from Google Places
-          if (!currentLocation.updated) {
+          if (!currentLocation) {
             return
           } else {
             placesData = await fetchNearbyPlaces(
@@ -225,7 +225,9 @@ export default function MapContainer() {
     setPlaces(normalizedResults);
   };
 
-  console.log(places);
+  
+
+  console.log(currentLocation);
   return (
     <main  >
       {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&

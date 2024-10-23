@@ -144,7 +144,7 @@ function PlaydateReminderCard({
   return playdate.invite_status === "invited" ? null : (
     <div
       key={`playdateReminderDetail${playdate.playdate_id}${index}`}
-      className="relative mt-4 flex w-full flex-wrap items-center justify-start gap-2 rounded-lg bg-inputBG p-4"
+      className="relative mt-4 flex w-full flex-wrap items-center justify-start gap-2 rounded-lg bg-inputBG p-4 xl:w-3/4"
     >
       <div
         id={`kidPlaydateReminderDetails${playdate.Kids.id}${index}`}
