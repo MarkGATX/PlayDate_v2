@@ -25,6 +25,7 @@ import { AuthContext } from "@/utils/firebase/AuthContext";
 import { AdultsType } from "@/utils/types/userTypeDefinitions";
 import supabaseClient from "@/utils/supabase/client";
 import { fetchSearchedPlace } from "@/utils/actions/searchActions";
+import styles from './MapContainer.module.scss'
 
 export default function MapContainer() {
   const [error, setError] = useState<string | null>(null);
@@ -226,12 +227,12 @@ export default function MapContainer() {
 
   console.log(places);
   return (
-    <main className='xl:flex'>
+    <main  >
       {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&
         currentLocation.latitude != 0 &&
         currentLocation.longitude != 0 ? (
-        <>
-          <div className='xl:w-3/5 flex-none xl:order-2'>
+        <div className={` xl:flex ${styles.mapMainHeight}`}>
+          <div className='xl:w-3/5 flex-none xl:order-2  xl:overflow-y-hidden'>
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API} libraries={["places"]} >
               {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
               <Map
@@ -280,7 +281,7 @@ export default function MapContainer() {
               </Map>
             </APIProvider>
           </div>
-          <div className='xl:w-2/5 flex-none'>
+          <div className='xl:w-2/5 flex-none xl:h-[calc(100vh - 125px)] xl:overflow-y-scroll'>
             <div className="mb-8 flex w-full flex-col items-center justify-center mt-4">
               <input
                 type="text"
@@ -335,7 +336,7 @@ export default function MapContainer() {
             ) : null}
 
           </div>
-        </>
+        </div>
       ) : (
         <div>Loading map data...</div>
       )

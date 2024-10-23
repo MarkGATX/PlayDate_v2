@@ -264,55 +264,55 @@ export default function PlaceReview({
   return (
     <main className='xl:flex'>
       <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>
-      <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[70dvh] w-full ">
-        <Swiper
-          pagination={true}
-          effect={"fade"}
-          navigation={true}
-          modules={[Pagination, Navigation, EffectFade]}
-        >
-          {currentPlace ? (
-            !currentPlace.photos || currentPlace.photos.length === 0 ? (
-              // use override class to force swiper to not define inline style of 150px width
-              <SwiperSlide className="swiper-slide-override">
-                <Image
-                  src="/logos/playdate_logo.webp"
-                  alt="Playdate logo"
-                  // width={250}
-                  // height={250}
-                  fill={true}
-                  sizes="(max-width:768px) 100vw, 33vw"
-                  style={{ objectFit: "contain" }}
-                />
-              </SwiperSlide>
-            ) : (
-              currentPlace.photos?.map((photo, index) => (
-                <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
+        <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[90dvh] w-full ">
+          <Swiper
+            pagination={true}
+            effect={"fade"}
+            navigation={true}
+            modules={[Pagination, Navigation, EffectFade]}
+          >
+            {currentPlace ? (
+              !currentPlace.photos || currentPlace.photos.length === 0 ? (
+                // use override class to force swiper to not define inline style of 150px width
+                <SwiperSlide className="swiper-slide-override">
                   <Image
-                    src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
-                    alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
+                    src="/logos/playdate_logo.webp"
+                    alt="Playdate logo"
+                    // width={250}
+                    // height={250}
                     fill={true}
-                    style={{ objectFit: "cover" }}
-                  ></Image>
-                  {photo.authorAttributions[0].displayName ? (
-                    <a
-                      href={`${photo.authorAttributions[0].uri}`}
-                      target="_blank"
-                    >
-                      <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
-                        Image by {photo.authorAttributions[0].displayName}
-                      </p>
-                    </a>
-                  ) : null}
+                    sizes="(max-width:768px) 100vw, 33vw"
+                    style={{ objectFit: "contain" }}
+                  />
                 </SwiperSlide>
-              ))
-            )
-          ) : (
-            <p> Loading Images...</p>
-          )}
-        </Swiper>
-      </div>
-      {currentPlace ? (
+              ) : (
+                currentPlace.photos?.map((photo, index) => (
+                  <SwiperSlide key={`${currentPlace?.id}photo${index}`}>
+                    <Image
+                      src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
+                      alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
+                      fill={true}
+                      style={{ objectFit: "cover" }}
+                    ></Image>
+                    {photo.authorAttributions[0].displayName ? (
+                      <a
+                        href={`${photo.authorAttributions[0].uri}`}
+                        target="_blank"
+                      >
+                        <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
+                          Image by {photo.authorAttributions[0].displayName}
+                        </p>
+                      </a>
+                    ) : null}
+                  </SwiperSlide>
+                ))
+              )
+            ) : (
+              <p> Loading Images...</p>
+            )}
+          </Swiper>
+        </div>
+        {/* {currentPlace ? (
         <>
           <div className="bg-appBlue py-4 text-appBG">
             <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG">
@@ -332,11 +332,32 @@ export default function PlaceReview({
         </>
       ) : (
         <h2 className="text-lg font-bold">{`That place isn't found. Check your link and try again.`}</h2>
-      )}
+      )} */}
       </div>
 
-      <section className="mt-4 flex flex-wrap xl:flex-col xl:align-top xl:justify-start justify-center px-4 xl:order-1">
-        <div className="flex justify-center flex-none xl:h-[36px] ">
+      <section className="flex flex-wrap xl:flex-col xl:align-top xl:justify-start justify-center xl:order-1">
+        {currentPlace ? (
+          <>
+            <div className="bg-appBlue py-4 text-appBG w-full">
+              <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG">
+                <Link
+                  href={`/place/${currentPlace.id}`}
+                  className="cursor-pointer underline"
+                >
+                  {currentPlace?.displayName.text}
+                </Link>{" "}
+                Review
+              </h2>
+              <p className="px-4">
+                by {currentReview?.Adults.first_name}{" "}
+                {currentReview?.Adults.last_name}
+              </p>
+            </div>
+          </>
+        ) : (
+          <h2 className="text-lg font-bold">{`That place isn't found. Check your link and try again.`}</h2>
+        )}
+        <div className="flex justify-center flex-none xl:h-[36px] mt-4">
           {currentReview ? (
             <>
               <Image
@@ -412,61 +433,61 @@ export default function PlaceReview({
             </>
           ) : null}
         </div>
-        <fieldset className="mt-4 flex w-full flex-wrap">
+        <fieldset className="mt-4 flex w-full flex-wrap px-4">
           {currentReview
             ? (() => {
-                //use rest to isolate the available amenities.
-                const {
-                  created_at,
-                  Adults,
-                  stars,
-                  reviewer_notes,
-                  reviewer_notes_plain_text,
-                  reviewer_id,
-                  google_place_id,
-                  id,
-                  ...amenities
-                } = currentReview;
-                // iterate over the new amenities object and
-                return Object.entries(amenities).map(([key, value], index) => {
-                  const amenity = key.replace(/_/g, " ");
-                  return (
-                    <div
-                      key={index}
-                      className="flex w-1/2 items-center justify-start"
+              //use rest to isolate the available amenities.
+              const {
+                created_at,
+                Adults,
+                stars,
+                reviewer_notes,
+                reviewer_notes_plain_text,
+                reviewer_id,
+                google_place_id,
+                id,
+                ...amenities
+              } = currentReview;
+              // iterate over the new amenities object and
+              return Object.entries(amenities).map(([key, value], index) => {
+                const amenity = key.replace(/_/g, " ");
+                return (
+                  <div
+                    key={index}
+                    className="flex w-1/2 items-center justify-start"
+                  >
+                    {openReviewEditor || !amenityEdits[key] ? (
+                      <input
+                        type="checkbox"
+                        id={amenity}
+                        checked={amenityEdits[key]}
+                        disabled={!openReviewEditor}
+                        readOnly={!openReviewEditor}
+                        //false inputs still allowed checks so added onclick to prevent
+                        onChange={(event) => handleAmenityChange(event)}
+                      />
+                    ) : (
+                      amenityEdits[key] && (
+                        <div className="align-center relative flex h-2 w-2 justify-center">
+                          <Image
+                            src="/icons/checkmark.webp"
+                            alt="checkmark"
+                            fill={true}
+                            style={{ objectFit: "cover" }}
+                          ></Image>
+                        </div>
+                      )
+                    )}
+                    <label
+                      htmlFor={amenity}
+                      className={`pl-2 text-sm xl:text-lg ${amenityEdits[key] ? "font-bold" : null}`}
                     >
-                      {openReviewEditor || !amenityEdits[key] ? (
-                        <input
-                          type="checkbox"
-                          id={amenity}
-                          checked={amenityEdits[key]}
-                          disabled={!openReviewEditor}
-                          readOnly={!openReviewEditor}
-                          //false inputs still allowed checks so added onclick to prevent
-                          onChange={(event) => handleAmenityChange(event)}
-                        />
-                      ) : (
-                        amenityEdits[key] && (
-                          <div className="align-center relative flex h-2 w-2 justify-center">
-                            <Image
-                              src="/icons/checkmark.webp"
-                              alt="checkmark"
-                              fill={true}
-                              style={{ objectFit: "cover" }}
-                            ></Image>
-                          </div>
-                        )
-                      )}
-                      <label
-                        htmlFor={amenity}
-                        className={`pl-2 text-sm ${amenityEdits[key] ? "font-bold" : null}`}
-                      >
-                        {amenity}
-                      </label>
-                    </div>
-                  );
-                });
-              })()
+                      {amenity}
+                    </label>
+                  </div>
+                );
+              });
+            })()
             : null}
         </fieldset>
         {currentReview && currentReview.reviewer_notes ? (

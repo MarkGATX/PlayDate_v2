@@ -243,7 +243,7 @@ export default function PlaceDetails({
     <>
       <main className='xl:flex'>
         <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>
-          <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[calc(100dvh-125px)] w-full ">
+          <div id="placePicContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[90dvh] w-full ">
             <Swiper
               pagination={true}
               effect={"fade"}
@@ -292,7 +292,7 @@ export default function PlaceDetails({
             </Swiper>
           </div>
         </div>
-        <div className="xl:flex xl:flex-col">
+        <div className="xl:flex xl:flex-col xl:w-1/3">
           <div id="placeDetails" className="w-full ">
             <h1 className="text-lg font-bold text-appBG bg-appBlue w-full p-4">
               {currentPlace?.displayName.text}

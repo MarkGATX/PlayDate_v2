@@ -8,6 +8,12 @@
   width: 100%;
   height: 100%;
 }
+
+.mapMainHeight {
+  height: calc(100dvh - 125px);
+  overflow-y: hidden;
+}
+
 .popupTitle {
   background-color: #87bd41;
   font-weight: 700;
