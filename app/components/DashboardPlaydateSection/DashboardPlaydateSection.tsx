@@ -59,7 +59,7 @@ export default function DashboardPlaydateSection({
     const fetchPlaydates = async () => {
       try {
         const playdates = await getKidsPlaydateData(adultData.id);
-        if (playdates) {
+        if (playdates && playdates.length > 0) {
           const sortedPlaydates = playdates.sort((a, b) => {
             //convert into date objects
             const dateA = new Date(a.Playdates.time);

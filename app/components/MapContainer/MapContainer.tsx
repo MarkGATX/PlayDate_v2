@@ -233,7 +233,7 @@ export default function MapContainer() {
       {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&
         currentLocation.latitude != 0 &&
         currentLocation.longitude != 0 ? (
-        <div className={` xl:flex ${styles.mapMainHeight}`}>
+        <div className={`xl:flex ${styles.mapMainHeight}`}>
           <div className='xl:w-3/5 flex-none xl:order-2  xl:overflow-y-hidden'>
             <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API} libraries={["places"]} >
               {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}

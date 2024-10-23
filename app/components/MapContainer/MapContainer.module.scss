@@ -9,10 +9,7 @@
   height: 100%;
 }
 
-.mapMainHeight {
-  height: calc(100dvh - 125px);
-  overflow-y: hidden;
-}
+
 
 .popupTitle {
   background-color: #87bd41;
@@ -35,4 +32,11 @@
 .popupWebUrl:active,
 .popupWebUrl:focus {
   outline: 0;
+}
+
+@media (width >=1024px) {
+  .mapMainHeight {
+    height: calc(100dvh - 128px);
+    overflow-y: hidden;
+  }
 }
