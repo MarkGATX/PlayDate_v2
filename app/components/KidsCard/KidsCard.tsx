@@ -354,7 +354,7 @@ export default function KidsCard({
 
   return (
     <>
-      <div key={kid.id} className="singleKid flex flex-col gap-4 overflow-hidden rounded-xl bg-inputBG p-2 xl:w-3/4">
+      <div key={kid.id} className="singleKid w-full flex flex-col gap-4 overflow-hidden rounded-xl bg-inputBG p-2 xl:w-3/4">
         <div className="flex w-full items-start justify-between gap-4">
           <div
             id="kidProfilePicContainer"

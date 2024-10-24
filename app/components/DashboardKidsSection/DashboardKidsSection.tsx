@@ -42,7 +42,7 @@ export default function DashboardKidsSection({
     };
 
     const kidSubscription = supabaseClient
-      .channel("supabase_realtime")
+      .channel("kids_dashboard_subscription")
       .on(
         "postgres_changes",
         {
@@ -55,7 +55,13 @@ export default function DashboardKidsSection({
           getKidsData();
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Kids Subscription successful');
+        } else {
+          console.error('Kids Subscription failed:', status);
+        }
+      });
 
     getKidsData();
 

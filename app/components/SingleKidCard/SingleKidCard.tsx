@@ -37,7 +37,7 @@ export default function SingleKidCard(kidId: string) {
   // }, [supabase])
 
   return (
-    <div className="singleKid flex flex-col gap-4 rounded-xl bg-inputBG p-2 xl:w-3/4">
+    <div className="singleKid flex flex-col gap-4 rounded-xl w-full bg-inputBG p-2 xl:w-3/4">
       <div className="flex w-full items-start justify-between gap-4">
         <div
           id="kidProfilePicContainer"
