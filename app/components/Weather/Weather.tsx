@@ -67,7 +67,7 @@ export default function Weather() {
         className="relative flex w-full flex-wrap items-center justify-between"
       >
         {locationData.error ? (
-          <div>Weather info not available</div>
+          <div>Weather info not available. Is geolocation approved?</div>
         ) : currentWeather?.error ? (
           <div className="flex w-3/4 items-center justify-between pl-1 pr-1">
             Weather not available: {weatherError}

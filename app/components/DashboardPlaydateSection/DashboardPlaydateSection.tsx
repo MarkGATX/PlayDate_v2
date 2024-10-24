@@ -185,7 +185,7 @@ export default function DashboardPlaydateSection({
         <div
           id="upcomingPlaydates"
           ref={upcomingPlaydatesRef}
-          className="flex h-0 flex-col items-center gap-2 overflow-y-hidden px-4 pt-2 opacity-0"
+          className="flex h-0 flex-col items-center gap-2 overflow-y-hidden px-4 pt-2 opacity-0 w-full"
         >
           {playdates ? (
             <>
