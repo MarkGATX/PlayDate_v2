@@ -3,7 +3,7 @@
 import { AmenityReview, placeReviewType, placesDataType } from "@/utils/types/placeTypeDefinitions";
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
@@ -69,9 +69,7 @@ export default function PlaceDetails({
 
   }
 
-
-
-  const getUserReviews = async () => {
+  const getUserReviews = useCallback(async () => {
     console.log('getUserReviews')
     try {
       const {
@@ -98,7 +96,7 @@ export default function PlaceDetails({
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [params.placeId]);
 
   const aggregateAmenities = (reviews: placeReviewType[]): AmenityReview => {
     return reviews.reduce(
@@ -155,7 +153,7 @@ export default function PlaceDetails({
       
     }
     getUserReviews()
-  }, [params.placeId]);
+  }, [params.placeId, getUserReviews]);
 
   useEffect(() => {
     const getCurrentUser = async () => {

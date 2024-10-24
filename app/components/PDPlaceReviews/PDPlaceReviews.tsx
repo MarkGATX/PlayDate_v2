@@ -57,7 +57,7 @@ export default function PDPlaceReviews({
       }
     };
     getPlaceReview();
-  }, []);
+  }, [placeID]);
 
   return (
     <>

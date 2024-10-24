@@ -13,7 +13,7 @@ import { PostgrestError } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 type PlaceCardsProps = {
   place: placesDataType;
@@ -95,7 +95,7 @@ export default function PlaceCards({
     setShowMore((previousValue) => !previousValue);
   };
 
-  const getUserReviews = async () => {
+  const getUserReviews = useCallback(async () => {
     try {
       const {
         data: reviewData,
@@ -120,7 +120,7 @@ export default function PlaceCards({
     } catch (error) {
       console.error(error);
     }
-  };
+  },[place.id]);
 
   const aggregateAmenities = (reviews: placeReviewType[]): AmenityReview => {
     return reviews.reduce(
@@ -172,6 +172,7 @@ export default function PlaceCards({
     summaryElement?.offsetHeight,
     linkElement?.offsetHeight,
     openSelectKid,
+    getUserReviews
   ]);
 
   return (

@@ -61,7 +61,7 @@ export default function PlaceReview({
       });
       setQuill(quillInstance);
     }
-  }, [currentReview]);
+  }, [currentReview, quill]);
 
   // Separate useEffect for setting contents
   useEffect(() => {

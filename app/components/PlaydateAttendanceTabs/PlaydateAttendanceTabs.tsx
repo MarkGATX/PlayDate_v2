@@ -94,7 +94,7 @@ export default function PlaydateAttendanceTabs({
     return () => {
       supabaseClient.removeChannel(attendanceSubscription);
     };
-  }, [playdate]);
+  }, [playdate, attendanceData]);
 
   const handleClick = async (value: string) => {
     setSelectedTab(value);

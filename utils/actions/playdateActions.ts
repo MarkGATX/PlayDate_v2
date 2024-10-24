@@ -150,7 +150,8 @@ export async function fetchPlaceData(placeID: string) {
 
 export async function getKidsPlaydateData(adultId: string) {
   let playdates;
-  const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set to the start of today
   const { data: kidsDataForPlaydate, error: kidsDataForPlaydateError } =
     await supabaseClient
       .from("Adult_Kid")
@@ -170,7 +171,7 @@ export async function getKidsPlaydateData(adultId: string) {
               "*, Playdates!inner(location, host_id, time, host_notes, host_kid_id), Kids(first_name, last_name, first_name_only, profile_pic)",
             )
             .eq("kid_id", kid.kid_id)
-            .gte("Playdates.time::date", today);
+            .gte("Playdates.time::date", today.toISOString());
             //use inner join to ensure no attendance records or playdate records return unless they match both filters
         if (playdatesForKidError) {
           throw playdatesForKidError;

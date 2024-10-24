@@ -76,6 +76,7 @@ export default function DashboardPlaydateSection({
 
     fetchPlaydates();
 
+
     const playdatesSubscription = supabaseClient
       .channel("supabase_realtime")
       .on(
@@ -91,10 +92,18 @@ export default function DashboardPlaydateSection({
           fetchPlaydates();
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Playdate Subscription successful');
+        } else {
+          console.error('Playdate Subscription failed:', status);
+        }
+      });
+    
+
 
     const deletedPlaydatesSubscription = supabaseClient
-      .channel("supabase_realtime")
+      .channel("deleted_playdates_subscription")
       .on(
         "postgres_changes",
         {
@@ -108,7 +117,14 @@ export default function DashboardPlaydateSection({
           fetchPlaydates();
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Deleted Playdates Subscription successful');
+        } else {
+          console.error('Delated Playdates Subscription failed:', status);
+        }
+      });
+
 
     return () => {
       supabaseClient.removeChannel(playdatesSubscription);
@@ -150,7 +166,7 @@ export default function DashboardPlaydateSection({
           </div>
         }
       >
-        <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG xl:rounded-l-med">
+        <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG xl:rounded-l-md ">
           <div
             className="transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125"
             onClick={handleShowplaydates}

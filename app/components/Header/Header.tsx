@@ -207,13 +207,23 @@ export default function Header() {
                       <li>Home</li>
                     </Link>
                     <Link
-                      href="/dashboard"
+                      href="/FAQ"
                       onClick={() =>
                         setShowMobileMenu((previousValue) => !previousValue)
                       }
                     >
-                      <li>Dashboard</li>
+                      <li>FAQs</li>
                     </Link>
+                    {user ? (
+                      <Link
+                        href="/dashboard"
+                        onClick={() =>
+                          setShowMobileMenu((previousValue) => !previousValue)
+                        }
+                      >
+                        <li>Dashboard</li>
+                      </Link>
+                    ) : null}
                     {user ? (
                       <li className="cursor-pointer" onClick={handleGoogleLogout}>
                         Logout
@@ -228,26 +238,36 @@ export default function Header() {
               </>
               :
               <ul className="flex gap-4 justify-end w-full">
-                    <Link
-                      href="/"
-                    >
-                      <li>Home</li>
-                    </Link>
-                    <Link
-                      href="/dashboard"
-                    >
-                      <li>Dashboard</li>
-                    </Link>
-                    {user ? (
-                      <li className="cursor-pointer" onClick={handleGoogleLogout}>
-                        Logout
-                      </li>
-                    ) : (
-                      <li className="cursor-pointer" onClick={handleGoogleLogin}>
-                        Login
-                      </li>
-                    )}
-                  </ul>
+                <Link
+                  href="/"
+                >
+                  <li>Home</li>
+                </Link>
+                <Link
+                  href="/FAQ"
+                  onClick={() =>
+                    setShowMobileMenu((previousValue) => !previousValue)
+                  }
+                >
+                  <li>FAQs</li>
+                </Link>
+                {user ? (
+                  <Link
+                    href="/dashboard"
+                  >
+                    <li>Dashboard</li>
+                  </Link>
+                ) : null}
+                {user ? (
+                  <li className="cursor-pointer" onClick={handleGoogleLogout}>
+                    Logout
+                  </li>
+                ) : (
+                  <li className="cursor-pointer" onClick={handleGoogleLogin}>
+                    Login
+                  </li>
+                )}
+              </ul>
             }
           </nav>
         </div>

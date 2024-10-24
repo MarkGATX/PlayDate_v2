@@ -107,6 +107,11 @@ export default function Notification({
           );
 
           setNotifications(updatedNotifications);
+          // setNotifications(prevNotifications => {
+          //   console.log('Previous notifications:', prevNotifications);
+          //   console.log('New notifications:', updatedNotifications);
+          //   return updatedNotifications;
+          // });
         } else {
           setNotifications([]); // Handle case where no notifications are found
         }
@@ -117,7 +122,7 @@ export default function Notification({
     };
 
     const notificationSubscription = supabaseClient
-      .channel("public")
+      .channel("dashboard_realtime_notifications")
       .on(
         "postgres_changes",
         {
@@ -127,11 +132,18 @@ export default function Notification({
           filter: `receiver_id=eq.${currentUser?.id}`,
         },
         (payload) => {
+          console.log('notification sub', payload)
           //refetch notifications
           getCurrentNotifications();
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('Notification Subscription successful');
+        } else {
+          console.error('Notification Subscription failed:', status);
+        }
+      });
 
     getCurrentNotifications();
 
@@ -161,6 +173,7 @@ export default function Notification({
       }
     }
   };
+  console.log(notifications)
 
   return (
     <section

@@ -207,7 +207,7 @@ export default function PlaydateDetails() {
     return () => {
       supabaseClient.removeChannel(playdateSubscription);
     };
-  }, [params]);
+  }, [params, router]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
