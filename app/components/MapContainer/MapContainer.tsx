@@ -340,7 +340,7 @@ export default function MapContainer() {
           </div>
         </div>
       ) : (
-        <div className='p-4'>Loading map data... Make sure you've approved geolocation and refresh your page.</div>
+        <div className='p-4'>{`Loading map data... Make sure you've approved geolocation and refresh your page.`}</div>
       )
       }
     </main>
