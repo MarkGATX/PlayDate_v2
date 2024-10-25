@@ -225,7 +225,7 @@ export default function MapContainer() {
     setPlaces(normalizedResults);
   };
 
-  
+
 
   console.log(currentLocation);
   return (
@@ -324,14 +324,17 @@ export default function MapContainer() {
                   </button>
                 </div>
                 <div className='flex flex-col items-center justify-center'>
-                {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => (
-                  <PlaceCards
-                    place={place}
-                    key={place.id}
-                    kids={currentUser?.Kids}
-                    currentUserID={currentUser?.id}
-                  />
-                ))}
+                  {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => {
+
+                    return (
+                      <PlaceCards
+                        place={place}
+                        key={place.id}
+                        kids={currentUser?.Kids}
+                        currentUserID={currentUser?.id}
+                      />
+                    )
+                  })}
                 </div>
 
               </>

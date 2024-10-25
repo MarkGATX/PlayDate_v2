@@ -42,6 +42,7 @@ export default function Notification({
             .from("Notifications")
             .select("*")
             .eq("receiver_id", currentUser.id);
+            console.log(notificationData)
         if (notificationData && notificationData.length > 0) {
           const updatedNotifications = await Promise.all(
             notificationData.map(async (notification) => {
@@ -72,9 +73,7 @@ export default function Notification({
 
               let playdateData;
               if (
-                notification.notification_type ===
-                  NotificationEnums.inviteToPlaydate ||
-                NotificationEnums.changePlaydateTime
+                notification.notification_type === ( NotificationEnums.inviteToPlaydate ||  NotificationEnums.changePlaydateTime)
               ) {
                 //get additional playdate information if related to playdates.
                 const {
