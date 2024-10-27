@@ -120,7 +120,7 @@ export default function PlaceCards({
     } catch (error) {
       console.error(error);
     }
-  },[place.id]);
+  }, [place.id]);
 
   const aggregateAmenities = (reviews: placeReviewType[]): AmenityReview => {
     return reviews.reduce(
@@ -187,7 +187,7 @@ export default function PlaceCards({
           </h2>
 
           {place.currentOpeningHours?.openNow ||
-          place.currentOpeningHours === undefined ? null : (
+            place.currentOpeningHours === undefined ? null : (
             <div className="mb-1 text-xs text-red-500">Currently closed</div>
           )}
           <div id="starRatings" className="flex items-center text-xs">
@@ -317,7 +317,7 @@ export default function PlaceCards({
             className="flex flex-col items-center justify-center gap-4"
           >
             <Link href={`/place/${place.id}`} className="flex justify-center w-full">
-              <button className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+              <button className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
                 More information...
               </button>
             </Link>
@@ -328,7 +328,7 @@ export default function PlaceCards({
                   case currentUserID && kids && kids?.length === 1:
                     return (
                       <button
-                        className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                         onClick={handleStartPlaydate}
                       >
                         Start a Playdate here...
@@ -337,7 +337,7 @@ export default function PlaceCards({
                   case currentUserID && kids && kids?.length > 1:
                     return (
                       <button
-                        className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        className="lg:w-2/3 w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                         onClick={() =>
                           setOpenSelectKid((previousValue) => !previousValue)
                         }

@@ -63,7 +63,7 @@ export default function PDPlaceReviews({
     <>
       {locationReviews && locationReviews.length > 0 ? (
         <div>
-          <div className="w-full bg-appBlue p-4 text-appBG">
+          <div className="w-full bg-blueGradient bg-appBlue p-4 text-appBG">
             <h3 className="">Playdate User Reviews...</h3>
 
             <div className="flex items-center text-sm">

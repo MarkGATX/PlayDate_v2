@@ -63,7 +63,7 @@
 //       <ReactQuill value={noteContent} readOnly={!openNoteEditor} onChange={handleChange} modules={modules} />
 //       {openNoteEditor
 //         ?
-//         <button className='min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleSaveNote}>Save Note</button>
+//         <button className='min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' onClick={handleSaveNote}>Save Note</button>
 //         :
 //         null
 //       }
@@ -149,7 +149,7 @@
 //       />
 //       {openNoteEditor && (
 //         <button
-//           className="min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none"
+//           className="min-w-40 px-2 w-90 text-xs cursor-pointer py-1 my-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none"
 //           onClick={handleSaveNote}
 //         >
 //           Save Note
@@ -262,7 +262,7 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
       <div>
         {openNoteEditor && (
           <button
-            className="w-90 my-2 min-w-40 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+            className="w-90 my-2 min-w-40 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
             onClick={handleSaveNote}
           >
             Save Note

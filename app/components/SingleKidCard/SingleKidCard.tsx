@@ -55,7 +55,7 @@ export default function SingleKidCard(kidId: string) {
               style={{ objectFit: "cover" }}
             ></Image>
           </div>
-          <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+          <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
             Edit pic
           </button>
         </div>
@@ -85,10 +85,10 @@ export default function SingleKidCard(kidId: string) {
         <p className="text-sm">Parents: parent names</p>
         <p className="text-sm">Caregivers: caregiver names</p>
         <div className="my-4 flex w-full justify-between">
-          <button className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-2 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+          <button className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-2 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
             Add New Parent
           </button>
-          <button className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-2 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+          <button className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-2 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
             Add New Caregiver
           </button>
         </div>

@@ -268,7 +268,7 @@ export default function MapContainer() {
                           }
                         >
                           <div
-                            className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-appBlue p-1 text-appGold`}
+                            className={`markerPin z-10 max-w-32 cursor-pointer rounded bg-blueGradient bg-appBlue p-1 text-appGold`}
                           >
                             <h3>
                               {place.displayName.text.length >= 30
@@ -292,7 +292,7 @@ export default function MapContainer() {
                 placeholder="Search for nearby places..."
               ></input>
               <button
-                className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                 onClick={handlePlaceSearch}
               >
                 Search
@@ -300,7 +300,7 @@ export default function MapContainer() {
             </div>
             {places ? (
               <>
-                <p className="mb-8 w-full bg-appBlue p-4 text-lg font-bold text-appBG">
+                <p className="mb-8 w-full bg-blueGradient bg-appBlue p-4 text-lg font-bold text-appBG">
                   Suggestions...
                 </p>
 
@@ -309,14 +309,14 @@ export default function MapContainer() {
                   className="mb-12 flex w-full justify-around"
                 >
                   <button
-                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setCurrentPage(currentPage - 1)}
                     disabled={currentPage === 1}
                   >
                     {currentPage === 1 ? "Start" : "Previous 5"}
                   </button>
                   <button
-                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-[130px] transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setCurrentPage(currentPage + 1)}
                     disabled={currentPage * 5 >= places.length}
                   >
@@ -324,17 +324,22 @@ export default function MapContainer() {
                   </button>
                 </div>
                 <div className='flex flex-col items-center justify-center'>
-                  {places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => {
-
-                    return (
-                      <PlaceCards
-                        place={place}
-                        key={place.id}
-                        kids={currentUser?.Kids}
-                        currentUserID={currentUser?.id}
-                      />
+                  {places.length > 0 ? (
+                    places.slice((currentPage - 1) * 5, currentPage * 5).map((place) => {
+                      return (
+                        <PlaceCards
+                          place={place}
+                          key={place.id}
+                          kids={currentUser?.Kids}
+                          currentUserID={currentUser?.id}
+                        />
+                      )
+                    }
                     )
-                  })}
+                  ) : (
+                    <div>No places found</div>
+                  )
+                  }
                 </div>
 
               </>

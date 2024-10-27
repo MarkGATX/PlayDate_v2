@@ -97,7 +97,7 @@ export default function DashboardKidsSection({
   return (
     <>
       <section id="kidsSection" className="mb-4 flex w-full flex-col gap-2">
-        <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG xl:rounded-l-md">
+        <div className="align-center flex w-full items-center justify-start bg-blueGradient bg-appBlue px-4 text-appBG xl:rounded-l-md">
           <div
             className="transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125"
             onClick={handleShowKids}

@@ -56,7 +56,7 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
     }
   }
 
-  const renderedFriendGroupMember = (member:FriendGroupMembersType, group:FriendGroupType) => {
+  const renderedFriendGroupMember = (member: FriendGroupMembersType, group: FriendGroupType) => {
     return (
       <div key={`${member.kid_id}`} className="mb-2 flex w-full items-center justify-start rounded-lg bg-appGold p-2 text-sm" >
         <div className="relative mr-4 h-5 w-5 rounded-full">
@@ -74,8 +74,8 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
         <button className=" w-28 transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50 " onClick={() => handleRemoveFromFriendGroup(member.kid_id, group.id)}>Remove</button>
       </div>
     )
-  } 
-  
+  }
+
 
   // const renderedFriendGroups = useMemo(() => {
   //   return friendGroups.map((group) => (
@@ -84,24 +84,24 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
   //       group.friend_group_members?.map((member) => {
   //         return renderedFriendGroupMember(member, group)
   //       })
-        //   return (
-        //     <div key={`${member.kid_id}${group.id}`} className="mb-2 flex w-full items-center justify-start rounded-lg bg-appGold p-2 text-sm" >
-        //       <div className="relative mr-4 h-5 w-5 rounded-full">
-        //         <Image
-        //           src={`${member.profile_pic}`}
-        //           fill={true}
-        //           alt={`profile picture of ${member.first_name}`}
-        //           style={{ objectFit: "cover" }}
-        //           className="rounded-full"
-        //         />
-        //       </div>
-        //       <p className='w-3/4'>
-        //         {member.first_name} {member.first_name_only ? '' : member.last_name}
-        //       </p>
-        //       <button className=" w-28 transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50 " onClick={() => handleRemoveFromFriendGroup(member.kid_id, group.id)}>Remove</button>
-        //     </div>
-        //   )
-        // })
+  //   return (
+  //     <div key={`${member.kid_id}${group.id}`} className="mb-2 flex w-full items-center justify-start rounded-lg bg-appGold p-2 text-sm" >
+  //       <div className="relative mr-4 h-5 w-5 rounded-full">
+  //         <Image
+  //           src={`${member.profile_pic}`}
+  //           fill={true}
+  //           alt={`profile picture of ${member.first_name}`}
+  //           style={{ objectFit: "cover" }}
+  //           className="rounded-full"
+  //         />
+  //       </div>
+  //       <p className='w-3/4'>
+  //         {member.first_name} {member.first_name_only ? '' : member.last_name}
+  //       </p>
+  //       <button className=" w-28 transform cursor-pointer rounded-lg border-2 border-red-700 bg-red-500 p-2 px-1 py-1 text-xs text-appGold duration-300 ease-in-out hover:bg-red-800 hover:text-white active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50 " onClick={() => handleRemoveFromFriendGroup(member.kid_id, group.id)}>Remove</button>
+  //     </div>
+  //   )
+  // })
   //       :
   //       <div>
   //         No members yet.
@@ -214,7 +214,7 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
       {friendGroups ?
         // friendGroups[0].friend_group_members.length > 0 ?
         <div>
-          <div className='w-full bg-appBlue text-appBG flex p-2 rounded-md'>
+          <div className='w-full bg-blueGradient bg-appBlue text-appBG flex p-2 rounded-md'>
             <h3>{`${kid.first_name}${kid.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</h3>
             <div className=" ml-2 transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125" onClick={handleShowFriendGroup} >
               <Image
@@ -228,12 +228,12 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
             </div>
           </div>
           <div ref={friendGroupRef} className="flex h-0 flex-col gap-2 overflow-y-hidden px-4 pt-2 opacity-0" >
- {friendGroups.map((group) => {
+            {friendGroups.map((group) => {
               return (
                 <div key={`${group.id}`}>
                   {group.friend_group_members.length > 0 ?
                     group.friend_group_members?.map((member) => {
-                    return renderedFriendGroupMember(member, group)
+                      return renderedFriendGroupMember(member, group)
                       // return (
                       //   <div key={`${member.kid_id}${group.id}`} className="mb-2 flex w-full items-center justify-start rounded-lg bg-appGold p-2 text-sm" >
                       //     <div className="relative mr-4 h-5 w-5 rounded-full">
@@ -259,7 +259,7 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
                   }
                 </div>
               )
-            })} 
+            })}
             {/* {renderedFriendGroups} */}
           </div>
         </div>

@@ -135,13 +135,13 @@ export default function PlaceDetails({
       try {
         const placeDetails = await fetchPlaceDetails(params.placeId);
         if (placeDetails) {
-          const formattedPlaceDetails =JSON.stringify(placeDetails);
+          const formattedPlaceDetails = JSON.stringify(placeDetails);
           setCurrentPlace(placeDetails);
-          
+
         } else {
           setCurrentPlace(undefined);
         }
-        
+
       } catch (error) {
         console.error(error);
       }
@@ -150,7 +150,7 @@ export default function PlaceDetails({
       setCurrentPlace(places.find((place) => place.id === params.placeId));
     } else {
       fetchedPlaceDetails();
-      
+
     }
     getUserReviews()
   }, [params.placeId, getUserReviews]);
@@ -276,7 +276,7 @@ export default function PlaceDetails({
                           href={`${photo.authorAttributions[0].uri}`}
                           target="_blank"
                         >
-                          <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
+                          <p className="absolute z-10 bg-blueGradient bg-appBlueTrans p-2 text-xs text-appGold">
                             Image by {photo.authorAttributions[0].displayName}
                           </p>
                         </a>
@@ -292,7 +292,7 @@ export default function PlaceDetails({
         </div>
         <div className="xl:flex xl:flex-col xl:w-1/3">
           <div id="placeDetails" className="w-full ">
-            <h1 className="text-lg font-bold text-appBG bg-appBlue w-full p-4">
+            <h1 className="text-lg font-bold text-appBG bg-blueGradient bg-appBlue w-full p-4">
               {currentPlace?.displayName.text}
             </h1>
             {currentPlace?.formattedAddress ? (
@@ -338,22 +338,22 @@ export default function PlaceDetails({
                 : "No ratings"}
             </div>
             <div id="placeAmenities" className="mt-2 flex flex-wrap px-2">
-          {placeAmenities &&
-            (Object.keys(placeAmenities) as Array<keyof AmenityReview>).map(
-              (amenity) =>
-                placeAmenities[amenity] ? (
-                  <Image
-                    key={`${amenity}${currentPlace?.id}`}
-                    src={amenityIcons[amenity]}
-                    className="m-2"
-                    width={32}
-                    height={32}
-                    alt={`${amenity} icon`}
-                    title={`${amenity}`}
-                  />
-                ) : null,
-            )}
-        </div>
+              {placeAmenities &&
+                (Object.keys(placeAmenities) as Array<keyof AmenityReview>).map(
+                  (amenity) =>
+                    placeAmenities[amenity] ? (
+                      <Image
+                        key={`${amenity}${currentPlace?.id}`}
+                        src={amenityIcons[amenity]}
+                        className="m-2"
+                        width={32}
+                        height={32}
+                        alt={`${amenity} icon`}
+                        title={`${amenity}`}
+                      />
+                    ) : null,
+                )}
+            </div>
             {/* {userReviewStars ? (
               <div id="userStarRating" className="mt-2 flex items-center text-xs">
                 {Array.from({ length: userFullStars }).map((_, index) => (
@@ -396,7 +396,7 @@ export default function PlaceDetails({
             <div id="placeButtons" className="my-8 flex w-full justify-around">
               {currentUser && currentPlace ? (
                 <button
-                  className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                  className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                   onClick={() =>
                     router.push(`/place/${currentPlace.id}/CreateReview`)
                   }
@@ -412,7 +412,7 @@ export default function PlaceDetails({
                       currentUser.Kids?.length === 1:
                       return (
                         <button
-                          className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                          className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                           onClick={handleStartPlaydate}
                         >
                           Start a Playdate
@@ -423,7 +423,7 @@ export default function PlaceDetails({
                       currentUser.Kids?.length > 1:
                       return (
                         <button
-                          className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                          className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                           onClick={() =>
                             setOpenSelectKid((previousValue) => !previousValue)
                           }
@@ -468,7 +468,7 @@ export default function PlaceDetails({
               </section>
             ) : null}
             {/* <Link href={`/place/${currentPlace?.id}/CreateReview`}>
-                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
+                            <button className='px-2 w-90 text-sm cursor-pointer py-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-xl transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Write a Review</button>
                         </Link> */}
           </div>
           {currentPlace ? (

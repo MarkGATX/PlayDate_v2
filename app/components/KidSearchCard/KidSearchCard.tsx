@@ -80,8 +80,8 @@ export default function KidSearchCard({
     }
   };
 
-  const inviteGroupToPlaydate = async() => {
-    
+  const inviteGroupToPlaydate = async () => {
+
   }
 
   return (
@@ -114,10 +114,10 @@ export default function KidSearchCard({
               <p className="w-full text-center text-xs">Primary Caregiver</p>
             ) : (
               // notificationExists ?
-              //     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Request already sent</button>
+              //     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Request already sent</button>
               //     :
               <button
-                className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                 onClick={handleAddKidRequest}
               >
                 Request add
@@ -127,18 +127,18 @@ export default function KidSearchCard({
           case "inviteToPlaydate":
             return kidData.primary_caregiver === currentUserId ? null : (
               // notificationExists ?
-              //     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Request already sent</button>
+              //     <button className='px-2 w-90 text-xs cursor-pointer py-1 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none mt-4' >Request already sent</button>
               //     :
               <>
                 <button
-                  className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                  className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                   onClick={handleInviteKid}
                 >
                   Invite
                 </button>
                 {friendGroups.length > 0 ?
                   <button
-                    className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-90 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={handleInviteKidWithGroup}
                   >
                     Invite & Add to Friend Group

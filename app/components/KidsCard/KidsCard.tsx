@@ -372,7 +372,7 @@ export default function KidsCard({
                 style={{ objectFit: "cover" }}
               ></Image>
             </div>
-            {/* <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button> */}
+            {/* <button className='px-1 w-90 text-xs cursor-pointer py-1 mt-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Edit pic</button> */}
           </div>
           <div className="flex w-3/4 flex-col gap-y-1 transition-all">
             {editKidInfo ? (
@@ -755,7 +755,7 @@ export default function KidsCard({
                 </div>
                 <div className="block w-full text-xs">
                   <button
-                    className="w-90 mr-2 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-90 mr-2 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={(event) => saveKidEdits(event)}
                     disabled={pending}
                   >
@@ -763,7 +763,7 @@ export default function KidsCard({
                   </button>
                   {/* <SubmitButton text='Save New Info' /> */}
                   <button
-                    className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={cancelKidEdits}
                   >
                     Cancel
@@ -802,21 +802,21 @@ export default function KidsCard({
                 </p>
                 <div className="block w-full text-xs">
                   <button
-                    className="w-90 mr-2 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-90 mr-2 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={handleEditKid}
                   >
                     Edit Kid Info
                   </button>
                   {kid.primary_caregiver === currentUser ? (
                     <button
-                      className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                      className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                       onClick={handleDeleteKid}
                     >
                       Delete Kid
                     </button>
                   ) : (
                     <button
-                      className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                      className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                       onClick={handleRemoveKid}
                     >
                       Remove Kid
@@ -831,13 +831,13 @@ export default function KidsCard({
                                         <p className='text-sm'>Parents: parent names</p>
                                         <p className='text-sm'>Caregivers: caregiver names</p>
                                         <div className='flex justify-between w-full my-4'>
-                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Parent</button>
-                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Caregiver</button>
+                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Parent</button>
+                                            <button className='px-2 w-90 text-xs cursor-pointer py-2 bg-appGold hover:bg-blueGradient hover:bg-appBlue active:bg-appGold active:shadow-activeButton active:text-appBlue hover:text-appGold border-2 border-appBlue rounded-lg transform ease-in-out duration-300 disabled:opacity-50 disabled:pointer-events-none' >Add New Caregiver</button>
                                         </div>
                                     </div> */}
         {/* {friendGroups.length > 0 ?
           <div>
-            <div className='w-full bg-appBlue text-appBG flex p-2 rounded-md'>
+            <div className='w-full bg-blueGradient bg-appBlue text-appBG flex p-2 rounded-md'>
               <h3>{`${kid.first_name}${kid.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</h3>
               <div className=" ml-2 transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125" onClick={handleShowFriendGroup} >
                 <Image
@@ -886,7 +886,7 @@ export default function KidsCard({
           </div>
           :
           null} */}
-          <DashboardFriendGroupSection {...kid} />
+        <DashboardFriendGroupSection {...kid} />
       </div >
       {
         openRemoveKidModal ? (
@@ -931,7 +931,7 @@ export default function KidsCard({
                   </button>
                   <button
                     type="button"
-                    className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => setOpenRemoveKidModal(false)}
                   >
                     Cancel
@@ -978,7 +978,7 @@ export default function KidsCard({
                 </button>
                 <button
                   type="button"
-                  className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                  className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                   onClick={() => setOpenDeleteKidModal(false)}
                 >
                   Cancel

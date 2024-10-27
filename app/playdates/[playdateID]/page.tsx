@@ -320,51 +320,51 @@ export default function PlaydateDetails() {
         <div id="playdateLocationImageContainer" className="flex h-[250px] sm:h-[33dvh] xl:h-[calc(100dvh-125px)] w-full "
         >
           <Swiper
-              pagination={true}
-              effect={"fade"}
-              navigation={true}
-              modules={[Pagination, Navigation, EffectFade]}
-            >
-              {placeDetails ? (
-                !placeDetails.photos || placeDetails.photos.length === 0 ? (
-                  // use override class to force swiper to not define inline style of 150px width
-                  <SwiperSlide className="swiper-slide-override">
-                    <Image
-                      src="/logos/playdate_logo.webp"
-                      alt="Playdate logo"
-                      // width={250}
-                      // height={250}
-                      fill={true}
-                      sizes="(max-width:768px) 100vw, 33vw"
-                      style={{ objectFit: "contain" }}
-                    />
-                  </SwiperSlide>
-                ) : (
-                  placeDetails.photos?.map((photo, index) => (
-                    <SwiperSlide key={`${placeDetails?.id}photo${index}`}>
-                      <Image
-                        src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
-                        alt={`pic ${index + 1} of ${placeDetails?.displayName.text}`}
-                        fill={true}
-                        style={{ objectFit: "cover" }}
-                      ></Image>
-                      {photo.authorAttributions[0].displayName ? (
-                        <a
-                          href={`${photo.authorAttributions[0].uri}`}
-                          target="_blank"
-                        >
-                          <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
-                            Image by {photo.authorAttributions[0].displayName}
-                          </p>
-                        </a>
-                      ) : null}
-                    </SwiperSlide>
-                  ))
-                )
+            pagination={true}
+            effect={"fade"}
+            navigation={true}
+            modules={[Pagination, Navigation, EffectFade]}
+          >
+            {placeDetails ? (
+              !placeDetails.photos || placeDetails.photos.length === 0 ? (
+                // use override class to force swiper to not define inline style of 150px width
+                <SwiperSlide className="swiper-slide-override">
+                  <Image
+                    src="/logos/playdate_logo.webp"
+                    alt="Playdate logo"
+                    // width={250}
+                    // height={250}
+                    fill={true}
+                    sizes="(max-width:768px) 100vw, 33vw"
+                    style={{ objectFit: "contain" }}
+                  />
+                </SwiperSlide>
               ) : (
-                <p> Loading Images...</p>
-              )}
-            </Swiper>
+                placeDetails.photos?.map((photo, index) => (
+                  <SwiperSlide key={`${placeDetails?.id}photo${index}`}>
+                    <Image
+                      src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
+                      alt={`pic ${index + 1} of ${placeDetails?.displayName.text}`}
+                      fill={true}
+                      style={{ objectFit: "cover" }}
+                    ></Image>
+                    {photo.authorAttributions[0].displayName ? (
+                      <a
+                        href={`${photo.authorAttributions[0].uri}`}
+                        target="_blank"
+                      >
+                        <p className="absolute z-10 bg-blueGradient bg-appBlueTrans p-2 text-xs text-appGold">
+                          Image by {photo.authorAttributions[0].displayName}
+                        </p>
+                      </a>
+                    ) : null}
+                  </SwiperSlide>
+                ))
+              )
+            ) : (
+              <p> Loading Images...</p>
+            )}
+          </Swiper>
           {/* <Image
             src={`https://places.googleapis.com/v1/${placeDetails?.photos[0].name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
             alt={`pic of ${placeDetails?.displayName.text}`}
@@ -376,7 +376,7 @@ export default function PlaydateDetails() {
               href={`${placeDetails.photos[0].authorAttributions[0].uri}`}
               target="_blank"
             >
-              <p className="absolute z-10 bg-appBlueTrans p-1 text-xs text-appGold">
+              <p className="absolute z-10 bg-blueGradient bg-appBlueTrans p-1 text-xs text-appGold">
                 Image by{" "}
                 {placeDetails.photos[0].authorAttributions[0].displayName}
               </p>
@@ -387,7 +387,7 @@ export default function PlaydateDetails() {
       <div className="xl:flex xl:flex-col xl:w-1/3">
         {playdateInfo && placeDetails ? (
           <>
-            <div id="playdateHeader" className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG">
+            <div id="playdateHeader" className="flex w-full flex-col items-center justify-center gap-0 bg-blueGradient bg-appBlue p-4 text-appBG">
               <h1 className="text-xl font-bold">{`Playdate at`}</h1>{" "}
               <Link
                 href={`/place/${placeDetails.id}`}
@@ -427,7 +427,7 @@ export default function PlaydateDetails() {
                     <div className="text-red-600">{editDateError}</div>
                   ) : null}
                   <button
-                    className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                    className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => {
                       handleUpdateDateAndTime();
                     }}
@@ -473,7 +473,7 @@ export default function PlaydateDetails() {
                   >
                     {playdateInfo.host_notes ? (
                       <button
-                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                         onClick={() =>
                           setOpenNoteEditor((previousValue) => !previousValue)
                         }
@@ -482,7 +482,7 @@ export default function PlaydateDetails() {
                       </button>
                     ) : (
                       <button
-                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                        className="w-90 my-2 min-w-28 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                         onClick={() =>
                           setOpenNoteEditor((previousValue) => !previousValue)
                         }
@@ -491,7 +491,7 @@ export default function PlaydateDetails() {
                       </button>
                     )}
                     <button
-                      className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                      className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                       onClick={() =>
                         setOpenEditDate((previousValue) => !previousValue)
                       }
@@ -519,7 +519,7 @@ export default function PlaydateDetails() {
                 href={`https://www.google.com/maps/dir/?api=1&origin=my+location&destination=${placeDetails.location.latitude},${placeDetails.location.longitude}&travelmode=driving`}
                 target="_blank"
               >
-                <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
+                <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">
                   Get Directions
                 </button>
               </a>
@@ -529,7 +529,7 @@ export default function PlaydateDetails() {
           <div>
             <div
               id="playdateHeader"
-              className="flex w-full flex-col items-center justify-center gap-0 bg-appBlue p-4 text-appBG"
+              className="flex w-full flex-col items-center justify-center gap-0 bg-blueGradient bg-appBlue p-4 text-appBG"
             >
               <h1 className="text-xl font-bold">Loading your playdate</h1>
               <h1>Sit tight...</h1>
@@ -564,7 +564,7 @@ export default function PlaydateDetails() {
           currentUser?.id === playdateInfo.host_id ? (
           <section id="inviteKidsSection" className="p-4 flex flex-col">
             <h3 className="font-bold w-full">Search for kids to invite...</h3>
-            <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50" onClick={handleInviteFriendGroup}>{`Invite ${playdateInfo.kid_name.first_name}${playdateInfo.kid_name.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</button>
+            <button className="w-90 mt-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50" onClick={handleInviteFriendGroup}>{`Invite ${playdateInfo.kid_name.first_name}${playdateInfo.kid_name.first_name.slice(-1) === 's' ? "'" : "'s"} Friend Group`}</button>
             <input
               type="text"
               value={kidSearchTerm}
@@ -607,7 +607,7 @@ export default function PlaydateDetails() {
               </button>
               <button
                 type="button"
-                className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+                className="mt-2 w-full transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-1 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                 onClick={() => setOpenDeletePlaydateModal(false)}
               >
                 Cancel

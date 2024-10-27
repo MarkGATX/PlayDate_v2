@@ -5,7 +5,7 @@ export default function FAQ() {
 
     return (
         <main>
-            <div className='bg-appBlue text-appBG'>
+            <div className='bg-blueGradient bg-appBlue text-appBG'>
                 <h1 className='text-3xl font-bold p-8'>Playdate - The story</h1>
             </div>
             <p className='mt-8 px-8 py-4'>{`With our young son growing up during the time of lockdowns, our family quickly learned how hard it can be for parents to keep their kids entertained. Playdate is a project meant to make it easier for parents to schedule playdates and other events and even find new places you may have never thought of.
@@ -14,16 +14,16 @@ export default function FAQ() {
             <p className='px-8 py-4'>{`Keep in mind for the recommendations to work, you `}<span className='font-bold '>{`MUST ALLOW GEOLOCATION IN YOUR BROWSER.`}</span></p>
             <p className='px-8 py-4'>{`Keep in mind this application is in pre-release. That means there will be occassional bugs, there will be more functionality added over time, and the interface will change over time. How will it change? That depends on you. I'd love to hear your feedback on what you like and don't like about how Playdate is working. `}</p>
             <a href="https://forms.gle/miaP4Dp2ggkaPQX87" target="_blank" className='px-8 py-4 font-bold text-lg hover:underline'>
-                <button className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">Click here to go to the feedback form</button>
+                <button className="w-90 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-2 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50">Click here to go to the feedback form</button>
             </a>
             <div >
-                <div className='bg-appBlue text-appBG mt-16'>
+                <div className='bg-blueGradient bg-appBlue text-appBG mt-16'>
                     <h1 className='text-3xl font-bold p-4'>{`FAQ's`}</h1>
                 </div>
                 <details className='detailSection p-4 xl:px-8'>
                     <summary className='font-bold'>How does it work?</summary>
                     <p>{`When you land on the Playdate home page, the application takes your current location as well as the current weather and pulls a list of places that might be a good choice to go visit. You can see ratings for the place from Google as well as ratings from users of the Playdate app as well as amenities at the place, like bathrooms or things to eat.`} </p>
-                
+
                     <p className='mt-4'>{`Once you decide on a place to visit, you can start a playdate and invite other families on the app to join in. It's great for last minute plans and helping to organize your plans.`}</p>
                 </details>
                 <details className='detailSection p-4 xl:px-8'>
@@ -33,13 +33,13 @@ export default function FAQ() {
                 <details className='detailSection p-4 xl:px-8'>
                     <summary className='font-bold'>What about my kids?</summary>
                     <p>{`Accounts are only available for parents. Once you have an account, you can add a new kid to your account inside your Dashboard section marked "Kids." When you add a kid, you'll be marked as the Primary Caregiver. There's no way to change Primary Caregiver at this time. Currently your account will be the one to receive all notifications about playdates for that kid. `} </p>
-                
+
                     <p className='mt-4'>{`If another parent wants to have access to a kid you've already added, they can search for the kid and request being added as a parent. You'll get a notification and can approve or reject the request.`}</p>
                 </details>
                 <details className='detailSection p-4 xl:px-8'>
                     <summary className='font-bold'>How do I start a playdate?</summary>
                     <p>{`When you find a location that you want to visit, click on the "Start a playdate button." From there you'll be taken to the playdate page. You can change the date and time of the playdate if you want, or leave it at the current time if you're on your way there now. You can also add a custom message about the playdate if you want.`} </p>
-                
+
                     <p className='mt-4'>{`After you set the details, search the application for kids to invite. You can see the current status of any invites on the playdate page.`}</p>
                 </details>
                 <details className='detailSection p-4 xl:px-8'>

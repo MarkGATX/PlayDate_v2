@@ -75,12 +75,12 @@ export default function Dashboard() {
     <main>
       <Suspense
         fallback={
-          <div className="flex w-full justify-center bg-appBlue p-4 text-appBG">
+          <div className="flex w-full justify-center bg-blueGradient bg-appBlue p-4 text-appBG">
             <h1 className="text-xl font-bold">Loading your data...</h1>
           </div>
         }
       >
-        <div className="flex w-full justify-center bg-appBlue p-4 text-appBG">
+        <div className="flex w-full justify-center bg-blueGradient bg-appBlue p-4 text-appBG">
           <h1 className="text-xl font-bold">Dashboard</h1>
         </div>
         {!currentUser ? (
@@ -90,22 +90,22 @@ export default function Dashboard() {
             </div>
           </>
         ) : (
-         
-            <div className='lg:flex'>
-              <div className='lg:w-2/5 flex-none'>
-                <DashboardAdultInfo user={currentUser} />
-              </div>
-              <div className='lg:w-3/5 flex-none'>
-                <Suspense fallback={<NotificationSuspense />}>
-                  <Notification currentUser={currentUser} />
-                </Suspense>
-                <DashboardPlaydateSection adultData={currentUser} />
-                <Suspense fallback={<DashboardKidsSectionSuspense />}>
-                  <DashboardKidsSection adultData={currentUser} />
-                </Suspense>
-              </div>
+
+          <div className='lg:flex'>
+            <div className='lg:w-2/5 flex-none'>
+              <DashboardAdultInfo user={currentUser} />
             </div>
-          
+            <div className='lg:w-3/5 flex-none'>
+              <Suspense fallback={<NotificationSuspense />}>
+                <Notification currentUser={currentUser} />
+              </Suspense>
+              <DashboardPlaydateSection adultData={currentUser} />
+              <Suspense fallback={<DashboardKidsSectionSuspense />}>
+                <DashboardKidsSection adultData={currentUser} />
+              </Suspense>
+            </div>
+          </div>
+
         )}
       </Suspense>
     </main>

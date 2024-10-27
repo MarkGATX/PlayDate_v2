@@ -299,7 +299,7 @@ export default function PlaceReview({
                         href={`${photo.authorAttributions[0].uri}`}
                         target="_blank"
                       >
-                        <p className="absolute z-10 bg-appBlueTrans p-2 text-xs text-appGold">
+                        <p className="absolute z-10 bg-blueGradient bg-appBlueTrans p-2 text-xs text-appGold">
                           Image by {photo.authorAttributions[0].displayName}
                         </p>
                       </a>
@@ -314,8 +314,8 @@ export default function PlaceReview({
         </div>
         {/* {currentPlace ? (
         <>
-          <div className="bg-appBlue py-4 text-appBG">
-            <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG">
+          <div className="bg-blueGradient bg-appBlue py-4 text-appBG">
+            <h2 className="bg-blueGradient bg-appBlue p-4 text-lg font-bold text-appBG">
               <Link
                 href={`/place/${currentPlace.id}`}
                 className="cursor-pointer underline"
@@ -338,8 +338,8 @@ export default function PlaceReview({
       <section className="flex flex-wrap xl:flex-col xl:align-top xl:justify-start justify-center xl:order-1">
         {currentPlace ? (
           <>
-            <div className="bg-appBlue py-4 text-appBG w-full">
-              <h2 className="bg-appBlue p-4 text-lg font-bold text-appBG">
+            <div className="bg-blueGradient bg-appBlue py-4 text-appBG w-full">
+              <h2 className="bg-blueGradient bg-appBlue p-4 text-lg font-bold text-appBG">
                 <Link
                   href={`/place/${currentPlace.id}`}
                   className="cursor-pointer underline"
@@ -518,7 +518,7 @@ export default function PlaceReview({
             className="mt-4 flex w-full justify-center"
           >
             <button
-              className="min-w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
+              className="min-w-48 transform cursor-pointer rounded-xl border-2 border-appBlue bg-appGold px-4 py-2 text-sm duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
               onPointerDown={(event) => handleSavingReviewEdits(event)}
             >
               Save Your Review
@@ -538,7 +538,7 @@ export default function PlaceReview({
               </button>
             ) : (
               <button
-                className={`min-w-36 cursor-pointer bg-appGold px-4 py-2 text-sm ${openReviewEditor ? "hover:bg-green-700" : "hover:bg-appBlue"} transform rounded-xl border-2 border-appBlue duration-300 ease-in-out hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50`}
+                className={`min-w-36 cursor-pointer bg-appGold px-4 py-2 text-sm ${openReviewEditor ? "hover:bg-green-700" : "hover:bg-blueGradient hover:bg-appBlue"} transform rounded-xl border-2 border-appBlue duration-300 ease-in-out hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50`}
                 onPointerDown={() =>
                   setOpenReviewEditor((previousValue) => !previousValue)
                 }

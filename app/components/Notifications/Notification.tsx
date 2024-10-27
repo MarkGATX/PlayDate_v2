@@ -42,7 +42,7 @@ export default function Notification({
             .from("Notifications")
             .select("*")
             .eq("receiver_id", currentUser.id);
-            console.log(notificationData)
+        console.log(notificationData)
         if (notificationData && notificationData.length > 0) {
           const updatedNotifications = await Promise.all(
             notificationData.map(async (notification) => {
@@ -73,7 +73,7 @@ export default function Notification({
 
               let playdateData;
               if (
-                notification.notification_type === ( NotificationEnums.inviteToPlaydate ||  NotificationEnums.changePlaydateTime)
+                notification.notification_type === (NotificationEnums.inviteToPlaydate || NotificationEnums.changePlaydateTime)
               ) {
                 //get additional playdate information if related to playdates.
                 const {
@@ -179,7 +179,7 @@ export default function Notification({
       id="notificationSection"
       className="mb-4 flex w-full flex-col gap-2"
     >
-      <div className="align-center flex w-full items-center justify-start bg-appBlue px-4 text-appBG xl:rounded-bl-md">
+      <div className="align-center flex w-full items-center justify-start bg-blueGradient bg-appBlue px-4 text-appBG xl:rounded-bl-md">
         <div
           className="transform cursor-pointer rounded-md bg-appGold p-2 duration-300 ease-in-out hover:scale-125"
           onClick={handleShowNotifications}
@@ -202,7 +202,7 @@ export default function Notification({
       </div>
       <div
         ref={notificationsAreaRef}
-        className="flex h-0 flex-col gap-2 overflow-y-hidden px-4 opacity-0"
+        className="flex h-0 flex-col items-center gap-2 overflow-y-hidden px-4 opacity-0"
       >
         {isLoadingNotifications ? (
           <div>Loading notifications...</div>

@@ -22,6 +22,8 @@ const config: Config = {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "blueGradient" :
+          "linear-gradient(to right, oklch(32.39% .177 266.91) 0%, oklch(32.39% .25 266.9) 100%)"
       },
       // borderColor: {
       //   'appBlue':  'oklch(32.39% 0.177 266.91)'
