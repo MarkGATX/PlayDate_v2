@@ -247,6 +247,7 @@ export default function PlaceDetails({
               effect={"fade"}
               navigation={true}
               modules={[Pagination, Navigation, EffectFade]}
+              className='w-full'
             >
               {currentPlace ? (
                 !currentPlace.photos || currentPlace.photos.length === 0 ? (
@@ -255,8 +256,6 @@ export default function PlaceDetails({
                     <Image
                       src="/logos/playdate_logo.webp"
                       alt="Playdate logo"
-                      // width={250}
-                      // height={250}
                       fill={true}
                       sizes="(max-width:768px) 100vw, 33vw"
                       style={{ objectFit: "contain" }}
@@ -269,6 +268,7 @@ export default function PlaceDetails({
                         src={`https://places.googleapis.com/v1/${photo.name}/media?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API}&maxWidthPx=800&maxHeightPx=800`}
                         alt={`pic ${index + 1} of ${currentPlace?.displayName.text}`}
                         fill={true}
+                        sizes="(max-width:768px) 100vw, 33vw"
                         style={{ objectFit: "cover" }}
                       ></Image>
                       {photo.authorAttributions[0].displayName ? (
