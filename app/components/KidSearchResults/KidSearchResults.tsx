@@ -18,7 +18,7 @@ export default function KidSearchResults({
   searchTerm: string;
   currentUser: AdultsType;
   playdateInfo?: PlaydateType;
-  friendGroups?:FriendGroupType[]
+  friendGroups?: FriendGroupType[]
 }) {
   const [searchResults, setSearchResults] = useState<KidsType[]>([]);
   const [leftButtonEnd, setLeftButtonEnd] = useState<boolean>(true);
@@ -72,7 +72,11 @@ export default function KidSearchResults({
   // const memoizedKidSearchResults = useMemo(() => async () => {
   useEffect(() => {
     const fetchKidSearchResults = async () => {
-      const kidResultArray = await searchForKids({ searchTerm });
+      if(!playdateInfo) {
+        return
+      }
+      const host_kid_id = playdateInfo.host_kid_id
+      const kidResultArray = await searchForKids({ searchTerm, host_kid_id });
       if (searchTerm && kidResultArray && kidResultArray.length > 0) {
         setSearchResults((previousValue) => kidResultArray);
         gsap.to(kidSearchResultsRef.current, {
@@ -107,6 +111,7 @@ export default function KidSearchResults({
   }, [searchTerm]);
 
   console.log(searchResults)
+  console.log(playdateInfo)
 
   return (
     <>
@@ -125,8 +130,7 @@ export default function KidSearchResults({
             {searchTerm && searchResults.length === 0 ? (
               <div className="p-2">{`Sorry, we can't find that kid.`}</div>
             ) : searchTerm && searchResults.length > 0 ? (
-              searchResults.map((kid) => {
-                return kid.primary_caregiver === currentUser.id ? null : (
+              searchResults.map((kid) => (
                   <KidSearchCard
                     key={kid.id}
                     searchType={searchType}
@@ -135,10 +139,9 @@ export default function KidSearchResults({
                     kidData={kid}
                     friendGroups={friendGroups ?? []}
                   />
-                );
-              })
-            ) : 
-            null}
+                ))
+            ) :
+              null}
           </div>
 
           {/* {searchResults

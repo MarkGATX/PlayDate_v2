@@ -87,6 +87,7 @@ export default function PlaydateDetails() {
 
           // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
           const { Adults, Kids, ...remainingData } = playdateData[0];
+          console.log(remainingData)
           const newPlaydateData = {
             ...remainingData,
             kid_name: {
@@ -312,7 +313,7 @@ export default function PlaydateDetails() {
     }
   }
 
-  console.log(placeDetails)
+  console.log(playdateInfo)
 
   return (
     <main className='xl:flex w-full'>

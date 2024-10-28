@@ -8,13 +8,11 @@ export type PlaydateType = {
   time: Date;
   host_id: string;
   host_name: nameType;
-  kid_id: string;
+  host_kid_id: string;
   kid_name: nameType;
   kid_first_name_only: boolean;
   host_notes?: Delta;
 };
-
-
 
 type nameType = {
   first_name: string;

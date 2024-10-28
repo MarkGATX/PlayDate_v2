@@ -14,31 +14,31 @@ export default function KidSearchResults({
   const [searchResults, setSearchResults] = useState<KidsType[]>([]);
   const kidSearchResultsRef = useRef<HTMLElement | null>(null);
 
-  useEffect(() => {
-    const kidSearchResults = async () => {
-      const kidResultArray = await searchForKids({ searchTerm });
-      if (kidResultArray && kidResultArray.length > 0) {
-        setSearchResults(kidResultArray);
-        gsap.to(kidSearchResultsRef.current, {
-          autoAlpha: 1,
-          maxHeight: "200px",
-          duration: 1,
-          ease: "power1.inOut",
-        });
-      } else {
-        // Handle the case where data is not available (e.g., set an empty array or loading state)
-        setSearchResults([]); // Set an empty array or display a loading message
-        gsap.to(kidSearchResultsRef.current, {
-          autoAlpha: 0,
-          maxHeight: 0,
-          duration: 1,
-          ease: "power1.inOut",
-        });
-      }
-    };
+  // useEffect(() => {
+  //   const kidSearchResults = async () => {
+  //     const kidResultArray = await searchForKids({ searchTerm });
+  //     if (kidResultArray && kidResultArray.length > 0) {
+  //       setSearchResults(kidResultArray);
+  //       gsap.to(kidSearchResultsRef.current, {
+  //         autoAlpha: 1,
+  //         maxHeight: "200px",
+  //         duration: 1,
+  //         ease: "power1.inOut",
+  //       });
+  //     } else {
+  //       // Handle the case where data is not available (e.g., set an empty array or loading state)
+  //       setSearchResults([]); // Set an empty array or display a loading message
+  //       gsap.to(kidSearchResultsRef.current, {
+  //         autoAlpha: 0,
+  //         maxHeight: 0,
+  //         duration: 1,
+  //         ease: "power1.inOut",
+  //       });
+  //     }
+  //   };
 
-    kidSearchResults();
-  }, [searchTerm]);
+  //   kidSearchResults();
+  // }, [searchTerm]);
 
   return (
     <section

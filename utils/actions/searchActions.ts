@@ -4,9 +4,9 @@ import { PostgrestError } from "@supabase/supabase-js";
 import { KidsType } from "../types/userTypeDefinitions";
 import supabaseClient from "../supabase/client";
 
-export async function searchForKids({ searchTerm }: { searchTerm: string }) {
+export async function searchForKids({ searchTerm, host_kid_id }: { searchTerm: string, host_kid_id:string }) {
   if (!searchTerm) {
-    return [];
+    return;
   }
   try {
     if (searchTerm.includes(" ")) {
@@ -22,7 +22,8 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
           .select("*")
           .or(
             `first_name.ilike.%${searchTermFirstName}%, last_name.ilike.%${searchTermLastName}%`,
-          );
+          )
+          .neq("id", host_kid_id)
       if (kidSearchError) {
         console.error("Error searching for kids:", kidSearchError);
       }
@@ -37,7 +38,8 @@ export async function searchForKids({ searchTerm }: { searchTerm: string }) {
           .select("*")
           .or(
             `first_name.ilike.%${searchTerm}%, last_name.ilike.%${searchTerm}%`,
-          );
+          )
+          .neq("id", host_kid_id);
       // .ilike('first_name', `%${searchTerm}%`)
       if (kidSearchError) {
         console.error("Error searching for kids:", kidSearchError);
