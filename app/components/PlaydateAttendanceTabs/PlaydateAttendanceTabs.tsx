@@ -4,7 +4,7 @@ import {
   InviteStatusType,
 } from "@/utils/types/playdateTypeDefinitions";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function PlaydateAttendanceTabs({
   playdate,
@@ -22,56 +22,67 @@ export default function PlaydateAttendanceTabs({
     InviteStatusType[] | null
   >(null);
 
+  const getPlaydateAttendanceData = useCallback(async () => {
+    console.log('GET ATTENDANCE')
+    //using returns to override what supabase expects to receive. They expect an array here but sending an object, so overriding to expect an object
+    const {
+      data: playdateAttendanceData,
+      error: playdateAttendanceDataError,
+    } = await supabaseClient
+      .from("Playdate_Attendance")
+      .select(
+        "invite_status, Kids(id,first_name, last_name, profile_pic, first_name_only)",
+      )
+      .eq("playdate_id", playdate)
+      .returns<InviteStatusType[]>();
+
+    // if (playdateAttendanceData) {
+    //   console.log(attendanceData)
+    //   setAttendanceData(playdateAttendanceData);
+    // }
+    if (playdateAttendanceData) {
+      setAttendanceData(prevData => {
+        // Only update if the data has changed. uses function version of setting the update to prevent infinite re-renders
+        if (JSON.stringify(prevData) !== JSON.stringify(playdateAttendanceData)) {
+          return playdateAttendanceData;
+        }
+        return prevData;
+      });
+    }
+
+    if (playdateAttendanceData && playdateAttendanceData.length > 0) {
+      let rawYesData: InviteStatusType[] = [];
+      let rawNoData: InviteStatusType[] = [];
+      let rawMaybeData: InviteStatusType[] = [];
+      let rawInvitedData: InviteStatusType[] = [];
+      playdateAttendanceData.forEach((attendee) => {
+        switch (attendee.invite_status) {
+          case "accepted":
+            rawYesData.push(attendee);
+            break;
+          case "rejected":
+            rawNoData.push(attendee);
+            break;
+          case "maybe":
+            rawMaybeData.push(attendee);
+            break;
+          case "invited":
+            rawInvitedData.push(attendee);
+            break;
+          default:
+            break;
+        }
+      });
+      // Update state in a single operation
+      setYesResponse(rawYesData);
+      setNoResponse(rawNoData);
+      setMaybeResponse(rawMaybeData);
+      setInvitedResponse(rawInvitedData);
+    }
+  }, [playdate]
+  );
+
   useEffect(() => {
-    const getPlaydateAttendanceData = async () => {
-      console.log('GET ATTENDANCE')
-      //using returns to override what supabase expects to receive. They expect an array here but sending an object, so overriding to expect an object
-      const {
-        data: playdateAttendanceData,
-        error: playdateAttendanceDataError,
-      } = await supabaseClient
-        .from("Playdate_Attendance")
-        .select(
-          "invite_status, Kids(id,first_name, last_name, profile_pic, first_name_only)",
-        )
-        .eq("playdate_id", playdate)
-        .returns<InviteStatusType[]>();
-
-      if (playdateAttendanceData) {
-        console.log(attendanceData)
-        setAttendanceData(playdateAttendanceData);
-      }
-      if (playdateAttendanceData && playdateAttendanceData.length > 0) {
-        let rawYesData: InviteStatusType[] = [];
-        let rawNoData: InviteStatusType[] = [];
-        let rawMaybeData: InviteStatusType[] = [];
-        let rawInvitedData: InviteStatusType[] = [];
-        playdateAttendanceData.forEach((attendee) => {
-          switch (attendee.invite_status) {
-            case "accepted":
-              rawYesData.push(attendee);
-              break;
-            case "rejected":
-              rawNoData.push(attendee);
-              break;
-            case "maybe":
-              rawMaybeData.push(attendee);
-              break;
-            case "invited":
-              rawInvitedData.push(attendee);
-              break;
-            default:
-              break;
-          }
-        });
-        // Update state in a single operation
-        setYesResponse(rawYesData);
-        setNoResponse(rawNoData);
-        setMaybeResponse(rawMaybeData);
-        setInvitedResponse(rawInvitedData);
-      }
-    };
-
     getPlaydateAttendanceData();
 
     const attendanceSubscription = supabaseClient
@@ -94,7 +105,7 @@ export default function PlaydateAttendanceTabs({
     return () => {
       supabaseClient.removeChannel(attendanceSubscription);
     };
-  }, [playdate, attendanceData]);
+  }, [playdate, getPlaydateAttendanceData]);
 
   const handleClick = async (value: string) => {
     setSelectedTab(value);

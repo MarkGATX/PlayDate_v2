@@ -106,6 +106,8 @@ export default function KidSearchResults({
     fetchKidSearchResults();
   }, [searchTerm]);
 
+  console.log(searchResults)
+
   return (
     <>
       <section
@@ -135,7 +137,8 @@ export default function KidSearchResults({
                   />
                 );
               })
-            ) : null}
+            ) : 
+            null}
           </div>
 
           {/* {searchResults
