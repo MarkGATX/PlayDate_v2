@@ -59,156 +59,166 @@ export default function PlaydateDetails() {
   const playdateID: string = params.playdateID;
   const router = useRouter();
 
+  //use to check if params is a valid UID. Throws null error in query otherwise
+  function isValidUUID(uuid: string) {
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(uuid);
+  }
 
 
   useEffect(() => {
-    const getPlaydateInfo = async () => {
-      try {
-        const { data: playdateData, error: playdateDataError } =
-          await supabaseClient
-            .from("Playdates")
-            .select(
-              "*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)",
-            )
-            .eq("id", params.playdateID);
-        if (playdateDataError) {
-          throw playdateDataError;
-        }
-        console.log(playdateData);
-        if (playdateData.length === 0) {
+    if (isValidUUID(params.playdateID)) {
 
-          // notFound();
-          router.push("/playdates/");
-        } else if (playdateData.length > 0) {
-
-          let luxonDate = DateTime.fromISO(playdateData[0].time);
-
-          setUnformattedPlaydateDate(luxonDate);
-
-          // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
-          const { Adults, Kids, ...remainingData } = playdateData[0];
-          console.log(remainingData)
-          const newPlaydateData = {
-            ...remainingData,
-            kid_name: {
-              first_name: Kids.first_name,
-              last_name: Kids.last_name,
-            },
-            host_name: {
-              first_name: Adults.first_name,
-              last_name: Adults.last_name,
-            },
-            kid_first_name_only: Kids.first_name_only,
-          };
-          setPlaydateInfo(newPlaydateData);
-
-          //get kid friend groups
-          const { data: friendGroupData, error: friendGroupError } = await supabaseClient
-            .from("Friend_Group")
-            .select("*")
-            .eq("kid_owner", newPlaydateData.host_kid_id)
-          if (friendGroupError) {
-            throw friendGroupError
+      const getPlaydateInfo = async () => {
+        try {
+          const { data: playdateData, error: playdateDataError } =
+            await supabaseClient
+              .from("Playdates")
+              .select(
+                "*, Kids(first_name, last_name, first_name_only), Adults(first_name, last_name)",
+              )
+              .eq("id", params.playdateID);
+          if (playdateDataError) {
+            throw playdateDataError;
           }
+          console.log(playdateData);
+          if (playdateData.length === 0) {
 
-          console.log(friendGroupData)
+            // notFound();
+            router.push("/playdates/");
+          } else if (playdateData.length > 0) {
 
-          // Use a temporary array to collect friend groups
-          const tempFriendGroups = [];
+            let luxonDate = DateTime.fromISO(playdateData[0].time);
 
-          // Clear previous friend groups before setting new ones
-          setFriendGroups([]);
-          //use for...of to handle await in each fetch from supabase
-          //use returns to ensure correct typing of response. once again supabase expecting an array but returning an object. this return overrides that
-          for (const friendGroup of friendGroupData) {
-            const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
-              .from("Friend_Group_Members")
-              .select("kid_uid, Kids(primary_caregiver, first_name, first_name_only, last_name, profile_pic)")
-              .eq("friend_group_uid", friendGroup.id)
-              .returns<SupabaseFriendGroupMemberType[]>();
-            if (friendGroupMembersError) {
-              throw friendGroupMembersError
+            setUnformattedPlaydateDate(luxonDate);
+
+            // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
+            const { Adults, Kids, ...remainingData } = playdateData[0];
+            console.log(remainingData)
+            const newPlaydateData = {
+              ...remainingData,
+              kid_name: {
+                first_name: Kids.first_name,
+                last_name: Kids.last_name,
+              },
+              host_name: {
+                first_name: Adults.first_name,
+                last_name: Adults.last_name,
+              },
+              kid_first_name_only: Kids.first_name_only,
+            };
+            setPlaydateInfo(newPlaydateData);
+
+            //get kid friend groups
+            const { data: friendGroupData, error: friendGroupError } = await supabaseClient
+              .from("Friend_Group")
+              .select("*")
+              .eq("kid_owner", newPlaydateData.host_kid_id)
+            if (friendGroupError) {
+              throw friendGroupError
             }
-            console.log(friendGroupMembers)
-            const friendGroupData = {
-              id: friendGroup.id,
-              group_name: friendGroup.group_name,
-              kid_owner: friendGroup.kid_owner,
-              //map group members to extract from uid and use a string
-              friend_group_members: friendGroupMembers.map((member: SupabaseFriendGroupMemberType) =>
-              ({
-                kid_id: member.kid_uid,
-                primary_caregiver_id: member.Kids.primary_caregiver || '',
-                profile_pic: member.Kids.profile_pic || '',
-                first_name: member.Kids.first_name,
-                last_name: member.Kids.last_name,
-                first_name_only: member.Kids.first_name_only
-              }))
-            }
+
             console.log(friendGroupData)
-            console.log(friendGroupMembers)
-            tempFriendGroups.push(friendGroupData)
 
-          }
-          setFriendGroups(tempFriendGroups)
+            // Use a temporary array to collect friend groups
+            const tempFriendGroups = [];
 
-          //get location data
-          // check for location in local storage first
-          const localStoragePlaces = localStorage.getItem("placesData");
-          const placesData: placesDataTypeWithExpiry = localStoragePlaces
-            ? JSON.parse(localStoragePlaces)
-            : [];
-          //if places has any data, check to see if stored locally otherwise fetch
-          if (placesData?.places?.length > 0) {
-            const selectedPlace = placesData.places.find(
-              (place: placesDataType) => place.id === playdateData[0].location,
-            );
-            //if place is in local storage, set details, else fetch details
-            if (selectedPlace) {
-              setPlaceDetails(selectedPlace);
-            } else {
-              const fetchPlace = await fetchPlaceDetails(
+            // Clear previous friend groups before setting new ones
+            setFriendGroups([]);
+            //use for...of to handle await in each fetch from supabase
+            //use returns to ensure correct typing of response. once again supabase expecting an array but returning an object. this return overrides that
+            for (const friendGroup of friendGroupData) {
+              const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
+                .from("Friend_Group_Members")
+                .select("kid_uid, Kids(primary_caregiver, first_name, first_name_only, last_name, profile_pic)")
+                .eq("friend_group_uid", friendGroup.id)
+                .returns<SupabaseFriendGroupMemberType[]>();
+              if (friendGroupMembersError) {
+                throw friendGroupMembersError
+              }
+              console.log(friendGroupMembers)
+              const friendGroupData = {
+                id: friendGroup.id,
+                group_name: friendGroup.group_name,
+                kid_owner: friendGroup.kid_owner,
+                //map group members to extract from uid and use a string
+                friend_group_members: friendGroupMembers.map((member: SupabaseFriendGroupMemberType) =>
+                ({
+                  kid_id: member.kid_uid,
+                  primary_caregiver_id: member.Kids.primary_caregiver || '',
+                  profile_pic: member.Kids.profile_pic || '',
+                  first_name: member.Kids.first_name,
+                  last_name: member.Kids.last_name,
+                  first_name_only: member.Kids.first_name_only
+                }))
+              }
+              console.log(friendGroupData)
+              console.log(friendGroupMembers)
+              tempFriendGroups.push(friendGroupData)
+
+            }
+            setFriendGroups(tempFriendGroups)
+
+            //get location data
+            // check for location in local storage first
+            const localStoragePlaces = localStorage.getItem("placesData");
+            const placesData: placesDataTypeWithExpiry = localStoragePlaces
+              ? JSON.parse(localStoragePlaces)
+              : [];
+            //if places has any data, check to see if stored locally otherwise fetch
+            if (placesData?.places?.length > 0) {
+              const selectedPlace = placesData.places.find(
+                (place: placesDataType) => place.id === playdateData[0].location,
+              );
+              //if place is in local storage, set details, else fetch details
+              if (selectedPlace) {
+                setPlaceDetails(selectedPlace);
+              } else {
+                const fetchPlace = await fetchPlaceDetails(
+                  playdateData[0].location,
+                );
+                setPlaceDetails(fetchPlace);
+              }
+            } else if (
+              placesData?.places?.length === 0 ||
+              !placesData?.places?.length
+            ) {
+              const fetchPlaceDetails = await fetchPlaceData(
                 playdateData[0].location,
               );
-              setPlaceDetails(fetchPlace);
+              setPlaceDetails(fetchPlaceDetails);
             }
-          } else if (
-            placesData?.places?.length === 0 ||
-            !placesData?.places?.length
-          ) {
-            const fetchPlaceDetails = await fetchPlaceData(
-              playdateData[0].location,
-            );
-            setPlaceDetails(fetchPlaceDetails);
           }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
-      }
-    };
+      };
 
-    const playdateSubscription = supabaseClient
-      .channel("supabase_realtime")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "Playdates",
-          filter: `id=eq.${params.playdateID}`,
-        },
-        (payload) => {
-          getPlaydateInfo();
-        },
-      )
-      .subscribe();
+      const playdateSubscription = supabaseClient
+        .channel("supabase_realtime")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "Playdates",
+            filter: `id=eq.${params.playdateID}`,
+          },
+          (payload) => {
+            getPlaydateInfo();
+          },
+        )
+        .subscribe();
 
-    getPlaydateInfo();
+      getPlaydateInfo();
 
-    return () => {
-      supabaseClient.removeChannel(playdateSubscription);
-    };
-  }, [params, router]);
+      return () => {
+        supabaseClient.removeChannel(playdateSubscription);
+      };
+    } else {
+      notFound();
+    }
+    }, [params, router]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
