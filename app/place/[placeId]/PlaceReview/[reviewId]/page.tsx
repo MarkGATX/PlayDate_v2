@@ -270,6 +270,7 @@ export default function PlaceReview({
             effect={"fade"}
             navigation={true}
             modules={[Pagination, Navigation, EffectFade]}
+            className='w-full'
           >
             {currentPlace ? (
               !currentPlace.photos || currentPlace.photos.length === 0 ? (
