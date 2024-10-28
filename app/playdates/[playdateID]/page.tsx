@@ -295,7 +295,7 @@ export default function PlaydateDetails() {
 
   const handleDeletePlaydate = async () => {
     try {
-      await deletePlaydate(playdateID);
+      const result = await deletePlaydate(playdateID);
       router.push('/dashboard')
     } catch (error) {
       console.error("Error deleting playdate: ", error);

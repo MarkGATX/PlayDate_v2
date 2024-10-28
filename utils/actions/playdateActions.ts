@@ -111,8 +111,11 @@ export async function deletePlaydate(playdateId: string) {
         .delete()
         .eq("id", playdateId)
         .single();
+    if (deletedPlaydateDataError) {
+      throw deletedPlaydateDataError
+    }
   } catch (error) {
-    console.error(error);
+    console.error('error deleting playdate: ', error);
   }
 }
 
@@ -157,7 +160,7 @@ export async function getKidsPlaydateData(adultId: string) {
       .from("Adult_Kid")
       .select("*")
       .eq("adult_id", adultId);
-      
+
   if (kidsDataForPlaydateError) {
     throw kidsDataForPlaydateError;
   }
@@ -172,7 +175,7 @@ export async function getKidsPlaydateData(adultId: string) {
             )
             .eq("kid_id", kid.kid_id)
             .gte("Playdates.time::date", today.toISOString());
-            //use inner join to ensure no attendance records or playdate records return unless they match both filters
+        //use inner join to ensure no attendance records or playdate records return unless they match both filters
         if (playdatesForKidError) {
           throw playdatesForKidError;
         }
@@ -373,19 +376,19 @@ export async function rejectPlaydateInvite(
   }
 }
 
-export async function removeKidFromFriendGroup(kid_id:string, friend_group_id:string) {
+export async function removeKidFromFriendGroup(kid_id: string, friend_group_id: string) {
   try {
-    const {data:friendData, error:friendDataError} = await supabaseClient
-    .from("Friend_Group_Members")
-    .delete()
-    .eq('friend_group_uid', friend_group_id)
-    .eq('kid_uid', kid_id)
-    .single()
-    if(friendDataError) {
+    const { data: friendData, error: friendDataError } = await supabaseClient
+      .from("Friend_Group_Members")
+      .delete()
+      .eq('friend_group_uid', friend_group_id)
+      .eq('kid_uid', kid_id)
+      .single()
+    if (friendDataError) {
       throw friendDataError
     }
     return friendData
-  }catch(error) {
+  } catch (error) {
     console.error("Error removing kid from friend group: ", error)
   }
 }
