@@ -15,26 +15,67 @@ export default function ChangePlaydateTime({
   const { id, playdate_time } = notification;
 
   const handleDeleteNotification = async () => {
+    console.log('delete notification')
     deleteNotification(id);
   };
 
-  let playdateTimeISO;
+  // let playdateTimeISO;
+  // if (playdate_time instanceof Date) {
+  //   // playdateTimeISO = playdate_time.toISOString();
+  //   playdateTimeISO = DateTime.fromJSDate(playdate_time);
+  // } else {
+  //   playdateTimeISO = new Date(playdate_time).toISOString();
+  // }
+
+  // // Parse and format the playdate_time
+  // const formattedDate = DateTime.fromISO(playdateTimeISO).toLocaleString(
+  //   DateTime.DATETIME_MED,
+  // );
+
+  // Parse the playdate_time using Luxon
+  let playdateDateTime: DateTime;
+  console.log(playdate_time)
+  console.log(playdate_time instanceof Date)
   if (playdate_time instanceof Date) {
-    playdateTimeISO = playdate_time.toISOString();
+    playdateDateTime = DateTime.fromJSDate(playdate_time);
+  } else if (typeof playdate_time === 'string') {
+    // Attempt to parse the string as an ISO date or SQL date
+    playdateDateTime = DateTime.fromISO(playdate_time).isValid 
+      ? DateTime.fromISO(playdate_time) 
+      : DateTime.fromSQL(playdate_time);
   } else {
-    playdateTimeISO = new Date(playdate_time).toISOString();
+    // Handle invalid input
+    console.error('Invalid playdate_time format');
+    playdateDateTime = DateTime.local(); // Use current time as fallback
   }
 
-  // Parse and format the playdate_time
-  const newDate = DateTime.fromISO(playdateTimeISO).toLocaleString(
-    DateTime.DATETIME_MED,
-  );
+  // Format the date for display
+  const formattedDate = playdateDateTime.toLocaleString(DateTime.DATETIME_MED);
+  
+
+    // // Parse the playdate_time using Luxon
+    // let playdateDateTime: DateTime;
+    // if (playdate_time instanceof Date) {
+    //   playdateDateTime = DateTime.fromJSDate(playdate_time);
+    // } else if (typeof playdate_time === 'string') {
+    //   // Attempt to parse the string as an ISO date or SQL date
+    //   playdateDateTime = DateTime.fromISO(playdate_time).isValid 
+    //     ? DateTime.fromISO(playdate_time) 
+    //     : DateTime.fromSQL(playdate_time);
+    // } else {
+    //   // Handle invalid input
+    //   console.error('Invalid playdate_time format');
+    //   // playdateDateTime = DateTime.local(); // Use current time as fallback
+    // }
+  
+    // // Format the date for display
+    // const formattedDate = playdateDateTime.toLocaleString(DateTime.DATETIME_MED);
 
   return (
-    <section className="flex justify-between rounded-lg bg-inputBG p-2 text-sm">
+    <section className="flex justify-between rounded-lg bg-inputBG p-2 text-sm w-full xl:w-3/4">
       <div className="w-5/6">
         <h3 className="font-bold">{`There's been a Playdate time change.`}</h3>
-        <p>The new time is {newDate}</p>
+        <p>The new time is {formattedDate}</p>
       </div>
       <div
         className="flex w-1/6 items-center justify-end"

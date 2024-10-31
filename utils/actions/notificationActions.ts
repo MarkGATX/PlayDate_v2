@@ -85,6 +85,7 @@ export async function deleteNotification(notification_id: string) {
     if (error) {
       throw handleSupabaseError(error);
     }
+    
     return data;
   } catch (error) {
     console.error(error);

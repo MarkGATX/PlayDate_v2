@@ -17,6 +17,7 @@ export default function DashboardKidsSection({
   const kidsDashboardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    let kidSubscription: ReturnType<typeof supabaseClient.channel> 
     const getKidsData = async () => {
       const { data: kidsJoinData, error: kidsJoinDataError } =
         await supabaseClient
@@ -41,33 +42,38 @@ export default function DashboardKidsSection({
       }
     };
 
-    const kidSubscription = supabaseClient
-      .channel("kids_dashboard_subscription")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "Adult_Kid",
-          filter: `adult_id=eq.${adultData.id}`,
-        },
-        (payload) => {
-          getKidsData();
-        },
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Kids Subscription successful');
-        } else {
-          console.error('Kids Subscription failed:', status);
-        }
-      });
+    if (adultData.id) {
+      kidSubscription = supabaseClient
+        .channel("kids_dashboard_subscription")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "Adult_Kid",
+            filter: `adult_id=eq.${adultData.id}`,
+          },
+          (payload) => {
+            getKidsData();
+          },
+        )
+        .subscribe((status, err) => {
+          if (err) console.error('Kids Subscription error:', err);
+          if (status === 'SUBSCRIBED') {
+            console.log('Kids Subscription successful');
+          } else {
+            console.error('Kids Subscription failed:', status);
+          }
+        });
+    }
 
     getKidsData();
 
     return () => {
-      supabaseClient.removeChannel(kidSubscription);
-    };
+      if (kidSubscription) {
+        supabaseClient.removeChannel(kidSubscription);
+      };
+    }
   }, [adultData.id]);
 
   const { contextSafe } = useGSAP();

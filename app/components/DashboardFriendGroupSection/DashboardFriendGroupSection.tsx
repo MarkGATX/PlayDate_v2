@@ -191,14 +191,14 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
               getFriendGroups();
             },
           )
-          .subscribe((status) => {
+          .subscribe((status, err) => {
+            if (err) console.error('Friend Group Subscription error:', err);
             console.log(`Subscription status for friend_groups_subscription_${group.id}:`, status);
           });
         console.log(subscription)
         subscriptions.push(subscription)
       })
     }
-
     createSubscriptions();
 
     return () => {

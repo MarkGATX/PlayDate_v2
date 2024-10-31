@@ -10,7 +10,7 @@ import {
 } from "@/utils/types/notificationTypeDefinitions";
 import { AdultsType, KidsType } from "@/utils/types/userTypeDefinitions";
 import Image from "next/image";
-import { Suspense, useEffect, useReducer, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useReducer, useRef, useState } from "react";
 import AddKidRequestNotification from "./NotificationCategories/AddKidRequestNotification";
 import ApprovedAddKidRequestNotification from "./NotificationCategories/ApprovedAddKidRequest";
 import { NotificationEnums } from "@/utils/enums/notificationEnums";
@@ -19,6 +19,7 @@ import NotificationSuspense from "./NotificationSuspense";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ChangePlaydateTime from "./NotificationCategories/ChangePlaydateTime";
+import { RealtimeChannel } from "@supabase/supabase-js";
 
 export default function Notification({
   currentUser,
@@ -34,121 +35,124 @@ export default function Notification({
   const notificationsAreaRef = useRef<HTMLDivElement | null>(null);
   const { contextSafe } = useGSAP();
 
-  useEffect(() => {
-    const getCurrentNotifications = async () => {
-      try {
-        const { data: notificationData, error: notificationError } =
-          await supabaseClient
-            .from("Notifications")
-            .select("*")
-            .eq("receiver_id", currentUser.id);
-        console.log(notificationData)
-        if (notificationData && notificationData.length > 0) {
-          const updatedNotifications = await Promise.all(
-            notificationData.map(async (notification) => {
-              const { data: senderData, error: senderDataError } =
-                await supabaseClient
-                  .from("Adults")
-                  .select("id, first_name, last_name, profilePicURL")
-                  .eq("id", notification.sender_id)
-                  .single();
-              if (senderDataError) {
-                throw senderDataError;
+  const getCurrentNotifications = useCallback(async () => {
+    try {
+      const { data: notificationData, error: notificationError } =
+        await supabaseClient
+          .from("Notifications")
+          .select("*")
+          .eq("receiver_id", currentUser.id);
+      console.log(notificationData)
+      if (notificationData && notificationData.length > 0) {
+        const updatedNotifications = await Promise.all(
+          notificationData.map(async (notification) => {
+            const { data: senderData, error: senderDataError } = await supabaseClient
+              .from("Adults")
+              .select("id, first_name, last_name, profilePicURL")
+              .eq("id", notification.sender_id)
+              .single();
+            if (senderDataError) {
+              throw senderDataError;
+            }
+            let kidData;
+            if (notification.kid_id) {
+              const { data: kidRawData, error: kidRawDataError } = await supabaseClient
+                .from("Kids")
+                .select(
+                  "id, first_name, last_name, profile_pic, primary_caregiver, first_name_only",
+                )
+                .eq("id", notification.kid_id)
+                .single();
+              if (kidRawDataError) {
+                throw kidRawDataError;
               }
-              let kidData;
-              if (notification.kid_id) {
-                const { data: kidRawData, error: kidRawDataError } =
-                  await supabaseClient
-                    .from("Kids")
-                    .select(
-                      "id, first_name, last_name, profile_pic, primary_caregiver, first_name_only",
-                    )
-                    .eq("id", notification.kid_id)
-                    .single();
-                if (kidRawDataError) {
-                  throw kidRawDataError;
-                }
-                kidData = kidRawData;
+              kidData = kidRawData;
+            }
+
+            let playdateData;
+            if (notification.notification_type === NotificationEnums.inviteToPlaydate || notification.notification_type === NotificationEnums.changePlaydateTime
+            ) {
+              //get additional playdate information if related to playdates.
+              const { data: playdateDetailsData, error: playdateDetailsDataError } = await supabaseClient
+                .from("Playdates")
+                .select(
+                  "location, time, Kids(id, first_name, last_name, first_name_only, profile_pic)",
+                )
+                .eq("id", notification.playdate_id)
+                .single();
+              playdateData = playdateDetailsData;
+              console.log(playdateData)
+              if (playdateDetailsDataError) {
+                throw playdateDetailsDataError;
               }
+            }
 
-              let playdateData;
-              if (
-                notification.notification_type === (NotificationEnums.inviteToPlaydate || NotificationEnums.changePlaydateTime)
-              ) {
-                //get additional playdate information if related to playdates.
-                const {
-                  data: playdateDetailsData,
-                  error: playdateDetailsDataError,
-                } = await supabaseClient
-                  .from("Playdates")
-                  .select(
-                    "location, time, Kids(id, first_name, last_name, first_name_only, profile_pic)",
-                  )
-                  .eq("id", notification.playdate_id)
-                  .single();
-                playdateData = playdateDetailsData;
+            return {
+              ...notification,
+              sender: senderData,
+              kid: kidData,
+              receiver: currentUser,
+              playdate_location: playdateData?.location,
+              playdate_time: playdateData?.time,
+              host_kid: playdateData?.Kids,
+            }; // Combine data into a single object
+          }),
+        );
 
-                if (playdateDetailsDataError) {
-                  throw playdateDetailsDataError;
-                }
-              }
-
-              return {
-                ...notification,
-                sender: senderData,
-                kid: kidData,
-                receiver: currentUser,
-                playdate_location: playdateData?.location,
-                playdate_time: playdateData?.time,
-                host_kid: playdateData?.Kids,
-              }; // Combine data into a single object
-            }),
-          );
-
-          setNotifications(updatedNotifications);
-          // setNotifications(prevNotifications => {
-          //   console.log('Previous notifications:', prevNotifications);
-          //   console.log('New notifications:', updatedNotifications);
-          //   return updatedNotifications;
-          // });
-        } else {
-          setNotifications([]); // Handle case where no notifications are found
-        }
-        setIsLoadingNotifications(false);
-      } catch (error) {
-        console.error("Error fetching notifications:", error);
+        setNotifications(previousNotifications => [...updatedNotifications]);
+        // setNotifications(prevNotifications => {
+        //   console.log('Previous notifications:', prevNotifications);
+        //   console.log('New notifications:', updatedNotifications);
+        //   return updatedNotifications;
+        // });
+      } else {
+        setNotifications([]); // Handle case where no notifications are found
       }
-    };
+      setIsLoadingNotifications(false);
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  },[currentUser.id]);
 
-    const notificationSubscription = supabaseClient
-      .channel("dashboard_realtime_notifications")
-      .on(
-        "postgres_changes",
-        {
-          event: "*",
-          schema: "public",
-          table: "Notifications",
-          filter: `receiver_id=eq.${currentUser?.id}`,
-        },
-        (payload) => {
-          console.log('notification sub', payload)
-          //refetch notifications
-          getCurrentNotifications();
-        },
-      )
-      .subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          console.log('Notification Subscription successful');
-        } else {
-          console.error('Notification Subscription failed:', status);
-        }
-      });
+  useEffect(() => {
+    let notificationSubscription: ReturnType<typeof supabaseClient.channel>
+    
+
+    if (currentUser?.id) {
+      notificationSubscription = supabaseClient
+        .channel("dashboard_realtime_notifications")
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: "Notifications",
+            // filter not working at this moment. need to find why. maybe breaking update?
+            // filter: `receiver_id=eq.${currentUser?.id}`,
+          },
+          (payload) => {
+            console.log('notification sub', payload)
+            //refetch notifications
+            getCurrentNotifications();
+          },
+        )
+        .subscribe((status, err) => {
+          if (err) console.error('Notification Subscription error:', err);
+          if (status === 'SUBSCRIBED') {
+            console.log('Notification Subscription successful', status);
+          } else {
+            console.error('Notification Subscription failed:', status);
+          }
+        });
+    }
 
     getCurrentNotifications();
 
     return () => {
-      supabaseClient.removeChannel(notificationSubscription);
-    };
+      if (notificationSubscription) {
+        supabaseClient.removeChannel(notificationSubscription);
+      };
+    }
   }, [currentUser]);
 
   const handleShowNotifications = async () => {
@@ -173,6 +177,7 @@ export default function Notification({
     }
   };
   console.log(notifications)
+  console.log(currentUser)
 
   return (
     <section

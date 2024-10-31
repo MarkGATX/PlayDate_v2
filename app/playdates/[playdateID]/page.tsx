@@ -195,7 +195,7 @@ export default function PlaydateDetails() {
       };
 
       const playdateSubscription = supabaseClient
-        .channel("supabase_realtime")
+        .channel("playdate subscription")
         .on(
           "postgres_changes",
           {
@@ -208,7 +208,13 @@ export default function PlaydateDetails() {
             getPlaydateInfo();
           },
         )
-        .subscribe();
+        .subscribe((status, err) => {
+          if (status === 'SUBSCRIBED') {
+            if (err) console.error('Playdate Subscription error:', err);
+            console.log(' playdate Subscription successful');
+          } else {
+            console.error('playdate Subscription failed:', status);
+    }});
 
       getPlaydateInfo();
 

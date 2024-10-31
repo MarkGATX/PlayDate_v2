@@ -247,7 +247,7 @@ export default function MapContainer() {
                 defaultZoom={12}
                 gestureHandling={"greedy"}
                 disableDefaultUI={true}
-                mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}
+                mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}                
               >
                 {places && places.length > 0
                   ?

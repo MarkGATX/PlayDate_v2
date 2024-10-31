@@ -100,7 +100,14 @@ export default function PlaydateAttendanceTabs({
           getPlaydateAttendanceData();
         },
       )
-      .subscribe();
+      .subscribe((status, err) => {
+        if (status === 'SUBSCRIBED') {
+          if (err) console.error('Playdate attendance tabs Subscription error:', err);
+          console.log('attendance tabs Subscription successful');
+        } else {
+          console.error('Notification Subscription failed:', status);
+  }
+});
 
     return () => {
       supabaseClient.removeChannel(attendanceSubscription);

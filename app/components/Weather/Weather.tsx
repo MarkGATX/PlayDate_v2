@@ -62,10 +62,7 @@ export default function Weather() {
 
   return (
     <>
-      <section
-        id="weatherConditions"
-        className="relative flex w-full flex-wrap items-center justify-between"
-      >
+      <section id="weatherConditions" className="relative flex w-full flex-wrap items-center justify-between lg:justify-start" >
         {locationData.error ? (
           <div>Weather info not available. Is geolocation approved?</div>
         ) : currentWeather?.error ? (
@@ -80,10 +77,7 @@ export default function Weather() {
               </div>
             ) : (
               <>
-                <section
-                  id="tempRange"
-                  className="max-w-2/3 z-1 mb-2 flex w-2/3 items-center justify-between pr-1"
-                >
+                <section id="tempRange" className="max-w-2/3 z-1 mb-2 flex w-2/3 items-center justify-between pr-1" >
                   <Image
                     src={`/weather_icons/${currentWeather.current_id}.webp`}
                     width={32}
@@ -127,13 +121,10 @@ export default function Weather() {
                     ></Image>
                   </div>
                 </section>
-                <section
-                  id="rainChance"
-                  className="z-1 ml-1 w-1/4 text-right text-sm"
-                >
+                <section id="rainChance" className="z-1 ml-2 w-1/4 lg:w-1/6 text-right text-sm" >
                   {currentWeather.rain_chance === null ||
                   currentWeather.rain_chance === 0 ? null : (
-                    <div>{currentWeather.rain_chance}% rain</div>
+                    <div className='w-full text-left mb-2'>{currentWeather.rain_chance}% rain</div>
                   )}
                 </section>
                 {/* need to use GSAP to animate open and close to exact height of element. Refs are set just need to implement. using h-20 now for smooth animation but doesn't work for large text areas */}
