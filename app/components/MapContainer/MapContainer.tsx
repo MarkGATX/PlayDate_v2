@@ -234,12 +234,12 @@ export default function MapContainer() {
               {/* <div>{currentLocation.latitude} {currentLocation.longitude}</div> */}
               <Map
                 className="h-[250px] sm:h-[33dvh] xl:h-[calc(100dvh-125px)] w-full flex-none"
-
                 defaultCenter={{
                   lat: currentLocation.latitude,
                   lng: currentLocation.longitude,
                 }}
-                defaultZoom={12}
+                defaultZoom={window.matchMedia('(min-width: 768px)').matches ? 14 : 12}
+                
                 gestureHandling={"greedy"}
                 disableDefaultUI={true}
                 mapId={process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAIN_MAP_ID}                
