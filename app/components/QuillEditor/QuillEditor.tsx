@@ -183,8 +183,6 @@ const QuillEditor: React.FC<QuillEditorProps> = ({
   const editorRef = useRef<HTMLDivElement>(null);
   const toolbarRef = useRef<HTMLDivElement>(null);
   const [quill, setQuill] = useState<Quill | null>(null);
-  console.log(openNoteEditor);
-  console.log(content);
 
   const defaultText: Delta = new Delta().insert("Write a note", { bold: true });
 

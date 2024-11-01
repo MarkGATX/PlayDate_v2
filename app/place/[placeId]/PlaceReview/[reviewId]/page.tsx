@@ -65,7 +65,6 @@ export default function PlaceReview({
 
   // Separate useEffect for setting contents
   useEffect(() => {
-    console.log(quill);
     if (quill && currentReview?.reviewer_notes) {
       quill.setContents(currentReview.reviewer_notes);
     }
@@ -196,14 +195,6 @@ export default function PlaceReview({
 
         const reviewDeltaContent: Delta = quill.getContents();
         const reviewPlainTextContent = quill.getText();
-        // const reviewPlainTextContent: string = await new Promise((resolve) => {
-        //     resolve(quill.getText());
-        // });
-
-        // console.log(reviewPlainTextContent)
-        // console.log(currentReview)
-        // setCurrentReview({ ...currentReview, reviewer_notes:reviewDeltaContent, reviewer_notes_plain_text:reviewPlainTextContent })
-        // saveToDB(reviewDeltaContent, reviewPlainTextContent)
 
         const { data: locationReview, error: locationReviewError } =
           await supabaseClient
@@ -216,13 +207,12 @@ export default function PlaceReview({
             })
             .eq("id", currentReview?.id)
             .select();
-        console.log(locationReview);
         setOpenReviewEditor((previousValue) => !previousValue);
         if (locationReviewError) {
           throw locationReviewError;
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
   };
@@ -231,12 +221,6 @@ export default function PlaceReview({
     reviewDeltaContent: Delta,
     reviewPlainTextContent: string,
   ) => {
-    console.log("Review Delta Content in saveToDB:", reviewDeltaContent); // Log the value
-    console.log(
-      "Review Plain Text Content in saveToDB:",
-      reviewPlainTextContent,
-    ); // Log the value
-    console.log(currentReview);
     try {
       const locationReviewData = {
         ...currentReview,
@@ -245,7 +229,6 @@ export default function PlaceReview({
         stars: starRating,
         ...amenityEdits, // Spread the amenity data into individual key value pairs
       };
-      console.log("Location Review Data:", locationReviewData); // Log the value
       const { data: locationReview, error: locationReviewError } =
         await supabaseClient
           .from("Location_Reviews")
@@ -260,7 +243,6 @@ export default function PlaceReview({
     }
   };
 
-  console.log(currentReview);
   return (
     <main className='xl:flex'>
       <div className='xl:flex xl:flex-col w-full xl:w-2/3 xl:order-2'>

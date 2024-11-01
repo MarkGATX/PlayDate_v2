@@ -17,6 +17,7 @@ export default function DashboardKidsSection({
   const kidsDashboardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    
     let kidSubscription: ReturnType<typeof supabaseClient.channel> 
     const getKidsData = async () => {
       const { data: kidsJoinData, error: kidsJoinDataError } =
@@ -41,6 +42,8 @@ export default function DashboardKidsSection({
         }
       }
     };
+    
+    getKidsData();
 
     if (adultData.id) {
       kidSubscription = supabaseClient
@@ -66,8 +69,6 @@ export default function DashboardKidsSection({
           }
         });
     }
-
-    getKidsData();
 
     return () => {
       if (kidSubscription) {

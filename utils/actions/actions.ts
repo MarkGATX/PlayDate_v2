@@ -80,7 +80,7 @@ export async function createNewFriendGroup(kidId:string, groupName:string) {
         throw handleSupabaseError(newFriendGroupError)
       }
   } catch(error) {
-    console.log('Error adding friend group: ', error)
+    console.error('Error adding friend group: ', error)
   }
 }
 

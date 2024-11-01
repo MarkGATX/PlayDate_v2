@@ -23,7 +23,6 @@ export default function PlaydateAttendanceTabs({
   >(null);
 
   const getPlaydateAttendanceData = useCallback(async () => {
-    console.log('GET ATTENDANCE')
     //using returns to override what supabase expects to receive. They expect an array here but sending an object, so overriding to expect an object
     const {
       data: playdateAttendanceData,
@@ -36,10 +35,6 @@ export default function PlaydateAttendanceTabs({
       .eq("playdate_id", playdate)
       .returns<InviteStatusType[]>();
 
-    // if (playdateAttendanceData) {
-    //   console.log(attendanceData)
-    //   setAttendanceData(playdateAttendanceData);
-    // }
     if (playdateAttendanceData) {
       setAttendanceData(prevData => {
         // Only update if the data has changed. uses function version of setting the update to prevent infinite re-renders
@@ -96,7 +91,7 @@ export default function PlaydateAttendanceTabs({
           filter: `playdate_id=eq.${playdate}`,
         },
         (payload) => {
-          console.log(payload)
+
           getPlaydateAttendanceData();
         },
       )

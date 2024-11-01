@@ -49,7 +49,6 @@ export async function fetchNearbyPlaces(
       throw new Error(`Error fetching nearby locations: ${response.status}`);
     }
     const data: DataType = await response.json();
-    console.log(data)
 
     if (!data) {
       console.error("No data received from API");

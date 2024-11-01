@@ -110,9 +110,6 @@ export default function KidSearchResults({
     fetchKidSearchResults();
   }, [searchTerm]);
 
-  console.log(searchResults)
-  console.log(playdateInfo)
-
   return (
     <>
       <section

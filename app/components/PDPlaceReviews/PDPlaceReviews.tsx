@@ -31,7 +31,6 @@ export default function PDPlaceReviews({
         if (placeReviewDataError) {
           throw placeReviewDataError;
         }
-        console.log(placeReviewData);
         setLocationReviews(placeReviewData);
 
         let totalStars = placeReviewData.reduce(

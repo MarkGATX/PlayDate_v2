@@ -42,7 +42,6 @@ export default function Notification({
           .from("Notifications")
           .select("*")
           .eq("receiver_id", currentUser.id);
-      console.log(notificationData)
       if (notificationData && notificationData.length > 0) {
         const updatedNotifications = await Promise.all(
           notificationData.map(async (notification) => {
@@ -81,7 +80,6 @@ export default function Notification({
                 .eq("id", notification.playdate_id)
                 .single();
               playdateData = playdateDetailsData;
-              console.log(playdateData)
               if (playdateDetailsDataError) {
                 throw playdateDetailsDataError;
               }
@@ -100,11 +98,6 @@ export default function Notification({
         );
 
         setNotifications(previousNotifications => [...updatedNotifications]);
-        // setNotifications(prevNotifications => {
-        //   console.log('Previous notifications:', prevNotifications);
-        //   console.log('New notifications:', updatedNotifications);
-        //   return updatedNotifications;
-        // });
       } else {
         setNotifications([]); // Handle case where no notifications are found
       }
@@ -115,9 +108,8 @@ export default function Notification({
   },[currentUser.id]);
 
   useEffect(() => {
+    getCurrentNotifications();
     let notificationSubscription: ReturnType<typeof supabaseClient.channel>
-    
-
     if (currentUser?.id) {
       notificationSubscription = supabaseClient
         .channel("dashboard_realtime_notifications")
@@ -131,7 +123,6 @@ export default function Notification({
             // filter: `receiver_id=eq.${currentUser?.id}`,
           },
           (payload) => {
-            console.log('notification sub', payload)
             //refetch notifications
             getCurrentNotifications();
           },
@@ -145,8 +136,6 @@ export default function Notification({
           }
         });
     }
-
-    getCurrentNotifications();
 
     return () => {
       if (notificationSubscription) {
@@ -176,8 +165,6 @@ export default function Notification({
       }
     }
   };
-  console.log(notifications)
-  console.log(currentUser)
 
   return (
     <section

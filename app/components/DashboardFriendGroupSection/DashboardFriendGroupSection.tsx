@@ -112,7 +112,6 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
   // }, [friendGroups, handleRemoveFromFriendGroup]);
 
   const getFriendGroups = useCallback(async () => {
-    console.log('calling getFriendGroups')
     try {
       const { data: friendGroupData, error: friendGroupError } = await supabaseClient
         .from("Friend_Group")
@@ -121,7 +120,6 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
       if (friendGroupError) {
         throw friendGroupError
       }
-      console.log(friendGroupData[0])
       // Use a temporary array to collect friend groups
       const tempFriendGroups = [];
       // Clear previous friend groups before setting new ones
@@ -137,7 +135,6 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
         if (friendGroupMembersError) {
           throw friendGroupMembersError
         }
-        console.log(friendGroupMembers)
         const friendGroupData = {
           id: friendGroup.id,
           group_name: friendGroup.group_name,
@@ -155,8 +152,6 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
             // Sort by first name
             .sort((a, b) => a.first_name.localeCompare(b.first_name)),
         }
-        console.log(friendGroupData)
-        console.log(friendGroupMembers)
         tempFriendGroups.push(friendGroupData)
 
       }
@@ -187,15 +182,15 @@ export default function DashboardFriendGroupSection(kid: KidsType) {
               // filter: `friend_group_uid=eq.${group.id}`,
             },
             (payload) => {
-              console.log('Received Payload', payload)
+
               getFriendGroups();
             },
           )
           .subscribe((status, err) => {
             if (err) console.error('Friend Group Subscription error:', err);
-            console.log(`Subscription status for friend_groups_subscription_${group.id}:`, status);
+           
           });
-        console.log(subscription)
+
         subscriptions.push(subscription)
       })
     }

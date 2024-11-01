@@ -39,7 +39,6 @@ export default function KidSearchCard({
   const handleInviteKid = async () => {
     if (!playdateInfo) {
       //no playdate Info
-      console.log("no playdate info");
       return;
     }
     try {
@@ -59,7 +58,6 @@ export default function KidSearchCard({
   const handleInviteKidWithGroup = async () => {
     if (!playdateInfo) {
       //no playdate Info
-      console.log("no playdate info");
       return;
     }
     try {

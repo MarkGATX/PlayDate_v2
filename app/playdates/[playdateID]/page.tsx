@@ -81,7 +81,6 @@ export default function PlaydateDetails() {
           if (playdateDataError) {
             throw playdateDataError;
           }
-          console.log(playdateData);
           if (playdateData.length === 0) {
 
             // notFound();
@@ -94,7 +93,6 @@ export default function PlaydateDetails() {
 
             // extract the Adults and Kids keys from the response to make the state object easier to read and navigate for clarity. Adults and Kids seems confusing since there will be only one host and one kid per playdate
             const { Adults, Kids, ...remainingData } = playdateData[0];
-            console.log(remainingData)
             const newPlaydateData = {
               ...remainingData,
               kid_name: {
@@ -118,8 +116,6 @@ export default function PlaydateDetails() {
               throw friendGroupError
             }
 
-            console.log(friendGroupData)
-
             // Use a temporary array to collect friend groups
             const tempFriendGroups = [];
 
@@ -136,7 +132,6 @@ export default function PlaydateDetails() {
               if (friendGroupMembersError) {
                 throw friendGroupMembersError
               }
-              console.log(friendGroupMembers)
               const friendGroupData = {
                 id: friendGroup.id,
                 group_name: friendGroup.group_name,
@@ -152,8 +147,6 @@ export default function PlaydateDetails() {
                   first_name_only: member.Kids.first_name_only
                 }))
               }
-              console.log(friendGroupData)
-              console.log(friendGroupMembers)
               tempFriendGroups.push(friendGroupData)
 
             }
@@ -328,8 +321,6 @@ export default function PlaydateDetails() {
       console.error('There was an error inviting the friend group', error)
     }
   }
-
-  console.log(playdateInfo)
 
   return (
     <main className='xl:flex w-full'>

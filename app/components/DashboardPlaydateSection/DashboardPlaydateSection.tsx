@@ -56,8 +56,30 @@ export default function DashboardPlaydateSection({
   });
 
   useEffect(() => {
-    console.log("test");
-    console.log(kidIds)
+    const fetchKidsIds = async () => {
+      try {
+        const { data: kidsIdData, error: kidsIdDataError } =
+          await supabaseClient
+            .from("Adult_Kid")
+            .select("kid_id") // Select only the ID for efficiency
+            .eq("adult_id", adultData.id);
+        if (kidsIdDataError) {
+          throw kidsIdDataError;
+        }
+        //map the resulting array of objects into an array of ids
+        const kidsIds = kidsIdData.map((kid: { kid_id: string }) => kid.kid_id);
+        setKidIds(kidsIds);
+        setIsDataReady(true)
+      } catch (error) {
+        console.error("Error fetching playdates:", error);
+      }
+    };
+
+    fetchKidsIds();
+  }, [adultData]);
+
+  useEffect(() => {
+
     const fetchPlaydates = async () => {
       try {
         const playdates = await getKidsPlaydateData(adultData.id);
@@ -77,7 +99,7 @@ export default function DashboardPlaydateSection({
     };
 
     fetchPlaydates();
-    console.log(isDataReady)
+    //trying to eliminiate original error from attempting subscription before kidIds is set
     if (isDataReady) {
       const playdatesSubscription = supabaseClient
         .channel("playdate_attendance_subscription")
@@ -139,124 +161,6 @@ export default function DashboardPlaydateSection({
         };
     }
   }, [adultData, kidIds]);
-
-  useEffect(() => {
-    const fetchKidsIds = async () => {
-      try {
-        const { data: kidsIdData, error: kidsIdDataError } =
-          await supabaseClient
-            .from("Adult_Kid")
-            .select("kid_id") // Select only the ID for efficiency
-            .eq("adult_id", adultData.id);
-        if (kidsIdDataError) {
-          throw kidsIdDataError;
-        }
-        //map the resulting array of objects into an array of ids
-        const kidsIds = kidsIdData.map((kid: { kid_id: string }) => kid.kid_id);
-        setKidIds(kidsIds);
-        setIsDataReady(true)
-      } catch (error) {
-        console.error("Error fetching playdates:", error);
-      }
-    };
-
-    fetchKidsIds();
-  }, [adultData]);
-
-  // useEffect(() => {
-  //   let playdatesSubscription: ReturnType<typeof supabaseClient.channel>;;
-  //   let deletedPlaydatesSubscription: ReturnType<typeof supabaseClient.channel>;;
-  
-  //   const fetchKidsIds = async () => {
-  //     try {
-  //       const { data: kidsIdData, error: kidsIdDataError } = await supabaseClient
-  //         .from("Adult_Kid")
-  //         .select("kid_id")
-  //         .eq("adult_id", adultData.id);
-  //       if (kidsIdDataError) {
-  //         throw kidsIdDataError;
-  //       }
-  //       const kidsIds = kidsIdData.map((kid: { kid_id: string }) => kid.kid_id);
-  //       setKidIds(kidsIds);
-  //       setIsDataReady(true);
-  //     } catch (error) {
-  //       console.error("Error fetching kids IDs:", error);
-  //     }
-  //   };
-  
-  //   const fetchPlaydates = async () => {
-  //     try {
-  //       const playdates = await getKidsPlaydateData(adultData.id);
-  //       if (playdates && playdates.length > 0) {
-  //         const sortedPlaydates = playdates.sort((a, b) => {
-  //           const dateA = new Date(a.Playdates.time);
-  //           const dateB = new Date(b.Playdates.time);
-  //           return dateA.getTime() - dateB.getTime();
-  //         });
-  //         setPlaydates(sortedPlaydates);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching playdates:", error);
-  //     }
-  //   };
-  
-  //   fetchKidsIds();
-  
-  //   if (isDataReady && kidIds) {
-  //     fetchPlaydates();
-  
-  //     playdatesSubscription = supabaseClient
-  //       .channel("playdate_attendance_subscription")
-  //       .on(
-  //         "postgres_changes",
-  //         {
-  //           event: "UPDATE",
-  //           schema: "public",
-  //           table: "Playdate_Attendance",
-  //           filter: `kid_id=in.(${kidIds.join(",")})`,
-  //         },
-  //         (payload) => {
-  //           fetchPlaydates();
-  //         }
-  //       )
-  //       .subscribe((status, err) => {
-  //         if (err) console.error('Playdate attendance Group Subscription error:', err);
-  //         if (status === 'SUBSCRIBED') {
-  //           console.log('Playdate Attendance Subscription successful');
-  //         } else {
-  //           console.error('Playdate Attendance Subscription failed:', status);
-  //         }
-  //       });
-  
-  //     deletedPlaydatesSubscription = supabaseClient
-  //       .channel("deleted_playdates_subscription")
-  //       .on(
-  //         "postgres_changes",
-  //         {
-  //           event: "DELETE",
-  //           schema: "public",
-  //           table: "Playdates",
-  //           filter: `host_kid_id=in.(${kidIds.join(",")})`,
-  //         },
-  //         (payload) => {
-  //           fetchPlaydates();
-  //         }
-  //       )
-  //       .subscribe((status, err) => {
-  //         if (err) console.error('Deleted Playdates Subscription error:', err);
-  //         if (status === 'SUBSCRIBED') {
-  //           console.log('Deleted Playdates Subscription successful');
-  //         } else {
-  //           console.error('Delated Playdates Subscription failed:', status);
-  //         }
-  //       });
-  //   }
-  
-  //   return () => {
-  //     if (playdatesSubscription) supabaseClient.removeChannel(playdatesSubscription);
-  //     if (deletedPlaydatesSubscription) supabaseClient.removeChannel(deletedPlaydatesSubscription);
-  //   };
-  // }, [adultData, isDataReady, kidIds]);
 
   return (
     <section

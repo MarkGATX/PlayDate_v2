@@ -176,8 +176,7 @@ export default function KidsCard({
       if (updateResponse) {
         setEditKidInfo((previousValue) => !previousValue);
       } else {
-        console.log("something else");
-        console.log(updateResponse);
+
         setEditKidInfo((previousValue) => !previousValue);
       }
     } catch (error) {
@@ -245,112 +244,10 @@ export default function KidsCard({
   const handleRemoveFromFriendGroup = async (kid_id: string, friend_group_id: string) => {
     try {
       const removedKid = await removeKidFromFriendGroup(kid_id, friend_group_id)
-      console.log(removedKid)
     } catch (error) {
       console.error("Error removing kid from Friend Group: ", error)
     }
   }
-
-  // const getFriendGroups = useCallback(async () => {
-  //   console.log('calling getFriendGroups')
-  //   try {
-  //     const { data: friendGroupData, error: friendGroupError } = await supabaseClient
-  //       .from("Friend_Group")
-  //       .select("*")
-  //       .eq("kid_owner", kid.id)
-  //     if (friendGroupError) {
-  //       throw friendGroupError
-  //     }
-  //     console.log(friendGroupData[0])
-  //     // Use a temporary array to collect friend groups
-  //     const tempFriendGroups = [];
-  //     // Clear previous friend groups before setting new ones
-  //     setFriendGroups([]);
-  //     //use for...of to handle await in each fetch from supabase
-  //     //use returns to ensure correct typing of response. once again supabase expecting an array but returning an object. this return overrides that
-  //     for (const friendGroup of friendGroupData) {
-  //       const { data: friendGroupMembers, error: friendGroupMembersError } = await supabaseClient
-  //         .from("Friend_Group_Members")
-  //         .select("kid_uid, Kids(primary_caregiver, first_name, first_name_only, last_name, profile_pic)")
-  //         .eq("friend_group_uid", friendGroup.id)
-  //         .returns<SupabaseFriendGroupMemberType[]>();
-  //       if (friendGroupMembersError) {
-  //         throw friendGroupMembersError
-  //       }
-  //       console.log(friendGroupMembers)
-  //       const friendGroupData = {
-  //         id: friendGroup.id,
-  //         group_name: friendGroup.group_name,
-  //         kid_owner: friendGroup.kid_owner,
-  //         //map group members to extract from uid and use a string
-  //         friend_group_members: friendGroupMembers.map((member: SupabaseFriendGroupMemberType) =>
-  //         ({
-  //           kid_id: member.kid_uid,
-  //           primary_caregiver_id: member.Kids.primary_caregiver || '',
-  //           profile_pic: member.Kids.profile_pic || '',
-  //           first_name: member.Kids.first_name,
-  //           last_name: member.Kids.last_name,
-  //           first_name_only: member.Kids.first_name_only
-  //         }))
-  //           // Sort by first name
-  //           .sort((a, b) => a.first_name.localeCompare(b.first_name)),
-  //       }
-  //       console.log(friendGroupData)
-  //       console.log(friendGroupMembers)
-  //       tempFriendGroups.push(friendGroupData)
-
-  //     }
-  //     setFriendGroups(tempFriendGroups)
-
-  //   } catch (error) {
-  //     console.error("There was an error getting friend groups in the kid card", error)
-  //   }
-  // }, [kid, supabaseClient]
-  // )
-
-  // useEffect(() => {
-  //   getFriendGroups();
-  // }, [getFriendGroups])
-
-  // useEffect(() => {
-  //   const subscriptions: RealtimeChannel[] = []
-
-  //   const createSubscriptions = () => {
-  //     friendGroups.forEach((group) => {
-  //       const subscription = supabaseClient
-  //         .channel(`friend_groups_subscription_${group.id}`)
-  //         .on(
-  //           "postgres_changes",
-  //           {
-  //             event: "*",
-  //             schema: "public",
-  //             table: "Friend_Group_Members",
-  //             // filter: `friend_group_uid=eq.${group.id}`,
-  //           },
-  //           (payload) => {
-  //             console.log('Received Payload', payload)
-  //             getFriendGroups();
-  //           },
-  //         )
-  //         .subscribe((status) => {
-  //       console.log(`Subscription status for friend_groups_subscription_${group.id}:`, status);
-  //     });
-  //       console.log(subscription)
-  //       subscriptions.push(subscription)
-  //     })
-  //   }
-
-  //   createSubscriptions();
-
-  //   return () => {
-  //     subscriptions.forEach((subscription) => {
-  //       supabaseClient.removeChannel(subscription);
-  //     })
-  //   };
-
-  // }, [friendGroups, getFriendGroups])
-
-  // console.log(friendGroups)
 
   return (
     <>

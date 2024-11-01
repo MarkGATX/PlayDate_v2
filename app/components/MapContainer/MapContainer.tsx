@@ -218,16 +218,11 @@ export default function MapContainer() {
     }
     const searchedPlace = await fetchSearchedPlace(searchTermRef.current.value, currentLocation.latitude, currentLocation.longitude);
     //normalize the data to match the same format returned from the maps api
-    console.log(searchedPlace);
     const normalizedResults = searchedPlace.results.map(normalizePlaceData);
-    console.log(normalizedResults);
     //set places to place markers on map and update place cards
     setPlaces(normalizedResults);
   };
 
-
-
-  console.log(currentLocation);
   return (
     <main  >
       {process.env.NEXT_PUBLIC_GOOGLE_MAPS_API &&

@@ -70,7 +70,6 @@ export default function PlaceDetails({
   }
 
   const getUserReviews = useCallback(async () => {
-    console.log('getUserReviews')
     try {
       const {
         data: reviewData,
@@ -83,13 +82,13 @@ export default function PlaceDetails({
       if (reviewDataError) {
         throw new Error("Error getting playdate user ");
       }
-      console.log(reviewData)
+
       //set PD user review stars
       if (reviewData && reviewData.length > 0) {
         const sum = reviewData?.reduce((sum, review) => sum + review.stars, 0);
         const average = Math.round(sum / reviewData.length);
         setUserReviewStars(average);
-        console.log(reviewData)
+
         //set list of user review amenities
         setPlaceAmenities(aggregateAmenities(reviewData));
       }
@@ -235,7 +234,6 @@ export default function PlaceDetails({
   const handlePickKidForPlaydate = async () => {
     setOpenSelectKid(true);
   };
-  console.log(placeAmenities);
 
   return (
     <>

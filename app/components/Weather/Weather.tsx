@@ -77,7 +77,7 @@ export default function Weather() {
               </div>
             ) : (
               <>
-                <section id="tempRange" className="max-w-2/3 z-1 mb-2 flex w-2/3 items-center justify-between pr-1" >
+                <section id="tempRange" className="max-w-2/3 z-1 mb-2 flex w-2/3 items-center justify-between pr-1 lg:gap-4 lg:justify-start" >
                   <Image
                     src={`/weather_icons/${currentWeather.current_id}.webp`}
                     width={32}

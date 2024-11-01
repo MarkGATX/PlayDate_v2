@@ -133,7 +133,6 @@ export default function CreateReview({
       // Get Quill editor contents
       const reviewDeltaContent = quill.getContents();
       const reviewPlainTextContent = quill.getText();
-      console.log(reviewPlainTextContent);
       if (!currentPlace || !currentUser) {
         return;
       } else {

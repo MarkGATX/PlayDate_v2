@@ -15,7 +15,6 @@ export default function ChangePlaydateTime({
   const { id, playdate_time } = notification;
 
   const handleDeleteNotification = async () => {
-    console.log('delete notification')
     deleteNotification(id);
   };
 
@@ -34,8 +33,7 @@ export default function ChangePlaydateTime({
 
   // Parse the playdate_time using Luxon
   let playdateDateTime: DateTime;
-  console.log(playdate_time)
-  console.log(playdate_time instanceof Date)
+
   if (playdate_time instanceof Date) {
     playdateDateTime = DateTime.fromJSDate(playdate_time);
   } else if (typeof playdate_time === 'string') {
