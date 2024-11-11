@@ -17,7 +17,7 @@ export default function privacy() {
                 <p>We collect several different types of information for various purposes to provide and improve our Service to you:</p>
 
                 <h3 className="font-bold">2.1 Personal Data</h3>
-                <p>While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:</p>
+                <p>{`While using our Service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you ("Personal Data"). Personally identifiable information may include, but is not limited to:`}</p>
                 <ul className='mb-4 list-disc'>
                     <li className='ml-8'>Email address</li>
                     <li className='ml-8'>First name and last name</li>
@@ -27,7 +27,7 @@ export default function privacy() {
                 </ul>
 
                 <h3 className="font-bold">2.2 Usage Data</h3>
-                <p>We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ("Usage Data").</p>
+                <p>{`We may also collect information that your browser sends whenever you visit our Service or when you access the Service by or through a mobile device ("Usage Data").`}</p>
 
                 <h2 className="text-lg font-bold">3. Use of Data</h2>
                 <p>Playdate uses the collected data for various purposes:</p>
@@ -60,8 +60,8 @@ export default function privacy() {
                 <h2 className="text-lg font-bold">7. Your Data Protection Rights</h2>
                 <p>We aim to take reasonable steps to allow you to correct, amend, delete, or limit the use of your Personal Data. If you wish to be informed what Personal Data we hold about you and if you want it to be removed from our systems, please contact us.</p>
 
-                <h2 className="text-lg font-bold">8. Changes to This Privacy Policy</h2>
-                <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "effective date" at the top of this Privacy Policy.</p>
+                <h2 className="text-lg font-bold">{`8. Changes to This Privacy Policy</h2>
+                <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. We will let you know via email and/or a prominent notice on our Service, prior to the change becoming effective and update the "effective date" at the top of this Privacy Policy.`}</p>
 
                 <h2 className="text-lg font-bold">9. Contact Us</h2>
                 <p>If you have any questions about this Privacy Policy, please contact us:</p>
