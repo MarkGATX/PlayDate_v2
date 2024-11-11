@@ -41,7 +41,7 @@ export default function Contact() {
                 <h1 className='text-3xl font-bold p-8'>Contact Us</h1>
             </div>
             <div  className="p-8 flex flex-col justify-center items-center">
-                <p className='mb-8'>Questions or concerns? Drop us a line and let us know. We'll get back to you as soon as we can.</p>
+                <p className='mb-8'>{`Questions or concerns? Drop us a line and let us know. We'll get back to you as soon as we can.`}</p>
                 <form id="contact-form" ref={formRef} onSubmit={HandleFormSubmit} className='w-full lg:w-1/2'>
                     <div>
                         <label htmlFor="name">Name:</label>

@@ -105,7 +105,7 @@ export default function Notification({
     } catch (error) {
       console.error("Error fetching notifications:", error);
     }
-  },[currentUser.id]);
+  }, [currentUser]);
 
   useEffect(() => {
     getCurrentNotifications();
@@ -142,7 +142,7 @@ export default function Notification({
         supabaseClient.removeChannel(notificationSubscription);
       };
     }
-  }, [currentUser]);
+  }, [currentUser, getCurrentNotifications]);
 
   const handleShowNotifications = async () => {
     if (notificationsAreaRef.current) {

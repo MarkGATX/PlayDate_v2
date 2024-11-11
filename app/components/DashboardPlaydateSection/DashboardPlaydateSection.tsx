@@ -100,7 +100,7 @@ export default function DashboardPlaydateSection({
 
     fetchPlaydates();
     //trying to eliminiate original error from attempting subscription before kidIds is set
-    if (isDataReady) {
+    
       const playdatesSubscription = supabaseClient
         .channel("playdate_attendance_subscription")
         .on(
@@ -159,7 +159,7 @@ export default function DashboardPlaydateSection({
             supabaseClient.removeChannel(deletedPlaydatesSubscription)
           };
         };
-    }
+    
   }, [adultData, kidIds]);
 
   return (

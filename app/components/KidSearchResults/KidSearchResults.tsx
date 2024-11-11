@@ -108,7 +108,7 @@ export default function KidSearchResults({
       }
     };
     fetchKidSearchResults();
-  }, [searchTerm]);
+  }, [searchTerm, playdateInfo]);
 
   return (
     <>
