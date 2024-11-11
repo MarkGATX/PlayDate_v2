@@ -37,6 +37,8 @@ import dynamic from "next/dynamic";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectFade, Navigation, Pagination } from "swiper/modules";
 import { fetchPlaceDetails } from "@/utils/map/placeDetailsAPI";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function PlaydateDetails() {
   const params = useParams<{ playdateID: string }>();
@@ -48,6 +50,7 @@ export default function PlaydateDetails() {
   const [unformattedPlaydateDate, setUnformattedPlaydateDate] =
     useState<DateTime>();
   const [newPlaydateDate, setNewPlaydateDate] = useState<string>();
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const newDateInputRef = useRef<HTMLInputElement | null>(null);
   const [editDateError, setEditDateError] = useState<string>();
   const [openNoteEditor, setOpenNoteEditor] = useState<boolean>(false);
@@ -207,7 +210,8 @@ export default function PlaydateDetails() {
             console.log(' playdate Subscription successful');
           } else {
             console.error('playdate Subscription failed:', status);
-    }});
+          }
+        });
 
       getPlaydateInfo();
 
@@ -217,7 +221,13 @@ export default function PlaydateDetails() {
     } else {
       notFound();
     }
-    }, [params, router]);
+  }, [params, router]);
+
+  useEffect(() => {
+    if (playdateInfo?.time) {
+      setSelectedDate(new Date(playdateInfo.time));
+    }
+  }, [playdateInfo]);
 
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -255,6 +265,10 @@ export default function PlaydateDetails() {
     getCurrentUser();
   }, [user]);
 
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
+  };
+
   const handleNewDateChange = async () => {
     if (!newDateInputRef.current) {
       return;
@@ -262,45 +276,77 @@ export default function PlaydateDetails() {
     setNewPlaydateDate(newDateInputRef.current.value);
   };
 
-  const handleUpdateDateAndTime = async () => {
-    if (!newDateInputRef.current) {
-      return;
-    }
-    try {
-      const newDateTime = newDateInputRef.current.value;
-      const inputDate = DateTime.fromISO(newDateTime);
-      const currentDate = DateTime.now();
-
-      if (inputDate < currentDate) {
-        //date is before current date
-        setEditDateError("Playdates can not be in the past");
+  const handleSaveDate = async () => {
+    if (selectedDate) {
+      // Check if the selected date is in the future
+      const now = new Date();
+      if (selectedDate < now) {
+        setEditDateError("Please select a future date and time.");
         return;
-      } else {
-        const { data: updatedDateData, error: updatedDateDataError } =
-          await supabaseClient
-            .from("Playdates")
-            .update({ time: inputDate })
-            .eq("id", playdateID)
-            .select();
-        if (updatedDateDataError) {
-          throw updatedDateDataError;
-        }
-        // Ensure playdateInfo and host_id are defined before calling sendPlaydateUpdates
+      }
+      try {
+        const { data, error } = await supabaseClient
+          .from("Playdates")
+          .update({ time: selectedDate.toISOString() })
+          .eq("id", playdateID);
+
+        if (error) throw error;
+
+        // Update local state
+        setPlaydateInfo(prev => ({ ...prev!, time: selectedDate }));
         if (playdateInfo && playdateInfo.host_id) {
           // Send update notification to all parents associated with kids
           sendPlaydateUpdates(playdateID, playdateInfo.host_id);
         } else {
           console.error("playdateInfo or host_id is undefined");
         }
-        //set date to display as new date
-        setUnformattedPlaydateDate(DateTime.fromISO(updatedDateData[0].time));
-        //close date edit elements
-        setOpenEditDate((previousValue) => !previousValue);
+        setOpenEditDate(false);
+      } catch (error) {
+        console.error("Error updating date:", error);
+        setEditDateError("Failed to update date. Please try again.");
       }
-    } catch (error) {
-      console.error(error);
     }
   };
+
+  // const handleUpdateDateAndTime = async () => {
+  //   if (!newDateInputRef.current) {
+  //     return;
+  //   }
+  //   try {
+  //     const newDateTime = newDateInputRef.current.value;
+  //     const inputDate = DateTime.fromISO(newDateTime);
+  //     const currentDate = DateTime.now();
+
+  //     if (inputDate < currentDate) {
+  //       //date is before current date
+  //       setEditDateError("Playdates can not be in the past");
+  //       return;
+  //     } else {
+  //       const { data: updatedDateData, error: updatedDateDataError } =
+  //         await supabaseClient
+  //           .from("Playdates")
+  //           .update({ time: inputDate })
+  //           .eq("id", playdateID)
+  //           .select();
+  //       if (updatedDateDataError) {
+  //         throw updatedDateDataError;
+  //       }
+  //       // Ensure playdateInfo and host_id are defined before calling sendPlaydateUpdates
+  //       if (playdateInfo && playdateInfo.host_id) {
+  //         // Send update notification to all parents associated with kids
+  //         sendPlaydateUpdates(playdateID, playdateInfo.host_id);
+  //       } else {
+  //         console.error("playdateInfo or host_id is undefined");
+  //       }
+  //       //set date to display as new date
+  //       setUnformattedPlaydateDate(DateTime.fromISO(updatedDateData[0].time));
+  //       //close date edit elements
+  //       setOpenEditDate((previousValue) => !previousValue);
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   const handleDeletePlaydate = async () => {
     try {
@@ -418,9 +464,16 @@ export default function PlaydateDetails() {
                 // <h2 className='text-lg font-bold w-full text-center px-4'>edit</h2>
                 <div
                   id="updatePlaydateTimesContainer"
-                  className="mt-2 flex w-full flex-wrap justify-around px-4"
+                  className="mt-2 flex flex-col w-full flex-wrap justify-around items-center px-4"
                 >
-                  <input
+                  <DatePicker
+                    selected={selectedDate}
+                    onChange={handleDateChange}
+                    showTimeSelect
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    className="border border-gray-300 rounded-md p-2"
+                  />
+                  {/* <input
                     ref={newDateInputRef}
                     type="datetime-local"
                     min={Date.now()}
@@ -430,14 +483,16 @@ export default function PlaydateDetails() {
                     }
                     className={`w-full ${editDateError ? "text-red-600" : "text-inherit"}`}
                     onChange={handleNewDateChange}
-                  ></input>
+                  ></input> */}
                   {editDateError ? (
                     <div className="text-red-600">{editDateError}</div>
-                  ) : null}
+                  )
+                    :
+                    null}
                   <button
                     className="w-90 my-2 transform cursor-pointer rounded-lg border-2 border-appBlue bg-appGold px-2 py-1 text-xs duration-300 ease-in-out hover:bg-blueGradient hover:bg-appBlue hover:text-appGold active:bg-appGold active:text-appBlue active:shadow-activeButton disabled:pointer-events-none disabled:opacity-50"
                     onClick={() => {
-                      handleUpdateDateAndTime();
+                      handleSaveDate();
                     }}
                   >
                     Save New Time
