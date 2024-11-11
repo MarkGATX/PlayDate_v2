@@ -170,7 +170,7 @@ export default function DashboardPlaydateSection({
       <Suspense
         fallback={
           <div className="align-center flex w-full items-center justify-start  bg-blueGradient bg-appBlue px-4 text-appBG">
-            Loading with suspense...
+            Loading...
           </div>
         }
       >
