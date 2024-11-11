@@ -24,6 +24,8 @@ body {
 main {
   position: relative;
   z-index: 1;
+  /* grow to fill any flex space with body set to col in layout */
+  flex-grow:1;
   /* min-height:100dvh; */
 }
 
