@@ -11,7 +11,7 @@ export default function privacy() {
                 <p>Last updated: 11/11/2024</p>
 
                 <h2 className="text-lg font-bold">1. Introduction</h2>
-                <p>Mark Gardner ("we", "our", or "us") operates the Playdate application (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service.</p>
+                <p>{`Mark Gardner ("we", "our", or "us") operates the Playdate application (the "Service"). This page informs you of our policies regarding the collection, use, and disclosure of personal data when you use our Service.`}</p>
 
                 <h2 className="text-lg font-bold">2. Information Collection and Use</h2>
                 <p>We collect several different types of information for various purposes to provide and improve our Service to you:</p>

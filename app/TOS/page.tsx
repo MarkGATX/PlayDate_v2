@@ -25,7 +25,7 @@ export default function TOS() {
                 </ul>
 
                 <h2 className="text-lg font-bold">4. Privacy and Data Protection</h2>
-                <p className='mb-4'>We collect and use personal information as outlined in our Privacy Policy [link to your privacy policy]. By using the app, you consent to our data practices described in the Privacy Policy.</p>
+                <p className='mb-4'>We collect and use personal information as outlined in our <Link href='./privacy'>Privacy Policy</Link>. By using the app, you consent to our data practices described in the Privacy Policy.</p>
 
                 <h2 className="text-lg font-bold">5. Limitation of Liability</h2>
                 <p >Playdate is not responsible for:</p>
@@ -45,7 +45,7 @@ export default function TOS() {
                 <p className='mb-4'>We may modify these Terms at any time. Continued use of the app after changes constitutes acceptance of the new Terms.</p>
 
                 <h2 className="text-lg font-bold">9. Disclaimer of Warranties</h2>
-                <p className='mb-4'>The app is provided "as is" without any warranties, express or implied.</p>
+                <p className='mb-4'>{`The app is provided "as is" without any warranties, express or implied.`}</p>
 
                 <h2 className="text-lg font-bold">10. Governing Law</h2>
                 <p className='mb-4'>These Terms shall be governed by and construed in accordance with the laws of the state of Texas.</p>
