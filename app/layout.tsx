@@ -5,6 +5,7 @@ import { LocationProvider } from "@/utils/location/LocationProvider";
 import { WeatherProvider } from "@/utils/weather/WeatherProvider";
 import Header from "./components/Header/Header";
 import { AuthProvider } from "@/utils/firebase/AuthProvider";
+import Footer from "./components/Footer/page";
 
 const urbanist = Urbanist({ subsets: ["latin"] });
 
@@ -23,9 +24,10 @@ export default function RootLayout({
       <LocationProvider>
         <WeatherProvider>
           <AuthProvider>
-            <body className={urbanist.className}>
+            <body className={`${urbanist.className} min-h-screen flex flex-col`}>
               <Header />
               {children}
+              <Footer />
             </body>
           </AuthProvider>
         </WeatherProvider>

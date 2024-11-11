@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <main className="flex flex-col items-center justify-start overflow-y-hidden">
+    <main className="flex flex-col items-center justify-start overflow-y-hidden flex-grow">
       <h2 className="w-full bg-blueGradient bg-appBlue p-4 text-center text-lg font-bold text-appBG">
         Page not found
       </h2>

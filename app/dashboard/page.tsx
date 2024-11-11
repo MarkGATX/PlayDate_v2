@@ -72,7 +72,7 @@ export default function Dashboard() {
   }, [user]);
 
   return (
-    <main>
+    <main className='flex-grow'>
       <Suspense
         fallback={
           <div className="flex w-full justify-center bg-blueGradient bg-appBlue p-4 text-appBG">
